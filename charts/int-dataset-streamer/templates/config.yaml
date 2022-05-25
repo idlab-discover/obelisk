@@ -1,0 +1,9 @@
+# Additional config for the Microservices (is mounted along the Obelisk Base configuration)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ include "int-dataset-streamer.fullname" . }}-config
+data:
+    EVENTS_MAX_AGE_MINUTES: "{{ .Values.config.eventsMaxAge }}"
+    MAX_CACHED_PRODUCERS: "{{ .Values.config.maxCachedProducers }}"
+    EXPIRE_PRODUCER_AFTER_MINUTES: "{{ .Values.config.inactiveProducerExpireTime }}"

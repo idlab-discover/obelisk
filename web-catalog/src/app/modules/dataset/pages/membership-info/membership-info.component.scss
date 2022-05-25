@@ -1,0 +1,28 @@
+@import "src/common";
+
+.tt {
+    text-decoration: underline;
+    font-style: italic;
+    color: theme-color("secondary");
+    cursor: help;
+}
+
+.rights {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: auto;
+    justify-items: left;
+    justify-content: left;
+
+    .right {
+        padding: 2px 8px;
+        margin: 0 4px 7px 0;
+        border-radius: 4px;
+        border: 1px solid theme-color-level("secondary", 0);
+        font-size: 13px;
+        font-variant: small-caps;
+        font-weight: 600;
+        color: white;
+        background-color: theme-color-level("secondary", -2);
+    }
+}

@@ -1,0 +1,64 @@
+type DataExport {
+    id: String!
+    name: String @searchable
+    user: User!,
+    team: Team,
+    dataRange: DataRange!
+    timestampPrecision: TimestampPrecision!
+    fields: [EventField!]
+    filter: JSON
+    from: Long
+    to: Long
+    limit: Int
+    requestedOn: Long! @searchable
+    status: DataExportStatus!
+    result: DataExportResult
+}
+
+type ExportMutation {
+    # Request a data export to run again (E.g. because the result expired)
+    # refresh: ExportResponse!
+    # Remove a data export
+    remove: ExportResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+}
+
+type DataExportStatus {
+    status: ExportStatus!
+    recordsEstimate: Long!
+    recordsProcessed: Long!
+}
+
+type DataExportResult {
+    completedOn: Long
+    expiresOn: Long
+    sizeInBytes: Long!
+    compressedSizeInBytes: Long
+}
+
+enum ExportStatus {
+    QUEUING, GENERATING, CANCELLED, COMPLETED, FAILED
+}
+
+type ExportResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: DataExport
+}
+
+input CreateExportInput {
+    name: String
+    dataRange: DataRangeInput!
+    timestampPrecision: TimestampPrecision = MILLISECONDS
+    fields: [EventField!]
+    filter: JSON
+    from: Long
+    to: Long
+    limit: Int
+}
+
+input DataRemovalRequestInput {
+    dataRange: DataRangeInput!
+    filter: JSON
+    from: Long
+    to: Long
+}

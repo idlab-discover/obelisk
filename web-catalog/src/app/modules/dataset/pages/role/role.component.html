@@ -1,0 +1,136 @@
+<div class="container-xl full">
+
+    <app-create-header header="Role: '{{role?.name}}'" createTitle="Edit Role" label="Edit role" icon="edit"
+        btnStyle="warning" [help]="role?.description" #header>
+
+        <form [formGroup]="roleForm" (submit)="save(header)">
+            <div class="form-row">
+                <div class="col form-group">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Name</span></div>
+                        <input class="form-control" type="text" formControlName="name" placeholder="Role name"
+                            id="name">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col form-group">
+                    <label class="form-label"> Description <span
+                            [style.color]="dLength > 80 ? 'darkorange' : 'black'">({{dLength}}/80)<span
+                                *ngIf="dLength > 80"><small> [might be truncated]</small></span></span></label>
+                    <textarea class="form-control form-control-sm" formControlName="description"
+                        placeholder="Short description" id="description" rows="3"></textarea>
+
+                </div>
+            </div>
+            <div class="form-row pt-2">
+                <div class="col-sm-12 col-md form-group">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Permissions</span></div>
+                        <ng-select class="myControl-sm" [items]="permissions" placeholder="Choose permissions"
+                            formControlName="permissions" [multiple]="true" labelForId="permissions"
+                            [closeOnSelect]="false">
+                            <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                <span class="ng-value-label tag">{{item}}</span>
+                                <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item}}
+                            </ng-template>
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-3 text-right">
+                    <button type="button" class="btn btn-sm btn-secondary" (click)="openFilterPanel()">
+                        <span>
+                            Filter editor
+                            <fa-icon icon="circle" class="ml-1" [class.active]="filterActive"
+                                [class.inactive]="!filterActive">
+                            </fa-icon>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 btns">
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="remove()">
+                        Delete role </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="resetForm()">
+                        Reset </button>
+                    <button type="submit" class="btn btn-sm btn-warning" [disabled]="roleForm.pristine">
+                        Save </button>
+                </div>
+            </div>
+        </form>
+    </app-create-header>
+
+    <div class="row pt-1">
+        <div class="col">
+            <p class="text-muted">
+                {{role?.description}}<br>
+                <span class="badge badge-secondary mr-2" *ngFor="let p of role?.grant?.permissions">{{p}}</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="row pt-1">
+        <div class="col division">
+            <div class="titleAndFilter">
+                <h6 class="header">Users</h6>
+                <form [formGroup]="userSearchForm" class="filter">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Filter</span></div>
+                        <input class="form-control" type="text" formControlName="filter" placeholder="filter">
+                    </div>
+                </form>
+                <cdk-virtual-scroll-viewport class="list mt-3" itemSize="56" minBufferPx="200" maxBufferPx="800"
+                    style="height: 500px">
+                    <tr [hidden]="!(userSource?.loading$ | async)">
+                        <td colspanner>
+                            <div class="d-flex align-items-center">
+                                <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                <span class="text-secondary"><em>Loading...</em></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <div [hidden]="!userSource?.isCurrentlyEmpty()">
+                        <em>No users found...</em>
+                    </div>
+                    <div [hidden]="userSource?.isCurrentlyEmpty()" class="user" *cdkVirtualFor="let u of userSource">
+                        <app-user-detail [user]="u" [hover]="true" (click)="goToUserAccessControl(u)"></app-user-detail>
+                    </div>
+                </cdk-virtual-scroll-viewport>
+            </div>
+
+            <div class="divider-vertical"></div>
+
+            <div class="titleAndFilter">
+                <h6 class="header">Teams</h6>
+                <form [formGroup]="teamSearchForm" class="filter">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Filter</span></div>
+                        <input class="form-control" type="text" formControlName="filter" placeholder="filter">
+                    </div>
+                </form>
+                <cdk-virtual-scroll-viewport class="list" itemSize="49" minBufferPx="200" maxBufferPx="800"
+                    style="height: 500px">
+                    <tr [hidden]="!(teamSource?.loading$ | async)">
+                        <td colspanner>
+                            <div class="d-flex align-items-center">
+                                <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                <span class="text-secondary"><em>Loading...</em></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <div [hidden]="!teamSource?.isCurrentlyEmpty()">
+                        <em>No teams found...</em>
+                    </div>
+                    <div [hidden]="teamSource?.isCurrentlyEmpty()" class="team" *cdkVirtualFor="let t of teamSource">
+                        <app-team-detail [team]="t" [hover]="true" (click)="goToTeamAccessControl(t)"></app-team-detail>
+                    </div>
+                </cdk-virtual-scroll-viewport>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+            <h5 class="d-inline-block">Metric details</h5>
+            <app-id class="float-right" [id]="metric?.id"></app-id>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col-sm-6">
+            <h6>General</h6>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>{{metric?.id}}</td>
+                    </tr>
+                    <tr>
+                        <td>last updated</td>
+                        <td>{{metric?.lastUpdate | ago}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-6">
+            <h6>Properties</h6>
+            <pre>{{metric?.properties | json}}</pre>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col baseline">
+            <h6>Things</h6>
+        </div>
+        <div class="col offset-md-1 offset-lg-3 baseline">
+            <form [formGroup]="searchForm">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Filter</span>
+                    </div>
+                    <input type="text" class="form-control" formControlName="search">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="33" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-striped table-hover table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="auto">id</th>
+                            <th width="35%">started</th>
+                            <th width="25%">last updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(datasource?.loading$ | async)">
+                           <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!datasource?.isCurrentlyEmpty() ">
+                            <td colspanner><em>No things found...</em></td>
+                        </tr>
+                        <tr [hidden]="datasource?.isCurrentlyEmpty()" class="pointer"
+                            *cdkVirtualFor="let ds of datasource" (click)="openThing(ds?.id)">
+                            <td class="trunc"><span>{{ds?.id}}</span></td>
+                            <td><small>{{ds?.started | date:'dd MMM, yyyy @ HH:mm:ss'}}</small></td>
+                            <td><small>{{ds?.lastUpdate | ago}}</small></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

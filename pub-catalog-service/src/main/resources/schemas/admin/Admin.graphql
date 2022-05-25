@@ -1,0 +1,26 @@
+type Admin {
+    # Get a specific Dataset
+    dataset(id: String!): Dataset
+    # List all datasets in the platform
+    datasets: [Dataset] @paged @enable_filter
+    # Get details about a single User identified by id
+    user(id: String!) : User
+    # List users
+    users: [User] @paged @enable_filter
+    # Get details about a single Client identified by id
+    client(id: String!): Client
+    # List all clients
+    clients: [Client] @paged @enable_filter
+    # Get details about a single UsagePlan identified by id
+    usagePlan(id: String!): UsagePlan
+    # Query Usage Plans
+    usagePlans: [UsagePlan] @paged @enable_filter
+    # Get details about a single UsageLimits identified by id
+    usageLimit(id: String!): UsageLimit
+    # Query Usage Limits
+    usageLimits: [UsageLimit] @paged @enable_filter
+    # Get details about a single Team identified by id
+    team(id: String!): Team
+    # Query Teams
+    teams: [Team] @paged @enable_filter
+}

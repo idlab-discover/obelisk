@@ -1,0 +1,208 @@
+type Dataset {
+    id: String! @searchable
+    name: String! @searchable
+    description: String @searchable
+    properties: JSON
+    metaStats: MetaStats
+    # Get a specific access request associated with the dataset.
+    accessRequest(id: String!): AccessRequest @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Request for access associated with this dataset.
+    accessRequests: [AccessRequest] @paged @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Get the member info for a specific User in this dataset (id is userId)
+    member(id: String!): User @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Users associated with this dataset
+    members: [User] @paged @enable_filter @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Get the team info for a specific Team that is associated with this dataset
+    team(id: String!): Team @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Teams associated with this dataset
+    teams: [Team] @paged @enable_filter @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Get specific UserGroup associated with this dataset
+    role(id: String!): Role @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # UserGroups created specifically for this dataset (for internal access organization)
+    roles: [Role] @paged @enable_filter @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Get details for a specific metric.
+    metric(id : String!) : Metric @restricted(level: [DATASET_MEMBER, DATASET_MANAGER, PLATFORM_MANAGER])
+    # List metrics available in the dataset.
+    metrics: [Metric] @paged @enable_filter @restricted(level: [DATASET_MEMBER, DATASET_MANAGER, PLATFORM_MANAGER])
+    userOrigin(id: String!): Origin @restricted(level: [DATASET_MEMBER, DATASET_MANAGER, PLATFORM_MANAGER])
+    clientOrigin(id: String!): Origin @restricted(level: [DATASET_MEMBER, DATASET_MANAGER, PLATFORM_MANAGER])
+    # List the data origins (i.e. clients that contributed) for this dataset.
+    origins: [Origin] @paged @enable_filter @restricted(level: [DATASET_MEMBER, DATASET_MANAGER, PLATFORM_MANAGER])
+    # Get details for a specific thing (an entity or device that produced events and attached its id as the source).
+    thing(id: String!) : Thing @restricted(level: [DATASET_MEMBER, DATASET_MANAGER, PLATFORM_MANAGER])
+    # List the things available in the dataset.
+    things: [Thing] @paged @enable_filter @restricted(level: [DATASET_MEMBER, DATASET_MANAGER, PLATFORM_MANAGER])
+    # When a dataset is published, it can be discovered by all users (and they can then request access).
+    published: Boolean!
+    # When a dataset is archived, users can no longer operate on it (as if it was removed)
+    archived: Boolean! @searchable(path: ["locked"]) @restricted(level: [DATASET_MEMBER, DATASET_MANAGER, PLATFORM_MANAGER])
+
+    # When a dataset is marked as open data, all Obelisk users have read rights on the dataset.
+    openData: Boolean!
+
+    # List the currently available invites for the Dataset
+    invites: [Invite] @paged(exposeCount: false) @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Retrieve information for a specific invite
+    invite(id: String): Invite!
+
+    keywords: [String]
+    license: String
+    contactPoint: String
+    publisher: DatasetPublisher
+}
+
+type DatasetMutation {
+    # Request access to the Dataset
+    requestAccess(input: RequestAccessInput!) : AccessRequestResponse!
+    # Request access to the Dataset for a team you are managing
+    requestAccessAsTeam(teamId: String!, input: RequestAccessInput!): AccessRequestResponse! @restricted(level: [TEAM_MANAGER, PLATFORM_MANAGER])
+    # Add User as member to the Dataset
+    addMember(userId: String!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Add Team to the Dataset
+    addTeam(teamId: String!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Remove User as member from the Dataset
+    removeMember(userId: String!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Revoke a Team from having access to the Dataset
+    removeTeam(teamId: String!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Create a Access Role within the Dataset
+    createRole(input: CreateRoleInput!): RoleResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Mutations for a specific Group defined privately within the Dataset
+    onRole(id: String!): RoleMutation! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    assignRoles(input: AssignRolesInput!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    assignRolesAsTeam(input: AssignTeamRolesInput!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+
+
+    setName(name: String!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER]) @deprecated
+    setDescription(description: String!):DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER]) @deprecated
+    setProperties(properties: JSON):DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER]) @deprecated
+    setPublished(published: Boolean!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER]) @deprecated
+    # When openData is set to true, all Obelisk users will have read access on the Dataset
+    setOpenData(openData: Boolean!): DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER]) @deprecated
+
+    update(input: UpdateDatasetInput!): DatasetResponse!
+
+    # Create an invite for the Dataset.
+    createInvite(input: InviteInput!): InviteResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Perform mutations on a specific invite
+    onInvite(id: String!): InviteMutation!
+
+    # Perform mutations on a specific AccessRequest
+    onAccessRequest(id: String!): AccessRequestMutation!
+
+    onMetric(id: String!): MetricMutation! @restricted(level: [DATASET_MANAGER, DATASET_MEMBER, PLATFORM_MANAGER])
+    onThing(id: String!): ThingMutation! @restricted(level: [DATASET_MANAGER, DATASET_MEMBER, PLATFORM_MANAGER])
+
+    # Archives the Dataset (the Dataset will no longer be available for listing // querying // ingesting)
+    archive: DatasetResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Unarchive
+    unarchive: DatasetResponse! @restricted(level: [PLATFORM_MANAGER])
+    # Deletes the Dataset and all its data
+    remove: DatasetResponse! @restricted(level: [PLATFORM_MANAGER])
+}
+
+type DatasetResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Dataset
+}
+
+type MetaStats {
+    # Timestamp (UTC) of last time the dataset was updated
+    lastUpdate: Long
+    # Number of metrics available in the dataset
+    nrOfMetrics: Int!
+    # Number of events (raw data points) available in the dataset
+    nrOfEvents: Long!
+    nrOfEventsProjection: Long!
+    # Approximation of the size in Megabytes of the entire dataset
+    approxSizeBytes: Long!
+    approxSizeBytesProjection: Long!
+    # Number of DataStreams having this Dataset as a source
+    nrOfStreams: Int!
+
+    # Returns a timeseries, representing the ingest request rate. By default the average number of ingest request per second for the last hour are returned.
+    ingestApiRequestRate(
+        # Optional parameter to configure the window that is returned
+        mode: RateSeriesMode = LAST_HOUR
+    ): [TimedFloat!]!
+    # Returns a timeseries, representing the event production rate. By default the average ingested events per second for the last hour are returned.
+    ingestedEventsRate(
+        # Optional parameter to configure the window that is returned
+        mode: RateSeriesMode = LAST_HOUR
+    ): [TimedFloat!]!
+
+    # Returns a timeseries, representing the events query request rate. By default the average number of events query request per second for the last hour are returned.
+    eventsQueryApiRequestRate(
+        # Optional parameter to configure the window that is returned
+        mode: RateSeriesMode = LAST_HOUR
+    ): [TimedFloat!]!
+    # Returns a timeseries, representing the stats query request rate. By default the average number of stats query request per second for the last hour are returned.
+    statsQueryApiRequestRate(
+    # Optional parameter to configure the window that is returned
+        mode: RateSeriesMode = LAST_HOUR
+    ): [TimedFloat!]!
+
+    # Returns a timeseries, representing the total event consumption rate (querying and streaming). By default the average consumed events per second for the last hour are returned.
+    consumedEventsRate(
+        # Optional parameter to configure the window that is returned
+        mode: RateSeriesMode = LAST_HOUR
+    ): [TimedFloat!]!
+    # Returns a timeseries, representing the event consumption rate for events consumed via the Query APIs.
+    queriesConsumedEventsRate(
+        # Optional parameter to configure the window that is returned
+        mode: RateSeriesMode = LAST_HOUR
+    ): [TimedFloat!]!
+    # Returns a timeseries, representing the event consumption rate for events consumed via the Streaming API.
+    streamingConsumedEventsRate(
+        # Optional parameter to configure the window that is returned
+        mode: RateSeriesMode = LAST_HOUR
+    ): [TimedFloat!]!
+    # Returns a timeseries, representing the number of active Data Streams for the Dataset (during the last hour).
+    activeStreams(
+        # Optional parameter to configure the window that is returned
+        mode: RateSeriesMode = LAST_HOUR
+    ): [TimedFloat!]!
+}
+
+enum RateSeriesMode {
+    # Return a window of an hour, having a value per minute
+    LAST_HOUR,
+    # Return a window of a day, having a value per half hour
+    LAST_DAY
+}
+
+type TimedFloat {
+    # The timestamp associated with the float value (UTC)
+    timestamp: Long
+    # The value at the time indicated by the timestamp
+    value: Float
+}
+
+type DatasetPublisher {
+    name: String
+    homepage: String
+}
+
+input CreateDatasetInput {
+    name: String!
+    description: String
+    # Optional userId to directly set a dataset owner (can be used by admin only). Defaults to self.
+    datasetOwnerId: String
+}
+
+input UpdateDatasetInput {
+    name: String @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    description: String @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    properties: JSON @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    published: Boolean @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    openData: Boolean @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    keywords: [String!] @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    license: String @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    contactPoint: String @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    publisher: DatasetPublisherInput @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+}
+
+input DatasetPublisherInput {
+    name: String
+    homepage: String
+}

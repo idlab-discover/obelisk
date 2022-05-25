@@ -1,0 +1,52 @@
+.upload-space {
+    height: 300px;
+    background-color: #def6f9;
+    color: rgb(16, 149, 167);
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.crop-space {
+    display: grid;
+    justify-items: center;
+
+    canvas {
+        border: 1px solid black;
+    }
+}
+
+.is-dragover {
+    // background-color: #fefefe;
+    background-color: #c3e6eb;
+    color: rgb(11, 85, 95);
+    outline: 2px dashed rgb(16, 149, 167);
+    outline-offset: -10px;
+}
+
+.inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.inputfile + label {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: rgb(16, 149, 167);
+    cursor: pointer;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    color: rgb(11, 85, 95);
+}
+
+.inputfile:focus + label {
+	outline: 1px dotted #000;
+	outline: -webkit-focus-ring-color auto 5px;
+}

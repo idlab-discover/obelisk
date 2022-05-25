@@ -1,0 +1,22 @@
+{{ include "oblx-service-template.ingressRoute" . }}
+    middlewares:
+      - name: add-slash-apiconsole
+      - name: strip-prefix-apiconsole
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: add-slash-apiconsole
+spec:
+  redirectRegex:
+    regex: ^(.*{{ $.Values.basePath }})$
+    replacement: ${1}/
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-prefix-apiconsole
+spec:
+  stripPrefix:
+    prefixes:
+      - "{{ $.Values.basePath }}"

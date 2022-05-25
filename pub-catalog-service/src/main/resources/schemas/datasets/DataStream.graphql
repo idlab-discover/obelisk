@@ -1,0 +1,32 @@
+type DataStream {
+    id: String!
+    name: String @searchable
+    user: User!,
+    team: Team,
+    dataRange: DataRange!
+    timestampPrecision: TimestampPrecision!
+    fields: [EventField!]!
+    filter: JSON!
+    clientConnected: Boolean!
+}
+
+type StreamMutation {
+    # Disconnects any client that is currently using this stream (if applicable)
+    endSession: StreamResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+    # Disconnects any client that is currently using this stream and completely removes the stream
+    remove: StreamResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+}
+
+type StreamResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: DataStream
+}
+
+input CreateStreamInput {
+    name: String
+    dataRange: DataRangeInput!
+    timestampPrecision: TimestampPrecision = MILLISECONDS
+    fields: [EventField!]
+    filter: JSON
+}

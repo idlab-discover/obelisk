@@ -1,0 +1,42 @@
+<div class="modal-header">
+    <h5 class="modal-title">Read Filter Editor</h5>
+    <div class="close pointer" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </div>
+</div>
+
+<div class="frames" [class.noDocs]="hideDocs">
+    <div class="tb">
+        <div class="btn-toolbar d-inline-block" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="First group" [ngbTooltip]="ttPrettify" placement="top">
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="prettify()">
+                    <fa-icon icon="magic"></fa-icon>
+                </button>
+            </div>
+            <div class="btn-group mr-2" role="group" aria-label="Second group" >
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="hideDocs = !hideDocs" ngbTooltip="Toggle docs" placement="top">
+                    <fa-icon icon="book"></fa-icon>
+                </button>
+            </div>
+        </div>
+        <div class="hint">Hint: Press <kbd><kbd>Ctrl</kbd> + <kbd>Space</kbd></kbd> for autocomplete suggestions</div>
+        <span class="badge" [class.badge-danger]="!isValidFilter" [class.badge-success]="isValidFilter">{{isValidFilter ? 'valid filter': 'invalid filter'}}</span>
+        <span class="badge" [class.badge-danger]="!isValidJson" [class.badge-success]="isValidJson">{{isValidJson ? 'valid JSON': 'invalid JSON'}}</span>
+    </div>
+    <form [formGroup]="myForm">
+        <ngx-codemirror #cm formControlName="editor" [options]="options" class="my-cm"></ngx-codemirror>
+    </form>
+
+    <div class="docs embed-responsive" *ngIf="!hideDocs">
+        <iframe class=".embed-responsive-item"
+            [src]="iFrameSrc | safe"></iframe>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-dark" (click)="decline()">Cancel</button>
+    <button type="button" class="btn btn-sm btn-primary" (click)="confirm()" [disabled]="!isValidJson">Save & close</button>
+</div>
+<ng-template #ttPrettify>
+    Prettify<br>
+    <kbd><kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd></kbd>
+</ng-template>

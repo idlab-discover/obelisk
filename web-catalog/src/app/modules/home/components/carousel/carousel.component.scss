@@ -1,0 +1,52 @@
+.carousel {
+    position: relative;
+    display: grid;
+    grid-template-columns: 32px 1fr 32px;
+    grid-template-rows: 1fr;
+    justify-content: space-between;
+    width: 100%;
+    // padding-bottom: 5px;
+
+    .arrow {
+        align-self: center;
+        justify-self: center;
+        cursor: pointer;
+
+        fa-icon.disabled {
+            color: grey;
+            cursor: default;
+        }
+    }
+
+    .viewport {
+        overflow: hidden;
+        
+        .window {
+            display: grid;
+            grid-auto-flow: row;
+            // grid-auto-columns: minmax(200px, 300px);
+            column-gap: 10px;
+            // grid-template-rows: 1fr;
+            justify-content: space-around;
+            width: calc(100% - 7px);
+            height: 100%;
+
+            app-big-dataset {
+                width: 100%;
+                // height: 300px;
+            }
+        }
+    }
+}
+
+.disabled {
+    color: grey;
+}
+
+.spinner {
+    display: grid;
+    grid-column: 1/5;
+    grid-row: 1/4;
+    justify-items: center;
+    align-items: center;
+}

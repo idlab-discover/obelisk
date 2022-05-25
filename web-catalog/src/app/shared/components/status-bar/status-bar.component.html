@@ -1,0 +1,18 @@
+<div class="status-bar">
+    <ng-container *ngFor="let el of service.history; let idx = index; let last = last">
+        <div class="element" [class.up]="el=='HEALTHY'" [class.down]="el=='FAILED'" [class.dud]="el=='UNKNOWN'" [class.degraded]="el=='DEGRADED'" [class.last]="last" [ngbTooltip]="tip" container="body"></div>
+        <ng-template #tip>
+            <div class="tip">
+                <div class="icon">
+                    <fa-icon icon="circle" [class.up]="el=='HEALTHY'" [class.down]="el=='FAILED'" [class.dud]="el=='UNKNOWN'" [class.degraded]="el=='DEGRADED'"></fa-icon>
+                </div>
+                <div class="state">
+                    {{state(el)}}
+                </div>
+                <div class="ts">
+                    {{time(idx)}}
+                </div>
+            </div>
+        </ng-template>
+    </ng-container>
+</div>

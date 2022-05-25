@@ -1,0 +1,54 @@
+<div class="ds-cont">
+    <sidebar>
+        <div class="up">
+            <sb-btn link="./home" help="Overview">
+                <sb-icon icon="home"></sb-icon>
+                <sb-label text="Overview"></sb-label>
+            </sb-btn>
+            <sb-btn link="./ds" help="Team Datasets">
+                <sb-icon icon="database"></sb-icon>
+                <sb-label text="Team Datasets"></sb-label>
+            </sb-btn>
+            <sb-btn link="./clients" help="Team Clients">
+                <sb-icon icon="tablet-alt"></sb-icon>
+                <sb-label text="Team Clients"></sb-label>
+            </sb-btn>
+            <div class="divider"></div>
+            <sb-btn *ngIf="canManageTeam" link="./invites" help="Invites">
+                <sb-icon icon="user-plus"></sb-icon>
+                <sb-label text="Invites"></sb-label>
+            </sb-btn>
+            <sb-btn link="./members" help="Members">
+                <sb-icon icon="users"></sb-icon>
+                <sb-label text="Members"></sb-label>
+            </sb-btn>
+            <div class="divider" ></div>
+            <sb-btn link="./ratelimit" help="Rate limits">
+                <sb-icon icon="tachometer-alt"></sb-icon>
+                <sb-label text="Rate limits"></sb-label>
+            </sb-btn>
+            <sb-btn link="./streams" help="Team Streams">
+                <sb-icon icon="stream"></sb-icon>
+                <sb-label text="Team Streams"></sb-label>
+            </sb-btn>
+            <sb-btn link="./exports" help="Team Exports">
+                <sb-icon icon="file-export"></sb-icon>
+                <sb-label text="Team Exports"></sb-label>
+            </sb-btn>
+            <div class="divider"*ngIf="canManageTeam" ></div>
+            <sb-btn link="./edit" help="Edit Team" *ngIf="canManageTeam">
+                <sb-icon icon="edit"></sb-icon>
+                <sb-label text="Edit Team"></sb-label>
+            </sb-btn>
+        </div>
+        <div class="down">
+            <sb-btn help="Toggle sidebar" sbToggle>
+                <sb-icon icon="angle-double-right" iconExpanded="angle-double-left"></sb-icon>
+                <sb-label text="Collapse sidebar"></sb-label>
+            </sb-btn>
+        </div>
+    </sidebar>
+    <div class="ds" [@fadeAnimation]="o.isActivated ? o.activatedRoute : ''">
+        <router-outlet #o="outlet"></router-outlet>
+    </div>
+</div>

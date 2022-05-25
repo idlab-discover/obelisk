@@ -1,0 +1,77 @@
+@import '/src/common';
+
+$shadeBorder: -6;
+
+.updated {
+    font-style: italic;
+    color: #666;
+}
+
+.baseline {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: 4px;
+    vertical-align: text-top;
+}
+
+.ticket-components {
+    position: relative;
+
+    .ticket,
+    .answer {
+        position: relative;
+        background-color: white;
+        z-index: 50;
+    }
+
+    .line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left:80px;
+        border-left: 4px dotted theme-color-level("secondary", -9 );
+        z-index: 40;
+    }
+
+    .answer {
+        border: 3px solid green;
+        margin-top: 30px;
+    }
+
+    .answer {
+        display: grid;
+        border: 1px solid theme-color-level("secondary", $shadeBorder);
+
+        .headline {
+            border-bottom: 1px solid theme-color-level("secondary", $shadeBorder);
+            padding: 0.2em 0.4em;
+            .created {
+                font-style: italic;
+                color: #666;
+            }
+        }
+    
+        .content {
+            padding: 0.2em 0.4em;
+            .summary {
+                font-weight: bold;
+                font-size: 15px;
+                &::first-letter {
+                    text-transform: uppercase;
+                }
+            }
+            .description {
+                margin-top: 4px;
+                font-size: 14px;
+                white-space: pre-line;
+            }
+        }
+        .btns {
+            display:grid;
+            grid-template-columns: 1fr auto auto auto auto;
+            justify-items: flex-start;
+            column-gap: 4px;
+            padding: 0.4em 0.4em;
+        }
+    }
+}

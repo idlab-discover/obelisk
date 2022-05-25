@@ -1,0 +1,92 @@
+@import "/src/common";
+
+.status-bar {
+    display: grid;
+    position: relative;
+    grid-template-columns: repeat(auto-fit, minmax(5px, 1fr));
+    padding-left: 1px;
+    grid-template-rows: 18px;
+    column-gap: 4px;
+    width: 100%;
+    .element {
+        &.up {
+            background-color: #3cd671;
+        }
+
+        &.down {
+            background-color: #dd484a;
+        }
+
+        &.dud {
+            background-color: theme-color("secondary");
+        }
+        
+        &.degraded {
+            background-color: #EB9413;
+        }
+
+        &.last {
+            animation-name: selector;
+            animation-duration: 400ms;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+            animation-timing-function: ease-in;
+        }
+
+        &:hover {
+            border: 1px solid green;
+            cursor: help;
+        }
+    }
+}
+
+fa-icon {
+    &.up {
+        color: #3cd671;
+    }
+
+    &.down {
+        color: #dd484a;
+    }
+
+    &.dud {
+        color: theme-color("secondary");
+    }
+
+    &.degraded {
+        color: #EB9413;
+    }
+}
+
+.tip {
+    display: grid;
+    grid-template-areas:
+        "ico state"
+        "ts   ts   ";
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    column-gap: 4px;
+    row-gap: 2px;
+
+    .icon {
+        grid-area: ico;
+        justify-self: left;
+    }
+
+    .state {
+        grid-area: state;
+        justify-self: right;
+    }
+    .ts {
+        grid-area: ts;
+    }
+}
+
+@keyframes selector {
+    from {
+        border: 1px solid white;
+    }
+    to {
+        border: 1px solid theme-color("primary");
+    }
+}

@@ -1,0 +1,139 @@
+<div class="container-xl full">
+    <app-create-header header="Datasets" createTitle="Create Dataset" #header>
+        <form class="form" [formGroup]="dsForm" (submit)="add(header)">
+            <div class="form-row">
+                <div class="col-6">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Name</span>
+                        </div>
+                        <input id="groupName" class="form-control form-control" type="text"
+                            formControlName="name" placeholder="Dataset name">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Owner</span>
+                        </div>
+                        <ng-select class="myControl-sm" [items]="userDataSource.items$ | async"
+                            bindLabel="email" bindValue="id" placeholder="Pick a dataset owner"
+                            formControlName="manager" [virtualScroll]="true"
+                            (scrollToEnd)="userDataSource.fetchMissingItems()"
+                            [typeahead]="userDataSource.queryRemote$" [trackByFn]="userDataSource.trackByFn"
+                            typeToSearchText="Please enter 2 or more characters">
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-sm btn-success float-right"
+                        [disabled]="dsForm.invalid">Create</button>
+                </div>
+            </div>
+        </form>
+    </app-create-header>
+
+    <div class="row pt-3">
+        <div class="col">
+
+            <ul ngbNav #nav="ngbNav" class="nav-tabs" (activeIdChange)="onTabChange($event)">
+                <li [ngbNavItem]="1">
+                    <a ngbNavLink>Live</a>
+                    <ng-template ngbNavContent>
+                        <cdk-virtual-scroll-viewport itemSize="36" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                            <table class="table table-hover table-sm">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="icon"></th>
+                                        <th width="auto">name</th>
+                                        <th width="10%" class="text-center">published</th>
+                                        <th width="10%" class="text-center">openData</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr [hidden]="!(liveSource?.loading$ | async)">
+                                       <td colspanner>
+                                            <div class="d-flex align-items-center">
+                                                <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                                <span class="text-secondary"><em>Loading...</em></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr [hidden]="!liveSource?.isCurrentlyEmpty() ">
+                                        <td colspanner><em>No datasets found...</em></td>
+                                    </tr>
+                                    <tr [hidden]="liveSource?.isCurrentlyEmpty()" *cdkVirtualFor="let ds of liveSource" [routerLink]="['/ds',ds.id]" class="pointer" [class.locked]="ds.locked">
+                                        <td class="icon">
+                                            <div ngbTooltip="archive" (click)="archive($event, ds.id)">
+                                                <fa-icon icon="archive" class="fa-sm"></fa-icon>
+                                            </div>
+                                        </td>
+                                        <td class="name">{{ds.name}}</td>
+                                        <td class="text-center"><span [innerHTML]="ds.published | checkmark:true"></span></td>
+                                        <td class="text-center"><span [innerHTML]="ds.openData | checkmark:true"></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </cdk-virtual-scroll-viewport>
+                    </ng-template>
+                </li>
+                <li [ngbNavItem]="2">
+                    <a ngbNavLink>Archived</a>
+                    <ng-template ngbNavContent>
+                        <cdk-virtual-scroll-viewport itemSize="36" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                            <table class="table table-hover table-sm">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="icon"></th>
+                                        <th>name</th>
+                                        <th width="25%" class="text-center">archived</th>
+                                        <th width="10%" class="text-center">delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr [hidden]="!(archivedSource?.loading$ | async)">
+                                       <td colspanner>
+                                            <div class="d-flex align-items-center">
+                                                <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                                <span class="text-secondary"><em>Loading...</em></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr [hidden]="!archivedSource?.isCurrentlyEmpty() ">
+                                        <td colspanner><em>No datasets found...</em></td>
+                                    </tr>
+                                    <tr [hidden]="archivedSource?.isCurrentlyEmpty()" *cdkVirtualFor="let ds of archivedSource" [routerLink]="['/ds',ds.id]" class="pointer" [class.locked]="ds.locked">
+                                        <td class="icon">
+                                            <div ngbTooltip="un-archive" (click)="unArchive($event, ds.id)">
+                                                <fa-icon icon="box-open" class="fa-sm"></fa-icon>
+                                            </div>
+                                        </td>
+                                        <td class="name">{{ds.name}}</td>
+                                        <td class="text-center">{{(ds.properties?._catalog?.archivedOn | ago) || '-'}}</td>
+                                        <td class="text-center"><button class="btn btn-xs btn-outline-danger" (click)="remove($event, ds.id)">delete</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </cdk-virtual-scroll-viewport>
+                    </ng-template>
+                </li>
+                <li class="ml-auto">
+                    <a>
+                        <form [formGroup]="searchForm" >
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Filter</span>
+                                </div>
+                                <input type="text" class="form-control" formControlName="search">
+                            </div>
+                        </form>
+                    </a>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" ></div>
+            
+        </div>
+    </div>
+</div>

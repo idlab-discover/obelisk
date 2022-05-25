@@ -1,0 +1,9 @@
+{
+    "oblxHost": "http://localhost:8080",
+    "oblxApiPrefix": "",
+    "oblxAuthEndpoint": "/auth",
+    "clientHost": "http://localhost:4200",
+    "clientBasePath": "",
+    "clientRedirectUri": "http://localhost:4200",
+    "clientId": "0"
+}

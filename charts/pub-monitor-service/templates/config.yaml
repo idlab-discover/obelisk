@@ -1,0 +1,12 @@
+# Additional config for the Microservices (is mounted along the Obelisk Base configuration)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "pub-monitor-service.fullname" . }}-config
+data:
+  HTTP_BASE_PATH: "{{ .Values.basePath }}"
+  API_BASE_URL: "{{ .Values.config.apiBaseUrl }}"
+  MONITORING_CLIENT_SECRET: "{{ .Values.config.clientSecret }}"
+  MONITORING_PERIOD_MS: "{{ .Values.config.periodMs }}"
+  MONITORING_INGEST_CHECK_INITIAL_DELAY_MS: "{{ .Values.config.ingestCheckInitialDelayMs }}"
+  MONITORING_INGEST_CHECK_MAX_RETRIES: "{{ .Values.config.ingestCheckMaxRetries }}"

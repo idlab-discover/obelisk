@@ -1,0 +1,60 @@
+<mat-sidenav-container>
+    <mat-sidenav #sidenav mode="side">
+        <div class="history">
+            <div class="head">
+                <div>History</div>
+                <button type="button" mat-button>
+                    <mat-icon [style.cursor]="'pointer'" (click)="sidenav.close()">close</mat-icon>
+                </button>
+
+            </div>
+            <div class="item" *ngFor="let item of items" (click)="restore(item)">
+                <div class="method">{{item.method}}</div>
+                <div class="path">{{item.path}}</div>
+                <div class="body">{{item.body}}</div>
+            </div>
+        </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+
+
+        <div class="http">
+            <form [formGroup]="httpForm" (submit)="doRequest()">
+                <button class="historyBtn" type="button" mat-raised-button matTooltip="History" matTooltipPosition="right"
+                    (click)="sidenav.toggle()">
+                    <mat-icon>history</mat-icon>
+                </button>
+                <mat-form-field>
+                    <mat-label>Method</mat-label>
+                    <mat-select formControlName="method">
+                        <mat-option value="GET">GET</mat-option>
+                        <mat-option value="POST">POST</mat-option>
+                        <mat-option value="PUT">PUT</mat-option>
+                        <mat-option value="DELETE">DELETE</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Path</mat-label>
+                    <input matInput placeholder="/resources/bla/bla" formControlName="path">
+                </mat-form-field>
+                <button mat-raised-button color="basic" type="button" (click)="clear()">Clear</button>
+                <button mat-raised-button color="primary" type="submit">Send</button>
+                <mat-form-field appearance="fill" *ngIf="!bodyDisabled()" class="body">
+                    <textarea matNativeControl formControlName="body"></textarea>
+                </mat-form-field>
+            </form>
+            <div class="output" id="my-output">
+                <pre>{{output | json}}</pre>
+                <button mat-mini-fab color="primary" type="button" id="btn-fab" (click)="copy()" matTooltip="copy body"
+                    matTooltipPosition="left">
+                    <mat-icon id="body-copy-token-icon">file_copy</mat-icon>
+                </button>
+            </div>
+            <div class="btns">
+
+            </div>
+        </div>
+
+
+    </mat-sidenav-content>
+</mat-sidenav-container>

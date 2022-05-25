@@ -1,0 +1,31 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">{{title}}</h4>
+    <div class="close pointer" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </div>
+</div>
+<div class="modal-body" [ngSwitch]="state">
+    <div class="upload-space" #dropspace *ngSwitchDefault>
+        <input type="file" name="file" id="file" class="inputfile" accept="image/*" />
+        <label for="file">
+            <fa-icon icon="upload" class="mr-2"></fa-icon> <em>Choose a file</em> or <em>drag one here</em>...
+        </label>
+    </div>
+    <div class="crop-space" *ngSwitchCase="'CROP'">
+        <canvas id="myCanvas" width="640" height="480"></canvas>
+        <span class="mt-1"><em>The image will be uploaded as a PNG.</em></span>
+
+        <input type="range" class="form-control-range" id="formControlRange" 
+            [value]="scale" 
+            (change)="changeScale($event)" 
+            (input)="changeScale($event)" 
+            [min]="min" 
+            [max]="max" 
+            [step]="step">
+    </div>
+</div>
+<div class="modal-footer">
+    <button *ngIf="state === 'SELECT'" type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Cancel</button>
+    <button *ngIf="state === 'SELECTED'" type="button" class="btn btn-secondary" (click)="loadCropping()">Continue</button>
+    <button *ngIf="state === 'CROP'" type="button" class="btn btn-primary" (click)="save()">Save</button>
+</div>

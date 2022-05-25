@@ -1,0 +1,17 @@
+// My theme colors
+$theme-colors: (
+  // "primary": #3F51B5,
+  // "secondary": #086788,
+  "primary": #085f88,
+  "secondary": #5d6985,
+  "info": #77b1cc,//#06aed5,
+  "warning": #FFA000,
+  "success": #008148,
+  "danger": #dd0d3d
+);
+
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+
+$enable-shadows: true;

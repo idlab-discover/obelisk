@@ -1,0 +1,69 @@
+type Role {
+    id : String!
+    name: String! @searchable
+    description: String @searchable
+    # Dataset the Role is linked to
+    dataset: Dataset @restricted(level: [PLATFORM_MANAGER, DATASET_MANAGER])
+    # Get specific User that has this role
+    user(id: String!): User
+    # Users that have this role
+    users: [User] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, DATASET_MANAGER])
+    # Get specific Team that has this role
+    team(id: String!): Team
+    # Teams that have this role
+    teams: [Team] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, DATASET_MANAGER])
+    grant: Grant!
+}
+
+type RoleMutation {
+    update(input: UpdateRoleInput!): RoleResponse!
+
+    setName(name: String!): RoleResponse! @deprecated
+    setDescription(description: String!): RoleResponse! @deprecated
+    setPermissions(permissions: [Permission!]!): RoleResponse! @deprecated
+    setReadFilter(readFilter: JSON!): RoleResponse! @deprecated
+    # Deletes the Role
+    remove: RoleResponse!
+}
+
+input CreateRoleInput {
+    name: String!
+    description: String
+    permissions: [Permission!]!
+    readFilter: JSON
+}
+
+
+input UpdateRoleInput {
+    name: String
+    description: String
+    permissions: [Permission!]
+    readFilter: JSON
+}
+
+type RoleResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Role
+}
+
+enum Permission {
+    MANAGE, READ, WRITE
+}
+
+type Grant {
+    # Indicates the permissions for the subject on the dataset
+    permissions: [Permission!]! @searchable
+    # Optional read restriction represented by a filter. E.g. the read rights can be restricted to a limited set of public sources.
+    readFilter: JSON
+}
+
+input AssignRolesInput {
+    userId: String!
+    roleIds: [String]
+}
+
+input AssignTeamRolesInput {
+    teamId: String!
+    roleIds: [String]
+}

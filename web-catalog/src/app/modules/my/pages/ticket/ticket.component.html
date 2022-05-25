@@ -1,0 +1,47 @@
+<div class="container-xl">
+    <div class="row pt-3">
+        <div class="col baseline">
+            <h5>Ticket #{{ticket?._id}}</h5>
+            <div class="updated" *ngIf="comments?.length > 0">
+                <small>(updated {{comments[comments?.length-1]?.createdAt |ago}})</small>
+            </div>
+            <div>
+                <issue-state [state]="ticket?.state"></issue-state>
+            </div>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col ticket-components pb-2 mb-5">
+            <div class="ticket">
+                <ticket-header [ticket]="ticket" (resolved)="onResolve($event)" (updated)="onIssueUpdated($event)">
+                </ticket-header>
+            </div>
+            <div class="line"></div>
+            <div class="comments">
+                <ticket-comment *ngFor="let comment of comments" [comment]="comment" [ticket]="ticket"
+                    (removed)="onRemove($event)" (updated)="onCommentUpdated($event)"></ticket-comment>
+            </div>
+            <div class="answer" *ngIf="ticketNotClosed()">
+                <div class="headline">
+                    <user-tag [user]="ticket?.reporter"></user-tag>
+                </div>
+                <div class="content">
+                    <form class="form" [formGroup]="answerForm">
+                        <textarea class="form-control form-control-sm" formControlName="comment" rows="4"
+                            placeholder="Type your reply here..."></textarea>
+                    </form>
+                </div>
+                <div class="btns">
+                    <button class="btn btn-xs btn-outline-danger" (click)="reset()">Reset</button>
+                    <span class="text-muted"><small><em>Markdown support enabled</em></small></span>
+                    <button class="btn btn-xs btn-outline-secondary mr-2" (click)="preview()"
+                        [disabled]="answerForm.invalid">Preview</button>
+                    <button class="btn btn-xs btn-outline-success" (click)="reply(true)" *ngIf="ticketNotClosed()"
+                        [disabled]="answerForm.invalid">Reply and close</button>
+                    <button class="btn btn-xs btn-primary" (click)="reply(false)"
+                        [disabled]="answerForm.invalid">Reply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+            <h5>Datasets <help class="ml-1">Discover new datasets. Request access by opening the dataset.</help></h5>
+        </div>
+        <div class="col offset-md-1 offset-lg-3 ">
+            <form [formGroup]="searchForm">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Filter</span>
+                    </div>
+                    <input type="text" class="form-control" formControlName="search">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="36" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="thumb"></th>
+                            <th width="200">name</th>
+                            <th>description</th>
+                            <th width="80" class="text-center">metrics</th>
+                            <th width="80" class="text-center">events</th>
+                            <th width="160" class="text-center">updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <tr [hidden]="!(datasetSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!datasetSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No datasets found...</em></td>
+                        </tr>
+                        <tr [hidden]="datasetSource?.isCurrentlyEmpty()" *cdkVirtualFor="let ds of datasetSource" [routerLink]="'/ds/'+ds.id" class="pointer">
+                            <td class="thumb"><div class="img" [style.background-image]="ds.id | resource:'thumbnail':true | async"></div></td>
+                            <td>{{ds.name}}</td>
+                            <td class="trunc"><span>{{ds.description}}</span></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.nrOfMetrics | nr) || '-'}}</small></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.nrOfEvents | nr) || '-'}}</small></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.lastUpdate | ago) || '-'}}</small></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

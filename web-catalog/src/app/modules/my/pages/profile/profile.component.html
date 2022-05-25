@@ -1,0 +1,21 @@
+<div class="container-xl full">
+  <div class="row pt-3">
+    <div class="col">
+      <div class="info text-truncate">Basic information on my currently authenticated profile.</div>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <div class="col">
+      <div class="media" *ngIf="profile">
+        <img [src]="avatarUri" class="align-self-center mt-1 mr-3">
+        <div class="media-body">
+          <h6 class="mt-0">{{idToken.name}} <span class="idp">via
+              {{idToken.idp + ' identity provider' | titlecase}}</span></h6>
+          {{profile?.email}}
+          <br>IDToken expires <span class="pointer-help pr-1"
+            [ngbTooltip]="idToken.exp*1000 | date:'E MMM d, yyyy \'at\' H:mm:ss'" placement="right">{{idToken.exp*1000 |
+            ago}}</span>
+        </div>
+      </div>
+    </div>
+  </div>

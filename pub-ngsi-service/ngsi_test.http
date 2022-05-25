@@ -1,0 +1,108 @@
+# Create Vehicle entity (result should be 201 with link)
+POST http://localhost:8080/ext/1/ngsi-ld/v1/entities/
+Content-Type: application/ld+json
+
+{
+    "id": "urn:ngsi-ld:Vehicle:A4567",
+    "type": "Vehicle",
+    "brandName": {
+        "type": "Property",
+        "value": "Mercedes"
+    },
+    "isParked": {
+        "type": "Relationship",
+        "object": "urn:ngsi-ld:OffStreetParking:Downtown1",
+        "observedAt": "2018-12-29T12:00:04Z",
+        "providedBy": {
+            "type": "Relationship",
+            "object": "urn:ngsi-ld:Person:Bob"
+        }
+    },
+    "@context": [
+        "http://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+    ]
+}
+
+###
+
+# Create OffStreetParking entity
+POST http://localhost:8080/ext/1/ngsi-ld/v1/entities/
+Content-Type: application/ld+json
+
+{
+  "id": "urn:ngsi-ld:OffStreetParking:Downtown1",
+  "type": "OffStreetParking",
+  "name": {
+    "type": "Property",
+    "value": "Downtown One"
+  },
+  "availableSpotNumber": {
+    "type": "Property",
+    "value": 121,
+    "observedAt": "2018-12-29T12:05:02Z",
+    "reliability": {
+      "type": "Property",
+      "value": 0.7
+    },
+    "providedBy": {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:Camera:C1"
+    }
+  },
+  "@context": [
+    "http://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+  ]
+}
+
+###
+
+# Create Person entity
+POST http://localhost:8080/ext/1/ngsi-ld/v1/entities/
+Content-Type: application/ld+json
+
+{
+  "id": "urn:ngsi-ld:Person:Bob",
+  "type" : "Person",
+  "firstName": {
+    "type": "Property",
+    "value": "Bob"
+  },
+  "lastName": {
+    "type": "Property",
+    "value" : "Doe"
+  },
+  "age": {
+    "type" : "Property",
+    "value" : 22
+  },
+  "@context": [
+    "http://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+  ]
+}
+
+###
+
+# Retrieve entities
+GET http://localhost:8080/ext/1/ngsi-ld/v1/entities?type=OffStreetParking
+
+###
+
+# Retrieve a specific entity
+GET http://localhost:8080/ext/1/ngsi-ld/v1/entities/urn:ngsi-ld:Vehicle:A4567
+
+###
+
+# Update entity
+POST http://localhost:8080/ext/1/ngsi-ld/v1/entities/urn:ngsi-ld:Vehicle:A4567/attrs
+Content-Type: application/ld+json
+
+{
+  "speed": {
+    "type": "Property",
+    "value": 89,
+    "accuracy": {
+      "type": "Property",
+      "value": 0.9
+    }
+  }
+}

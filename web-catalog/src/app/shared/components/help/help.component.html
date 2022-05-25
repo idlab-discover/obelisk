@@ -1,0 +1,5 @@
+<span class="help" [ngbTooltip]="text || tpl" container="body" [placement]="placement" [style.cursor]="cursor">
+    <fa-icon [icon]="icon"></fa-icon>
+</span>
+
+<ng-template #tpl><ng-content></ng-content></ng-template>

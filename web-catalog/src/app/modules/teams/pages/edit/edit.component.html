@@ -1,0 +1,121 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+
+            <div class="section">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="d-inline-block">General</h4>
+                        <button class="btn btn-sm btn-outline-secondary collapser"
+                            (click)="collapseGeneral=!collapseGeneral">{{collapseGeneral ? 'Expand' :
+                            'Collapse'}}</button>
+                        <div class="font-weight-light">Customize your team name and description.
+                        </div>
+                    </div>
+                </div>
+                <div class="row" [ngbCollapse]="collapseGeneral" [animation]="true">
+                    <div class="col mt-4 mb-4">
+                        <form [formGroup]="generalForm">
+
+                            <div class="row pt-3">
+                                <div class="col">
+                                    <h6>Team details</h6>
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <th scope="row">id</th>
+                                            <td>{{team?.id}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">name</th>
+                                            <td><input class="form-control form-control-sm" type="text"
+                                                    formControlName="name"></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">description</th>
+                                            <td><textarea class="form-control form-control-sm"
+                                                    formControlName="description" rows="2"></textarea></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h6>Advanced</h6>
+                                    <button type="button" class="btn btn-sm btn-danger" (click)="removeTeam()">Delete team</button>
+                                </div>
+                            </div>
+                            <div class="row pt-0">
+                                <div class="col">
+                                    <button class="btn btn-sm btn-primary float-right" (click)="saveGeneral()">Save
+                                        changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" *ngIf="isAdmin">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="d-inline-block">Rate limiting</h4>
+                        <button class="btn btn-sm btn-outline-secondary collapser"
+                            (click)="collapseRateLimit=!collapseRateLimit">{{collapseRateLimit ? 'Expand' :
+                            'Collapse'}}</button>
+                        <div class="font-weight-light">Clients and users are rate limited by default
+                            usage limits. However, you can assign a
+                            specific Usage Plan for your team to use. All clients and members of the team will fall
+                            under the
+                            ratelimits specified in this plan.
+                        </div>
+                    </div>
+                </div>
+                <div class="row" [ngbCollapse]="collapseRateLimit" [animation]="true">
+                    <div class="col mt-4 mb-4">
+                        <form [formGroup]="rateLimitForm">
+                            <div class="row pt-3">
+                                <div class="col">
+                                    <h6>Team Usage Plan</h6>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Usage plan</span>
+                                        </div>
+                                        <ng-select class="myControl-sm" [items]="usagePlanSource.items$ | async"
+                                            bindLabel="name" bindValue="id" placeholder="Default plan"
+                                            formControlName="usagePlanId" [virtualScroll]="true"
+                                            (scrollToEnd)="usagePlanSource.fetchMissingItems()"
+                                            [typeahead]="usagePlanSource.queryRemote$"
+                                            [trackByFn]="usagePlanSource.trackByFn"
+                                            [compareWith]="usagePlanSource.compareWith"
+                                            (close)="usagePlanSource.resetQuery()"
+                                            typeToSearchText="Please enter 2 or more characters" labelForId="usagePlan">
+                                        </ng-select>
+                                        <div class="input-group-append" ngbTooltip="Create new Usage Plan"
+                                            *ngIf="isAdmin">
+                                            <a class="btn btn-outline-secondary" (click)="goToCreateUsagePlan()">
+                                                <fa-icon icon="external-link-alt"></fa-icon>
+                                            </a>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                <app-help placement="top"
+                                                    text="Usage Plan that will apply to users and clients of this team">
+                                                </app-help>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-3">
+                                <div class="col">
+                                    <button class="btn btn-sm btn-primary float-right" (click)="saveRateLimit()">Save
+                                        changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

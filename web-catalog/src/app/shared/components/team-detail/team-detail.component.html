@@ -1,0 +1,4 @@
+<div class="team" [ngClass]="getCss()" >
+    <div class="avatar"><img [src]="getAvatar()"></div>
+    <div class="name">{{team?.name}}<help class="ml-2" *ngIf="team?.description as desc">{{desc}}</help></div>
+</div>

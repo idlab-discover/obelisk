@@ -1,0 +1,13 @@
+.mycont {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    height: 120px;
+}
+
+a {
+    text-decoration: none;
+}

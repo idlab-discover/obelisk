@@ -1,0 +1,72 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+            <h5 class="d-inline-block">Rate limits</h5>
+            <form [formGroup]="radioForm" class="form-inline float-right">
+                <div class="btn-group btn-group-toggle btn-group-sm" ngbRadioGroup name="view" formControlName="view">
+                    <label ngbButtonLabel class="btn-outline-secondary">
+                        <input ngbButton type="radio" value="plan"> Plan
+                    </label>
+                    <label ngbButtonLabel class="btn-outline-secondary">
+                        <input ngbButton type="radio" value="clients"> Clients
+                    </label>
+                </div>
+            </form>
+            <p class="info">Team clients and users are rate limited by usage limits defined in a teams Usage Plan.
+                You can see the details (limits) of the currently assigned team Usage Plan here.</p>
+        </div>
+    </div>
+
+    <!-- Personal view -->
+    <ng-container *ngIf="'plan'===mode else teamView">
+        <div class="row pt-2">
+            <div class="col">
+                <h6>Team Usage Plan <help>This is the Team's current Usage Plan. It determines what Usage Limits are
+                        applied to Team Users and Team Clients.</help>
+                </h6>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col">
+                <usage-plan-detail [details]="upDetails"></usage-plan-detail>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Team view -->
+    <ng-template #teamView>
+        <div class="row">
+            <div class="col-4 col-md-3">
+                <h6>Select a team client...</h6>
+            </div>
+            <div class="col-8 col-md-9 ">
+                <h6>Team Client Usage Limit</h6>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-4 col-md-3">
+                <cdk-virtual-scroll-viewport itemSize="61" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                    <div [hidden]="!(clientSource?.loading$ | async)">
+                        <div class="d-flex align-items-center">
+                          <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'">
+                          </div>
+                          <span class="text-secondary"><em>Loading...</em></span>
+                        </div>
+                      </div>
+                    <div [hidden]="!clientSource?.isCurrentlyEmpty()">
+                        <em>No applicable team clients found...</em>
+                    </div>
+                    <div [hidden]="clientSource?.isCurrentlyEmpty()" class="client"
+                        *cdkVirtualFor="let c of clientSource">
+                        <app-client-detail [active]="c?.id===client?.id" [client]="c" [hover]="true"
+                            (click)="loadClient(c)"></app-client-detail>
+                    </div>
+                </cdk-virtual-scroll-viewport>
+            </div>
+            <div class="col-8 col-md-9 viewer">
+                <usage-limit-detail [details]="details"></usage-limit-detail>
+            </div>
+        </div>
+
+    </ng-template>
+</div>

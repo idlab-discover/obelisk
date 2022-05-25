@@ -1,0 +1,21 @@
+type DataRange {
+    # The Datasets included in the data range
+    datasets: [Dataset!]!
+    # The IDs of the Metrics included in the data range
+    metrics: [String]
+}
+
+input DataRangeInput {
+    # Ids of the datasets that are used for this range
+    datasets: [String!]
+    # Metrics for this dataset (format '<name>::<type>')
+    metrics: [String]
+}
+
+enum EventField {
+    timestamp, dataset, metric, producer, source, value, tags, location, geohash, elevation, tsReceived
+}
+
+enum TimestampPrecision {
+    SECONDS, MILLISECONDS, MICROSECONDS
+}

@@ -1,0 +1,41 @@
+<div class="container-xl">
+    <div class="row pt-3">
+        <div class="col">
+            <h5>News item</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form class="form" [formGroup]="newsForm" (submit)="save()">
+                <div class="form-row">
+                    <div class="form-group col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Title</span>
+                            </div>
+                            <input class="form-control form-control" type="text" formControlName="title"
+                                placeholder="News title" id="name">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label for="content">Content</label>
+                        <textarea class="form-control" formControlName="content" rows="6" id="content"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-sm-12 btns">
+                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="remove()">Remove</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="reset()">Reset</button>
+                        <span class="text-muted"><small><em>Markdown support enabled</em></small></span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="preview()"
+                            [disabled]="newsForm.invalid">Preview</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<ng-container *ngIf="icon then iconOnlyTpl else fullTpl">
+    
+</ng-container>
+
+<ng-template #iconOnlyTpl>
+    <div class="pointer-help" (click)="open($event)"><fa-icon [icon]="icon" class="mr-1"></fa-icon></div>
+</ng-template>
+
+<ng-template #fullTpl>
+    <a class="badge badge-light pointer-help" (click)="open($event)">
+        <fa-icon icon="tablet-alt" class="mr-1"></fa-icon>
+        {{info.name}}
+    </a>
+</ng-template>

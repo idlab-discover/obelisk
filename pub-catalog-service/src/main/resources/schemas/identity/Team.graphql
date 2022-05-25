@@ -1,0 +1,128 @@
+type Team {
+    id: String! @searchable
+    name: String! @searchable
+    description: String @searchable
+    usagePlanAssigned: Boolean!
+    usagePlan: UsagePlan! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    usersRemaining: Int!
+    clientsRemaining: Int!
+    # Access a specific User in this team
+    user(id: String!): TeamUser! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Access Users in this team
+    users: [TeamUser] @paged @enable_filter @searchable @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Access a specific Dataset the Team has access to
+    dataset(id: String!): Dataset @restricted(level: [PLATFORM_MANAGER, DATASET_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Retrieve all the datasets (including not published datasets) the Team has access to.
+    datasets: [Dataset] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Access membership information for the dataset with the specified id (id is datasetId)
+    membership(id: String!): Membership @restricted(level: [PLATFORM_MANAGER, DATASET_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Access membership information
+    memberships: [Membership] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Access a specific invite
+    invite(id: String!): TeamInvite
+    # Access invites associated with this team
+    invites: [TeamInvite] @paged(exposeCount: false) @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    # Access a specific Client
+    client(id: String!): Client @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Clients associated with this Team
+    clients: [Client] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Get a specific access request associated with this Team.
+    accessRequest(id: String!): AccessRequest @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    # Access requests associated with this Team
+    accessRequests: [AccessRequest] @paged @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    # Access a specific data stream associated with this Team
+    activeStream(id: String!): DataStream @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Active streams associated with this Team
+    activeStreams: [DataStream] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Access a specific export associated with this Team
+    export(id: String!): DataExport @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Data exports associated with this Team
+    exports: [DataExport] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+}
+
+type TeamMutation {
+    update(input: UpdateTeamInput!): TeamResponse!
+
+    setName(name: String!): TeamResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    setDescription(description: String): TeamResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    setUsagePlan(usagePlanId: String): TeamResponse! @deprecated @restricted(level: [PLATFORM_MANAGER])
+    # Create an invite for the Team.
+    createInvite: TeamInviteResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    # Create a client for the team
+    createClient(input: CreateClientInput): ClientResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Setup a new push-based data stream (there are a limited number of streams allowed per user), shared with the Team.
+    createStream(input : CreateStreamInput!): StreamResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+    # Request a data export shared with the Team.
+    createExport(input : CreateExportInput!) : ExportResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, TEAM_MEMBER])
+
+    # Perform mutations on a specific invite
+    onInvite(id: String!): TeamInviteMutation!
+    # Perform mutations on a specific User
+    onTeamUser(id: String!): TeamUserMutation! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    # Perform mutations on a specific Client
+    onClient(id: String!): ClientMutation!
+    # Access mutations for a specific Stream
+    onStream(id: String!): StreamMutation!
+    # Access mutations for a specific Export
+    onExport(id: String!): ExportMutation!
+    # Delete this team
+    remove: TeamResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+}
+
+type TeamUserMutation {
+    # Toggle the manager role for the User
+    setManager(teamManager: Boolean): TeamUserResponse!
+    # Remove the User from the Team
+    remove: TeamResponse!
+}
+
+input CreateTeamInput {
+    name: String!
+    description: String
+    # ID of the User that will manage the Team (optional, can be used by admin only), defaults to self.
+    teamOwnerId: String
+}
+
+input UpdateTeamInput {
+    name: String @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    description: String @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    usagePlanId: String @restricted(level: [PLATFORM_MANAGER])
+}
+
+type TeamResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Team
+}
+
+type TeamInvite {
+    id: String!
+    # Time in milliseconds until the invite will expire
+    expiresInMs: Long!
+}
+
+type TeamInviteMutation {
+    # Accept the invite
+    accept: TeamInviteResponse!
+    # Revoke the invite. This stops users from using the invite immediately
+    revoke: TeamInviteResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+}
+
+type TeamInviteResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: TeamInvite
+}
+
+type TeamUser {
+    # Indicates if the User has a manager role in the Team
+    manager: Boolean! @searchable(path: ["teamMemberships", "manager"])
+    # Reference to the User
+    user: User! @searchable
+}
+
+type TeamUserResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: TeamUser
+}

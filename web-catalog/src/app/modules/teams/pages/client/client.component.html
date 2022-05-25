@@ -1,0 +1,352 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+            <h5 class="d-inline-block">Client details</h5>
+            <app-id class="float-right" [id]="client?.id"></app-id>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col">
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr>
+                        <td>name</td>
+                        <td>{{client?.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>
+                            <ng-container *ngIf="client?.team then team else personal"></ng-container>
+                            <ng-template #team>
+                                <span class="badge badge-secondary" [style.fontSize]="'13px'">
+                                    <fa-icon icon="sitemap" class="mr-1 fa-sm"></fa-icon> team client
+                                </span>
+                            </ng-template>
+                            <ng-template #personal>
+                                <span class="badge badge-secondary" [style.fontSize]="'13px'">
+                                    <fa-icon icon="user" class="mr-1 fa-sm"></fa-icon> personal client
+                                </span>
+                            </ng-template>
+
+                        </td>
+                    </tr>
+                    <tr *ngIf="client?.team as t">
+                        <td>team</td>
+                        <td>{{t.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>creator</td>
+                        <td>{{client?.user | user}}</td>
+                    </tr>
+                    <tr>
+                        <td>id <app-help text="The clientId is part of your client credentials"></app-help>
+                        </td>
+                        <td>{{client?.id}}</td>
+                    </tr>
+                    <tr>
+                        <td>secret <app-help
+                                text="Never share this key with the public. If your client has client-side code, you must use a PKCE code_challenge.">
+                            </app-help>
+                        </td>
+                        <td>********************
+                            <button class="btn btn-xs btn-outline-danger float-right" (click)="regenerateSecret()">
+                                <fa-icon icon="redo-alt"></fa-icon> Regenerate secret
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>confidential <app-help
+                                text="Client code is not publicly readable (like on websites). Implies a shared secret can be used.">
+                            </app-help>
+                        </td>
+                        <td><span [innerHTML]="client?.confidential | checkmark:true"></span></td>
+                    </tr>
+                    <tr>
+                        <td>user-authed <app-help text="Client acts on behalf of a logged in user, known by Obelisk.">
+                            </app-help>
+                        </td>
+                        <td><span [innerHTML]="client?.onBehalfOfUser | checkmark:true"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row" *ngIf="canDelete">
+        <div class="col text-right">
+            <button type="button" class="btn btn-sm btn-danger" (click)="remove()">Delete client</button>
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            <h6>Scope <app-help
+                    text="Client-called APIs must be within these scope, even when acting on behalf of user.">
+                </app-help>
+            </h6>
+        </div>
+    </div>
+    <div class="row pt-2" *ngIf="scopePermissionForm">
+        <div class="col">
+            <table class="table table-sm">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center">Read</th>
+                        <th class="text-center">Write</th>
+                        <th class="text-center">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr [formGroup]="scopePermissionForm">
+                        <td class="text-center">
+                            <input type="checkbox" formControlName="read">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" formControlName="write">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" formControlName="manage">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            <h6>Restrictions <app-help text="Client is restricted to these datasets"></app-help>
+            </h6>
+        </div>
+    </div>
+    <div class="row pt-2" *ngIf="restrictionPermissionForm">
+        <div class="col">
+            <table class="table table-sm">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Dataset</th>
+                        <th class="text-center">Read</th>
+                        <th class="text-center">Write</th>
+                        <th class="text-center">Manage</th>
+                    </tr>
+                </thead>
+                <tbody [formGroup]="restrictionPermissionForm">
+                    <tr *ngFor="let r of client?.restrictions">
+                        <td>{{r.dataset.name}}</td>
+                        <td class="text-center">
+                            <input type="checkbox" [formControlName]="r.dataset.id+'##READ'">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" [formControlName]="r.dataset.id+'##WRITE'">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" [formControlName]="r.dataset.id+'##MANAGE'">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            <h6>Redirect URIs <app-help text="The URI-(pattern) that will be called when authentiation is complete.">
+                </app-help>
+            </h6>
+        </div>
+    </div>
+    <div class="row pt-2" *ngIf="redirectURIForm">
+        <div class="col">
+            <table class="table">
+                <tbody>
+                    <tr *ngFor="let uri of client?.redirectURIs">
+                        <td class="icon">
+                            <div class="pointer" (click)="removeURI(uri)" ngbTooltip="remove">
+                                <fa-icon icon="trash" class="fa-sm"></fa-icon>
+                            </div>
+                        </td>
+                        <td>{{uri}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" [formGroup]="redirectURIForm">
+                            <div class="input-group input-group-sm">
+                                <input type="url" class="form-control" formControlName="uri">
+                                <div class="input-group-append">
+                                    <button class="btn btn-sm btn-success" (click)="addURI()"
+                                        [disabled]="redirectURIForm.invalid">
+                                        <fa-icon icon="plus"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="row pt-2" *ngIf="(client?.properties | json) !== '{}'">
+        <div class="col">
+            <h5>Properties</h5>
+        </div>
+    </div>
+    <div class="row pt-2" *ngIf="(client?.properties | json) !== '{}'">
+        <div class="col">
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr *ngFor="let entry of client?.properties | keyvalue">
+                        <td>{{entry.key}}</td>
+                        <td>{{entry.value | json}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row pt-3 pb-1">
+        <div class="col">
+            <h5 class="text-danger">
+                <fa-icon icon="exclamation-triangle" class="pr-1"></fa-icon> Permanent data removal
+                <help>Data generated by this client will be removed in the background over time</help>
+            </h5>
+        </div>
+    </div>
+
+    <div class="row pt-1">
+        <div class="col">
+            <ngb-alert [dismissible]="false">
+                <strong>Looking for your own datasets?</strong> You will only see the team accessible datasets here. To see your own datasets too, open this in the <a [routerLink]="'/my/clients/'+client?.id">My Clients view</a>.
+            </ngb-alert>
+        </div>
+    </div>
+
+    <div class="row pt-0 pb-5">
+        <div class="col">
+            <form [formGroup]="removalForm" (submit)="deleteData()">
+                <div class="form-group d-none">
+                    <div class="input-group">
+                        <input name="datepicker" class="form-control" ngbDatepicker #datepicker="ngbDatepicker"
+                            [autoClose]="'outside'" (dateSelect)="onDateSelection($event)" [displayMonths]="2"
+                            [dayTemplate]="t" [footerTemplate]="f" outsideDays="hidden" [startDate]="fromDate!"
+                            tabindex="-1" container="body" [positionTarget]="dpTarget">
+                        <ng-template #t let-date let-focused="focused">
+                            <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)"
+                                [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date"
+                                (mouseleave)="hoveredDate = null">
+                                {{ date.day }}
+                            </span>
+                        </ng-template>
+                        <ng-template #f>
+                            <button (click)="datepicker.close()"
+                                class="btn btn-sm btn-outline-primary float-right mr-2 mb-2">Close</button>
+                        </ng-template>
+                    </div>
+                </div>
+                <!-- Select 1 dataset -->
+                <div class="form-row mt-2">
+                    <div class="form-group col-sm-12">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" (click)="ignore($event)">Dataset</span>
+                            </div>
+                            <ng-select class="myControl-sm" [items]="datasetSource?.items$ | async" bindLabel="name"
+                                placeholder="Choose a dataset" formControlName="dataset" [virtualScroll]="true"
+                                (scrollToEnd)="datasetSource?.fetchMissingItems()"
+                                [typeahead]="datasetSource?.queryRemote$" [compareWith]="datasetSource?.compareWith"
+                                [trackByFn]="datasetSource?.trackByFn"
+                                typeToSearchText="Please enter 2 or more characters" labelForId="datasets" #dsInput>
+                                <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                    <span class="ng-value-label tag">{{item.name}}</span>
+                                    <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                                </ng-template>
+                            </ng-select>
+                        </div>
+                        <div *ngIf="fDataset.errors?.required && fDataset.touched" class="error-txt">
+                            Please select a dataset
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Select metrics -->
+                <div class="form-row mt-2">
+                    <div class="form-group col-sm-12">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" (click)="ignore($event)">Metrics</span>
+                            </div>
+                            <ng-select class="myControl-sm" [items]="metricSource?.items$ | async" bindLabel="id"
+                                bindValue="id" placeholder="Select metrics" formControlName="metrics"
+                                [virtualScroll]="true" (scrollToEnd)="metricSource?.fetchMissingItems()"
+                                [typeahead]="metricSource?.queryRemote$" [trackByFn]="metricSource?.trackByFn"
+                                typeToSearchText="Please enter 2 or more characters"
+                                [compareWith]="metricSource?.compareWith" labelForId="restrictions" [multiple]="true"
+                                [closeOnSelect]="false" (close)="metricSource?.resetQuery()">
+                                <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                    <span class="ng-value-label tag">{{item.id}}</span>
+                                    <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                                </ng-template>
+                                <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                    <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item.id}}
+                                </ng-template>
+                                <ng-template ng-footer-tmp>
+                                    <button class="btn btn-xs btn-outline-secondary mr-2"
+                                        (click)="selectAllMetrics()">Select all</button>
+                                    <button class="btn btn-xs btn-outline-secondary"
+                                        (click)="deselectAllMetrics()">Deselect all</button>
+                                </ng-template>
+                            </ng-select>
+                        </div>
+                        <div *ngIf="fMetrics.errors?.required && fMetrics.touched" class="error-txt">
+                            Please select at least one metric
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Select time-range -->
+                <div class="form-row mt-2">
+                    <div class="form-group col-sm-8">
+                        <div class="input-group input-group-sm" (click)="datepicker.toggle()">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" (click)="ignore($event)">Timespan</span>
+                            </div>
+                            <input type="text" class="form-control dp pointer" placeholder="dd/mm/yyyy - dd/mm/yyyy"
+                                formControlName="timespan" required />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary " (click)="setAllTime($event)">
+                                    All data
+                                </button>
+                            </div>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary calendar rounded-right"
+                                    (click)="toggleDate($event)" #dpTarget>
+                                    <fa-icon icon="calendar-alt"></fa-icon>
+                                </button>
+                            </div>
+                            <div *ngIf="fTimespan.errors?.required && fTimespan.touched" class="error-txt">
+                                Please choose a timespan
+                            </div>
+                            <div *ngIf="fTimespan.errors?.pattern && fTimespan.touched" class="error-txt">
+                                Timespan must be of the form <code>dd/mm/yyyy - dd/mm/yyyy</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <button type="button" class="btn btn-sm btn-secondary" (click)="openFilterPanel()">
+                            <span>
+                                Filter editor
+                                <fa-icon icon="circle" class="ml-1" [class.active]="filterActive"
+                                    [class.inactive]="!filterActive">
+                                </fa-icon>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="form-group col-sm-2 text-right">
+                        <button class="btn btn-sm btn-outline-danger" type="submit"
+                            [disabled]="removalForm.invalid">Delete selected
+                            data</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>

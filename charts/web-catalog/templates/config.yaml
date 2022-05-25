@@ -1,0 +1,16 @@
+# Additional config for the Microservices (is mounted along the Obelisk Base configuration)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "web-catalog.fullname" . }}-config
+data:
+  config.json: |
+    {
+        "oblxHost": "https://{{ .Values.config.host }}",
+        "oblxApiPrefix": "{{ .Values.config.oblxApiPrefix }}",
+        "oblxAuthEndpoint": "{{ .Values.config.oblxAuthEndpoint }}",
+        "clientHost": "https://{{ .Values.config.host }}",
+        "clientBasePath": "{{ .Values.basePath }}",
+        "clientRedirectUri": "https://{{ .Values.config.host }}{{ .Values.basePath }}",
+        "clientId": {{ .Values.config.clientId | quote }}
+    }

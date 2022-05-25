@@ -1,0 +1,84 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{info?.name}}</h4><div [hidden]="!info?.defaultLimit" class="ml-2 badge badge-success">default</div>
+    <div class="close pointer" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col text-muted">
+        {{info?.description}}
+      </div>  
+    </div>
+    <div class="row">
+      <div class="col">
+        <table class="table table-sm">
+          <thead class="thead-light">
+            <tr>
+              <th colspan="2">Primitive limits (max hourly)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td>Events stored</td>
+                <td>{{info?.values.maxHourlyPrimitiveEventsStored}}</td>
+            </tr>
+            <tr>
+                <td>Events queried</td>
+                <td>{{info?.values.maxHourlyPrimitiveEventQueries}}</td>
+            </tr>
+            <tr>
+                <td>Stats queried</td>
+                <td>{{info?.values.maxHourlyPrimitiveStatsQueries}}</td>
+            </tr>
+            <tr>
+                <td>Events streamed</td>
+                <td>{{info?.values.maxHourlyPrimitiveEventsStreamed}}</td>
+            </tr>
+          </tbody>
+          <thead class="thead-light">
+            <tr>
+              <th colspan="2">Complex limits (max hourly)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td>Events stored</td>
+                <td>{{info?.values.maxHourlyComplexEventsStored}}</td>
+            </tr>
+            <tr>
+                <td>Events queried</td>
+                <td>{{info?.values.maxHourlyComplexEventQueries}}</td>
+            </tr>
+            <tr>
+                <td>Stats queried</td>
+                <td>{{info?.values.maxHourlyComplexStatsQueries}}</td>
+            </tr>
+            <tr>
+                <td>Events streamed</td>
+                <td>{{info?.values.maxHourlyComplexEventsStreamed}}</td>
+            </tr>
+          </tbody>
+          <thead class="thead-light">
+            <tr>
+              <th colspan="2">Additional limits (overall)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td>Streams</td>
+                <td>{{info?.values.maxDataStreams}}</td>
+            </tr>
+            <tr>
+                <td>Exports</td>
+                <td>{{info?.values.maxDataExports}}</td>
+            </tr>
+            <tr>
+                <td>Exported records</td>
+                <td>{{info?.values.maxDataExportRecords}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

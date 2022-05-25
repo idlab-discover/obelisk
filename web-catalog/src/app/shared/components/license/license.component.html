@@ -1,0 +1,7 @@
+<div class="license pointer" *ngIf="licenseUri" (click)="openLicense()">
+    <div class="caption">license</div>
+    <div class="content" *ngIf="licenseName?.length < 20 else tooLong">{{licenseName}}</div>
+    <ng-template #tooLong>
+        <div class="content" [ngbTooltip]="licenseName" container="body">{{licenseSpdx}}</div>
+    </ng-template>
+</div>

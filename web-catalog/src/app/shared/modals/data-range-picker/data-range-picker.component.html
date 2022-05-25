@@ -1,0 +1,68 @@
+<div class="modal-header">
+    <h5 class="modal-title">Add datarange</h5>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form class="form" [formGroup]="datarangeForm">
+        <div class="form-row">
+            <div class="form-group col">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Dataset</span>
+                    </div>
+                    <ng-select class="myControl-sm" [items]="datasetSource.items$ | async" bindLabel="name"
+                         placeholder="Choose a dataset" formControlName="dataset" [virtualScroll]="true"
+                        (scrollToEnd)="datasetSource.fetchMissingItems()" [typeahead]="datasetSource.queryRemote$"
+                        [compareWith]="datasetSource.compareWith"
+                        [trackByFn]="datasetSource.trackByFn" typeToSearchText="Please enter 2 or more characters"
+                        labelForId="datasets" #dsInput>
+                        <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                            <span class="ng-value-label tag">{{item.name}}</span>
+                            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                        </ng-template>
+                    </ng-select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col">
+                <button class="btn btn-sm btn-outline-secondary float-right" (click)="toggleAddMetrics()" [disabled]="ds.value==null">
+                    <span>
+                        <fa-icon [icon]="defineMetrics ? 'chevron-down' : 'plus'"></fa-icon> {{defineMetrics ? 'Remove metrics': 'Add metrics'}}
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div class="form-row" [ngbCollapse]="!defineMetrics"  [animation]=true>
+            <div class="form-group col">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Metrics</span>
+                    </div>
+                    <ng-select class="myControl-sm" [items]="metricSource?.items$ | async" bindLabel="id"
+                        bindValue="id" placeholder="Choose metrics" formControlName="metrics" [virtualScroll]="true"
+                        (scrollToEnd)="metricSource?.fetchMissingItems()" [typeahead]="metricSource?.queryRemote$"
+                        [trackByFn]="metricSource?.trackByFn" typeToSearchText="Please enter 2 or more characters" 
+                        [compareWith]="metricSource?.compareWith"
+                        labelForId="restrictions" [multiple]="true" [closeOnSelect]="false" (close)="metricSource.resetQuery()" >
+                        <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                            <span class="ng-value-label tag">{{item.id}}</span>
+                            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                            <input id="item-{{index}}" type="checkbox" [checked]="item$.selected"/> {{item.id}}
+                        </ng-template>
+                    </ng-select>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-dark"
+        (click)="activeModal.dismiss()">Close</button>
+    <button type="button" class="btn btn-sm btn-primary" (click)="finish()">Add datarange</button>
+</div>

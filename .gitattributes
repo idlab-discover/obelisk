@@ -1,0 +1,2 @@
+﻿# ignore shell files for line ending
+*.sh    eol=lf

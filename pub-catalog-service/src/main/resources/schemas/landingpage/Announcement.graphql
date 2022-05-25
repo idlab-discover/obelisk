@@ -1,0 +1,30 @@
+type Announcement {
+    id: String!
+    # UTC timestamp of when the announcement was made
+    timestamp: Long! @searchable
+    # Title of the announcement
+    title: String! @searchable
+    # Content of the announcement
+    content: String! @searchable
+}
+
+input CreateAnnouncement {
+    title: String!
+    content: String!
+}
+
+input UpdateAnnouncement {
+    title: String
+    content: String
+}
+
+type AnnouncementResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Announcement
+}
+
+type AnnouncementMutation {
+    update(input: UpdateAnnouncement!): AnnouncementResponse!
+    remove: AnnouncementResponse!
+}

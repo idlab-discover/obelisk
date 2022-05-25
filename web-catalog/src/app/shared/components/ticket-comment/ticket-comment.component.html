@@ -1,0 +1,40 @@
+<div class="ticket-comment shadow-sm" [class]="indentClass" [class.internal]="comment?.internal" *ngIf="isComment">
+    <div class="headline d-flex justify-content-between align-items-center">
+        <div class="reporter">
+            <user-tag [user]="comment?.author" size="20"></user-tag>
+            <button class="btn btn-xs btn-outline-warning xxs" (click)="editComment()"
+                *ngIf="isMyComment() && ticketNotClosed()">{{edit ? 'discard': 'edit'}}</button>
+            <button class="btn btn-xs btn-outline-danger xxs" (click)="removeComment()"
+                *ngIf="isMyComment() && ticketNotClosed()">remove</button>
+            <span class="badge badge-secondary help" *ngIf="comment?.internal"
+                ngbTooltip="Only viewable by admins">internal</span>
+        </div>
+        <div class="created"><small>{{comment?.createdAt | date:'dd MMM, yyyy @ HH:mm:ss'}}</small></div>
+    </div>
+    <div class="content">
+        <ng-container *ngIf="edit then editBox else viewBox"></ng-container>
+        <ng-template #viewBox>
+            <div class="description" markdown [data]="comment?.comment"></div>
+            <div class="modified" *ngIf="comment?.modifiedAt">(edited {{comment?.modifiedAt | date:'d MMM, yyyy @ HH:mm:ss'}})</div>
+        </ng-template>
+        <ng-template class="edit" #editBox>
+            <form class="form" [formGroup]="editForm">
+                <div class="row mt-2">
+                    <div class="col">
+                        <textarea class="form-control form-control-sm" formControlName="comment" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="row mt-1 mb-2">
+                    <div class="col btns">
+                        <button class="btn btn-xs xxs btn-outline-secondary" (click)="reset()">Reset</button>
+                        <button class="btn btn-xs xxs btn-secondary" (click)="showPreview()">Preview</button>
+                        <button class="btn btn-xs xxs btn-warning" (click)="updateComment()">Save</button>
+                    </div>
+                </div>
+            </form>
+        </ng-template>
+    </div>
+</div>
+<div class="state-change" *ngIf="isActivity">
+    <issue-state [state]="comment?.changeState"></issue-state>
+</div>

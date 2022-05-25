@@ -1,0 +1,230 @@
+<div class="container-xl full">
+    <form [formGroup]="ulForm">
+        <div class="row pt-3">
+            <div class="col form-group">
+                <label for="name">Name</label>
+                <div *ngIf="ulForm?.value.defaultLimit" class="badge badge-success float-right help"
+                    ngbTooltip="Select another default in the Usage Limit overview." container="body" placement="bottom">
+                    Marked as default</div>
+                <div *ngIf="!ulForm?.value.defaultLimit" class="badge badge-secondary float-right help"
+                    ngbTooltip="Select a default in the Usage Limit overview." container="body" placement="bottom">Not
+                    marked as default</div>
+                <input class="form-control" type="text" formControlName="name" placeholder="Usage Limit name" id="name">
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col form-group">
+                <label for="description">Description <span
+                        [style.color]="dLength > 80 ? 'darkorange' : 'black'">({{dLength}}/80)<span
+                            *ngIf="dLength > 80"><small> [might be truncated]</small></span></span></label>
+                <textarea class="form-control" formControlName="description" placeholder="Short description"
+                    id="description"></textarea>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-md-6 col-lg-4">
+                <div class="row">
+                    <div class="col">
+                        <label>Hourly primitive limits</label>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"> Events stored </span>
+                            </div>
+                            <input type="number" min="0" class="form-control"
+                                formControlName="maxHourlyPrimitiveEventsStored">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum ingested event records per hour"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Events queried </span>
+                            </div>
+                            <input type="number" min="0" class="form-control"
+                                formControlName="maxHourlyPrimitiveEventQueries">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum event records queried per hour"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Stats queried </span>
+                            </div>
+                            <input type="number" min="0" class="form-control"
+                                formControlName="maxHourlyPrimitiveStatsQueries">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum stat queries per hour"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Events streamed </span>
+                            </div>
+                            <input type="number" min="0" class="form-control"
+                                formControlName="maxHourlyPrimitiveEventsStreamed">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum event records queried per hour"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="row">
+                    <div class="col">
+                        <label>Hourly complex limits</label>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"> Events stored </span>
+                            </div>
+                            <input type="number" min="0" class="form-control"
+                                formControlName="maxHourlyComplexEventsStored">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum ingested event records per hour"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Events queried </span>
+                            </div>
+                            <input type="number" min="0" class="form-control"
+                                formControlName="maxHourlyComplexEventQueries">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum event records queried per hour"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Stats queried </span>
+                            </div>
+                            <input type="number" min="0" class="form-control"
+                                formControlName="maxHourlyComplexStatsQueries">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum stat queries per hour"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Events streamed </span>
+                            </div>
+                            <input type="number" min="0" class="form-control"
+                                formControlName="maxHourlyComplexEventsStreamed">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum event records queried per hour"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="row">
+                    <div class="col">
+                        <label>Additional limits</label>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Streams</span>
+                            </div>
+                            <input type="number" min="0" class="form-control" formControlName="maxDataStreams">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum active streams"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Exports</span>
+                            </div>
+                            <input type="number" min="0" class="form-control" formControlName="maxDataExports">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum active exports"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Export records</span>
+                            </div>
+                            <input type="number" min="0" class="form-control" formControlName="maxDataExportRecords">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum records per export"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row pt-2">
+            <div class="col-md-12">
+                <button class="btn btn-sm btn-dark" (click)="reset()">Reset</button>
+                <button class="btn btn-sm btn-warning float-right" (click)="save()">Save</button>
+            </div>
+        </div>
+    </form>
+</div>

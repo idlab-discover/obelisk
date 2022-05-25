@@ -1,0 +1,53 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+            <div class="info text-truncate">Active access requests for datasets are listed here, both personal as
+                well as those requested for teams you manage.</div>
+        </div>
+
+    </div>
+    <div class="row pt-4">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="33" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="icon"></th>
+                            <th width="20%">time</th>
+                            <th width="30%">dataset</th>
+                            <th width="auto">
+                                Team <help>Access can be requested for a team that you manage</help>
+                            </th>
+                            <th width="20%">permissions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(accessRequestSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!accessRequestSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No accessrequests found</em></td>
+                        </tr>
+                        <tr [hidden]="accessRequestSource?.isCurrentlyEmpty()"
+                            *cdkVirtualFor="let r of accessRequestSource" class="pointer" (click)="viewRequest(r)">
+                            <td class="icon">
+                                <div (click)="remove($event, r)" ngbTooltip="revoke">
+                                    <fa-icon icon="trash" class="fa-sm"></fa-icon>
+                                </div>
+                            </td>
+                            <td>{{r.timestamp | ago}}</td>
+                            <td>{{r.dataset.name}}</td>
+                            <td>{{r.team?.name || '-'}}</td>
+                            <td>{{r.type.join(',') | lowercase}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+<div class="container-lg">
+    <div class="row pt-3">
+        <div class="col">
+            <div class="h5">Membership Info <help>Extra information on your membership permissions related to this dataset
+                </help>
+            </div>
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            Considering both your <span ngbTooltip="Permissions attached to your account because of granted roles in this dataset" container="body" class="tt">personal permissions</span> and your <span ngbTooltip="Permissions attached to any teams you are part of, that have been granted roles in this dataset" container="body" class="tt">inherited permissions</span>, your combined permissions for this dataset are:
+            <div class="rights pt-3" *ngIf="rights?.length > 0 else noRights">
+                <div class="right" *ngFor="let right of rights">{{right}}</div>
+            </div>
+            <ng-template #noRights>
+                <p><span class="text-muted">You have no permissions in this dataset</span></p>
+            </ng-template>
+        </div>
+    </div>
+</div>

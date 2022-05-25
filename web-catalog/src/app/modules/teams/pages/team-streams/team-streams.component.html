@@ -1,0 +1,153 @@
+<div class="container-xl full">
+  <app-create-header help="Overview of the team's streams." createTitle="New Team Stream" [filterSource]="streamSource"
+    #header>
+    <form class="form" [formGroup]="streamsForm" (submit)="addStream(header)">
+      <div class="form-row">
+        <div class="form-group col-sm-12">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Name</span>
+            </div>
+            <input type='text' class="form-control rounded-right" formControlName="name" required>
+          </div>
+          <div *ngIf="fName.errors?.required && fName.touched" class="error-txt">
+            Please choose a name
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row mt-2">
+        <div class="form-group col-sm-12">
+          <h6 class="d-inline-block">Datarange</h6>
+          <button type="button" class="btn btn-xs btn-outline-secondary float-right mt-1"
+            (click)="openDataRangeWizard()">
+            <fa-icon icon="plus"></fa-icon> Add datarange ...
+          </button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-sm-6">
+          <label for="datasets">Datasets</label>
+          <select class="form-control custom-select" size="4" id="datasets" formControlName="selectedDataset">
+            <option *ngFor="let d of rangeDatasets" [value]="d.id">{{d.name}}</option>
+          </select>
+          <button type="button" class="btn btn-xs btn-outline-danger float-right mt-1" (click)="removeDataset()"
+            [disabled]="!isDatasetSelected()">Remove selected</button>
+        </div>
+        <div class="form-group col-sm-6">
+          <label for="metrics">Metrics</label>
+          <select class="form-control custom-select" size="4" id="metrics" formControlName="selectedMetric">
+            <option *ngFor="let m of rangeMetrics">{{m}}</option>>
+          </select>
+          <button type="button" class="btn btn-xs btn-outline-danger float-right mt-1" (click)="removeMetric()"
+            [disabled]="!isMetricSelected()">Remove selected</button>
+        </div>
+      </div>
+
+      <div class="form-row mt-2">
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Specify fields</span>
+            </div>
+            <ng-select class="myControl-sm" [items]="allFields" multiple="true" formControlName="fields"
+              placeholder="Default fields" [closeOnSelect]="false">
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item}}
+              </ng-template>
+            </ng-select>
+            <div class="input-group-append">
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="selectAllFields()">Select
+                all</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-sm-2 text-right">
+          <button type="button" class="btn btn-sm btn-secondary" (click)="openFilterPanel()">
+            <span>
+              Filter editor
+              <fa-icon icon="circle" class="ml-1" [class.active]="filterActive" [class.inactive]="!filterActive">
+              </fa-icon>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row mt-2">
+        <div class="form-group col-sm-6">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Timestamp precision</span>
+            </div>
+            <ng-select class="myControl-sm rounded-right" [items]="allPrecision" formControlName="timestampPrecision">
+            </ng-select>
+          </div>
+          <div *ngIf="fTsPrecision.errors?.required && fTsPrecision.touched" class="error-txt">
+            Please choose a timestamp precision
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row mt-2">
+        <div class="form-group col-sm-12">
+          <button type="submit" class="btn btn-sm btn-success float-right" [disabled]="!isFormValid()">Create
+            stream</button>
+        </div>
+      </div>
+    </form>
+  </app-create-header>
+
+  <div class="row pt-2">
+    <div class="col">
+      <cdk-virtual-scroll-viewport itemSize="40" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+        <table class="table table-sm table-hover exports">
+          <thead class="thead-light">
+            <tr>
+              <th class="icon">&nbsp;</th>
+              <th width="auto">Name</th>
+              <th width="40%">Datasets</th>
+              <th width="100">Status <help>Whether the stream has a consumer connected</help></th>
+              <th width="60" class="text-center">
+                <button class="btn btn-sm" (click)="refresh()" ngbTooltip="refresh" container="body">
+                  <fa-icon icon="sync-alt"></fa-icon>
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr [hidden]="!(streamSource?.loading$ | async)">
+              <td colspanner>
+                <div class="d-flex align-items-center">
+                  <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status"
+                    [style.borderRadius]="'4px'"></div>
+                  <span class="text-secondary"><em>Loading...</em></span>
+                </div>
+              </td>
+            </tr>
+            <tr [hidden]="!streamSource?.isCurrentlyEmpty()">
+              <td colspanner><em>No streams found...</em></td>
+            </tr>
+            <tr [hidden]="streamSource?.isCurrentlyEmpty()" *cdkVirtualFor="let stream of streamSource"
+              class="pointer-help" (click)="showInfo(stream)">
+              <td>
+                <help icon="trash" class="sm" (click)="removeStream(stream.id,$event)">remove</help>
+              </td>
+              <td>{{stream.name}}</td>
+              <td>{{stream.dataRange.datasets | mapList:'name'}}</td>
+              <td class="text-center spin" [ngbTooltip]="stream.clientConnected ? 'connected' : 'not connected'"
+                container="body">
+                <div class="d-flex align-items-center justify-content-center">
+                  <div class="spinner-grow spinner-grow-xs" [ngClass]="getSpinnerStyle(stream.clientConnected)"></div>
+                </div>
+              </td>
+              <td class="text-center">
+                <help icon="power-off" class="sm text-danger" (click)="endStream(stream.id,$event)" cursor="pointer">end active
+                  sessions</help>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,290 @@
+/* Import customized bootstrap */
+@import "custom-bootstrap";
+
+html, html body {
+  height: 100vh;
+}
+
+div.container.resetbg {
+  background-color: unset;
+  border: unset;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.pointer-help {
+  cursor: help;
+}
+
+.banner {
+  position: absolute;
+  margin-top: -76px;
+}
+
+.ds-title {
+  display: inline-block;
+  font-weight: bold;
+  color: #eee;
+  text-shadow: black 1px 1px;
+  font-size: 36pt;
+}
+
+.btn-banner {
+  vertical-align: text-bottom;
+  margin-left: 20px;
+}
+
+fa-icon.fa-disabled {
+  opacity: 0.6;
+  // pointer-events: none;
+  cursor: default;
+}
+
+div.col.unmargin {
+  margin-left: -15px;
+  margin-right: -15px;
+  max-width: calc(100% + 30px);
+}
+
+/**********************
+  NgSelect overrides 
+***********************/
+
+.myControl .ng-select-container {
+  min-height: 38px !important;
+}
+
+.myControl-sm .ng-select-container {
+  // height: 31px !important;
+  min-height: 31px !important;
+
+  .ng-value-container {
+    padding-top: 2px !important;
+
+    .ng-placeholder {
+      line-height: 1.2 !important; //1.95 !important;
+      // min-height: 24px !important;
+      padding-bottom: 2px !important;
+    }
+  }
+
+  .ng-value {
+    margin-bottom: 2px !important;
+  }
+}
+
+table .myControl-sm .ng-select-container .ng-placeholder {
+  line-height: 1.2 !important;
+  // height: 24px !important;
+}
+
+.myControl-sm.ng-select.ng-select-single {
+  .ng-select-container {
+    height: 31px !important;
+  }
+}
+
+.input-group {
+  ng-select {
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+  }
+
+  .input-group-prepend + ng-select .ng-select-container {
+    border-top-left-radius: unset;
+    border-bottom-left-radius: unset;
+  }
+
+  ng-select:not(:last-child) .ng-select-container {
+    border-top-right-radius: unset;
+    border-bottom-right-radius: unset;
+  }
+}
+
+.btn-xs,
+.btn-group-xs > .btn {
+  padding: 0.15rem 0.35rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border-radius: 0.2rem;
+}
+
+/**********************
+  Ngx-bootstrap overrides 
+***********************/
+
+.input-group {
+  .input-group-prepend .btn-group .btn.dropdown-toggle {
+    border-top-right-radius: unset;
+    border-bottom-right-radius: unset;
+  }
+
+  .input-group-append .btn-group .btn.dropdown-toggle {
+    border-top-left-radius: unset;
+    border-bottom-left-radius: unset;
+  }
+}
+
+/**********************
+  Ng-bootstrap overrides 
+***********************/
+
+.input-group {
+  .input-group-prepend .dropdown .btn {
+    border-top-right-radius: unset;
+    border-bottom-right-radius: unset;
+  }
+
+  .input-group-append .dropdown .btn {
+    border-top-left-radius: unset;
+    border-bottom-left-radius: unset;
+  }
+}
+
+.dropdown button:focus {
+  outline: none;
+}
+
+/**********************
+  Special table mixins 
+***********************/
+
+td.min,
+th.min {
+  width: 1%;
+  white-space: nowrap;
+}
+
+td.trunc,
+th.trunc {
+  position: relative;
+
+  > span {
+    position: absolute;
+    vertical-align: baseline;
+    width: calc(100% - 1rem);
+    line-height: 1.5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+/**********************
+  Special table overrides 
+***********************/
+
+.table th,
+.table td {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.table th.icon,
+.table td.icon {
+  width: 36px;
+  padding-left: unset;
+  padding-right: unset;
+  text-align: center;
+}
+
+// .table th.icon + th,
+// .table td.icon + td {
+//   padding-left: 0;
+// }
+
+/**********************
+  Text utilities
+***********************/
+p.info, div.info {
+  font-weight: 300;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.form-label {
+  font-size: 14px;
+}
+
+
+tr:focus {
+  outline: none !important;
+  background-color: theme-color-level("primary", -9) !important;
+}
+
+a {
+  text-decoration: underline;
+
+}
+a.btn {
+  text-decoration: none !important;
+}
+
+
+/**************************
+  Focus outline override
+***************************/  
+
+*:focus {
+  outline: none;
+}
+
+/**************************
+  CodeMirror hints override
+***************************/  
+
+.CodeMirror-hints {
+  z-index: 1100;
+}
+
+
+/**************************
+  Nav tabs overwrite
+**************************/
+
+.nav-tabs a {
+  text-decoration: none;
+}
+
+/**************************
+  Tidbits
+**************************/
+.spinner-grow.spinner-grow-xs {
+  width: 15px;
+  height: 15px;
+}
+
+/**************************
+  Markdown restyling
+**************************/
+
+$factor: 8px;
+.md {
+
+  h1 {
+    font-size: max(28px, calc(40px - calc( #{$factor})));
+  }
+  h2 {
+    font-size: max(26px, calc(32px - #{$factor}));
+  }
+  h3 {
+    font-size: max(24px, calc(28px - #{$factor}));
+  }
+  h4 {
+    font-size: max(20px, calc(24px - #{$factor}));
+  }
+  h5 {
+    font-size: max(18px, calc(20px - #{$factor}));
+  }
+  h6 {
+    font-size: max( 16px, calc(16px - #{$factor}));
+  }
+
+  blockquote {
+    padding-left: 20px;
+    border-left: 6px solid theme-color('secondary');
+  }
+}

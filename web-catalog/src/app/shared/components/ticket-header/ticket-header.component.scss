@@ -1,0 +1,73 @@
+@import "/src/common";
+
+$shadeBorder: -8;
+
+.xxs {
+    height: 23px;
+    font-size: 13px;
+    line-height: 13px;
+}
+
+.ticket {
+    display: grid;
+    border: 1px solid theme-color-level("secondary", $shadeBorder);
+
+    .headline {
+        border-bottom: 1px solid theme-color-level("secondary", $shadeBorder);
+        padding: 0.2em 0.4em;
+
+        .created {
+            font-style: italic;
+            color: #666;
+        }
+
+        .reporter {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            column-gap: 4px;
+            align-items: center;
+        }
+
+
+        &.btn2 {
+            grid-template-columns: 1fr auto;
+        }
+
+        &.btn3 {
+            grid-template-columns: auto 1fr auto;
+        }
+    }
+
+    .content {
+        padding: 0.2em 0.8em;
+        .summary {
+            font-weight: bold;
+            font-size: 15px;
+            &::first-letter {
+                text-transform: uppercase;
+            }
+            border-bottom: solid 1px #eee;
+            padding-bottom: 0.4em;
+        }
+        .description {
+            margin-top: 4px;
+            font-size: 14px;
+        }
+        .modified {
+            font-size:12px;
+            padding-bottom: 0.4em;
+            font-style: italic;
+            color: #777;
+        }
+    }
+    .mybtns {
+        padding: 0.4em 0.4em;
+    }
+}
+
+.btns {
+    display:grid;
+    column-gap: 4px;
+    grid-template-columns: auto 1fr auto;
+    justify-items: end;
+}

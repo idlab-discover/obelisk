@@ -1,0 +1,79 @@
+<div class="ds-cont">
+    <sidebar>
+        <div class="up">
+            <sb-btn link="./home" help="Overview">
+                <sb-icon icon="home"></sb-icon>
+                <sb-label text="Overview"></sb-label>
+            </sb-btn>
+            <sb-btn link="./metrics" help="Metrics">
+                <sb-icon icon="table"></sb-icon>
+                <sb-label text="Metrics"></sb-label>
+            </sb-btn>
+            <sb-btn link="./things" help="Things">
+                <sb-icon icon="th"></sb-icon>
+                <sb-label text="Things"></sb-label>
+            </sb-btn>
+            <sb-btn link="./origins" help="Origins">
+                <sb-icon icon="bullseye"></sb-icon>
+                <sb-label text="Origins"></sb-label>
+            </sb-btn>
+            <sb-btn link="./readme" help="Readme">
+                <sb-icon icon="book"></sb-icon>
+                <sb-label text="Readme"></sb-label>
+            </sb-btn>
+            <sb-btn link="./insight" help="Insight">
+                <sb-icon icon="chart-line"></sb-icon>
+                <sb-label text="Insight"></sb-label>
+            </sb-btn>
+
+            <div class="divider"></div>
+
+            <sb-btn link="./membership-info" help="Membership Info">
+                <sb-icon icon="user-check"></sb-icon>
+                <sb-label text="Membership Info"></sb-label>
+            </sb-btn>
+
+            <div *ngIf="canManage" class="divider"></div>
+
+            <sb-btn *ngIf="canManage" link="./accessrequests" help="Access Requests">
+                <sb-icon icon="hands-helping" [notify]="aReqs > 0"></sb-icon>
+                <sb-label>Access Requests <span *ngIf="aReqs > 0" class="badge badge-info">{{aReqs}}</span></sb-label>
+            </sb-btn>
+            <sb-btn *ngIf="canManage" link="./invites" help="Invites">
+                <sb-icon icon="user-plus"></sb-icon>
+                <sb-label text="Invites"></sb-label>
+            </sb-btn>
+
+            <div *ngIf="canManage" class="divider"></div>
+
+            <sb-btn *ngIf="canManage" link="./access" help="Access control">
+                <sb-icon icon="users"></sb-icon>
+                <sb-label text="Access control"></sb-label>
+            </sb-btn>
+            <sb-btn *ngIf="canManage" link="./roles" help="Roles">
+                <sb-icon icon="key"></sb-icon>
+                <sb-label text="Roles"></sb-label>
+            </sb-btn>
+
+            <div class="divider"></div>
+
+            <sb-btn link="./edit" help="Edit dataset" *ngIf="canManage">
+                <sb-icon icon="edit"></sb-icon>
+                <sb-label text="Edit dataset"></sb-label>
+            </sb-btn>
+        </div>
+        <div class="down">
+            <!-- <sb-btn *ngIf="role.canManageDataset$(dsId, false) | async" help="DATASET OWNER" (click)="role.clearCache()">
+                <sb-icon icon="eye"></sb-icon>
+                <sb-label text="DATASET OWNER"></sb-label>
+            </sb-btn> -->
+            <sb-btn help="Toggle sidebar" sbToggle>
+                <sb-icon icon="angle-double-right" iconExpanded="angle-double-left"></sb-icon>
+                <sb-label text="Collapse sidebar"></sb-label>
+            </sb-btn>
+        </div>
+    </sidebar>
+    <div class="ds" [@fadeAnimation]="o.isActivated ? o.activatedRoute: ''">
+        <router-outlet #o="outlet"></router-outlet>
+    </div>
+</div>

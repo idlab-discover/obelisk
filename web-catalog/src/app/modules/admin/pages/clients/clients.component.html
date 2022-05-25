@@ -1,0 +1,175 @@
+<div class="container-xl full">
+    <app-create-header header="Clients" createTitle="Create Client" [filterSource]="clientsSource" #header>
+        <form class="form" [formGroup]="clientForm" (submit)="add(header)">
+            <div class="form-row">
+                <div class="col-8">
+                    <h6>General options</h6>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Name <help class="ml-2">A human readably name used to
+                                            identify this client</help></span>
+                                </div>
+                                <input class="form-control form-control" type="text" formControlName="name"
+                                    placeholder="Client name" id="name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Scope <help class="ml-2">The scope limits what a
+                                            client can do, regardless of the owner's or user's rights</help></span>
+                                </div>
+                                <ng-select class="myControl-sm" [items]="FULL_RIGHTS" placeholder="Choose scope"
+                                    formControlName="scope" multiple="true" labelForId="scope" [closeOnSelect]="false">
+                                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                        <span class="ng-value-label tag">{{item}}</span>
+                                        <span class="ng-value-icon right" (click)="clear(item)"
+                                            aria-hidden="true">×</span>
+                                    </ng-template>
+                                    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                        <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" />
+                                        {{item}}
+                                    </ng-template>
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Restrictions <help class="ml-2">Choose one or more
+                                            datasets to restrict this client to</help></span>
+                                </div>
+                                <ng-select class="myControl-sm" [items]="datasetsSource?.items$ | async"
+                                    bindLabel="name" bindValue="id" placeholder="Choose datasets"
+                                    formControlName="datasets" [virtualScroll]="true"
+                                    (scrollToEnd)="datasetsSource?.fetchMissingItems()"
+                                    [typeahead]="datasetsSource?.queryRemote$" [trackByFn]="datasetsSource?.trackByFn"
+                                    [closeOnSelect]="false" (close)="datasetsSource?.resetQuery()"
+                                    typeToSearchText="Please enter 2 or more characters" multiple="true"
+                                    labelForId="restrictions">
+                                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                        <span class="ng-value-label tag">{{item.name}}</span>
+                                        <span class="ng-value-icon right" (click)="clear(item)"
+                                            aria-hidden="true">×</span>
+                                    </ng-template>
+                                    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                        <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" />
+                                        {{item.name}}
+                                    </ng-template>
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <div class="checks">
+                            <h6>Authentication options</h6>
+                            <div class="form-check checkbox">
+                                <input class="form-check-input" type="checkbox" formControlName="confidential"
+                                    id="defaultCheck1">
+                                <label class="form-check-label" for="defaultCheck1">
+                                    confidential <app-help
+                                        text="Client code is not publicly readable (like on websites). Implies a shared secret can be used.">
+                                    </app-help>
+                                </label>
+                            </div>
+
+
+                            <div class="form-check checkbox">
+                                <input class=" form-check-input" type="checkbox" formControlName="onBehalfOfUser"
+                                    id="defaultCheck2">
+                                <label class="form-check-label" for="defaultCheck2">
+                                    authenticate users <app-help
+                                        text="Client acts on behalf of a logged in user, known by Obelisk.">
+                                    </app-help>
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    <button type="submit" [disabled]="clientForm.invalid" class="btn btn-sm btn-success float-right">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </form>
+    </app-create-header>
+
+    <div class="row pt-3">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="33" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="icon text-center">
+                                <help icon="star">
+                                    Client type
+                                </help>
+                            </th>
+                            <th width="auto">name</th>
+                            <th width="25%">creator</th>
+                            <th width="20%">scope <app-help
+                                    text="Client-called APIs must be within these scope, even when acting on behalf of user.">
+                                </app-help>
+                            </th>
+                            <th width="20%">restrictions <app-help text="Client is restricted to these datasets.">
+                                </app-help>
+                            </th>
+                            <th class="icon text-center">
+                                <help icon="user-secret"
+                                    text="Client code is not publicly readable (like on websites). Implies a shared secret can be used.">
+                                </help>
+                            </th>
+                            <th class="icon text-center">
+                                <help icon="exchange-alt">Client acts on behalf of a logged in user, known by Obelisk.
+                                </help>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(clientsSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!clientsSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No clients found...</em></td>
+                        </tr>
+
+                        <tr [hidden]="clientsSource?.isCurrentlyEmpty()" *cdkVirtualFor="let c of clientsSource"
+                            [routerLink]="c.id" class="pointer">
+                            <td class="icon text-center">
+                                <ng-container *ngIf="c.team != null then team else user"></ng-container>
+                                <ng-template #team><help class="sm" icon="sitemap">team client</help></ng-template>
+                                <ng-template #user><help class="sm" icon="user">personal client</help></ng-template>
+                            </td>
+                            <td>{{c.name}}</td>
+                            <td>{{c.user | user}}</td>
+                            <td>{{c.scope.join(', ') | lowercase}}</td>
+                            <td><span [innerHTML]="c.restrictions | mapList:'dataset.name':'<br>':2"></span></td>
+                            <td class="text-center"><span [innerHTML]="c.confidential | checkmark:true"></span></td>
+                            <td class="text-center"><span [innerHTML]="c.onBehalfOfUser | checkmark:true"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+@import '/src/common';
+
+fa-icon.active {
+    color: #3CD671;
+}
+
+fa-icon.inactive {
+    color: theme-color-level("secondary", -8);
+}
+
+tr, 
+tr th {
+    vertical-align: middle;
+}
+
+
+div.spinner-stop {
+    opacity: 1;
+    --webkit-animation: unset;
+    animation: unset;
+}
+
+.spin {
+    vertical-align: middle;
+}
+

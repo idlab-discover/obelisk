@@ -1,0 +1,16 @@
+# Additional config for the Microservices (is mounted along the Obelisk Base configuration)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ include "pub-auth-service.fullname" . }}-config
+data:
+    HTTP_BASE_PATH: "{{ .Values.basePath }}"
+    TOKEN_TTL: "{{ .Values.config.tokenTTL }}"
+    TOKEN_IDLE_TTL: "{{ .Values.config.tokenIdleTTL }}"
+    LOGIN_TTL: "{{ .Values.config.loginTTL }}"
+    SESSION_TTL: "{{ .Values.config.sessionTTL }}"
+    SESSION_IDLE_TTL: "{{ .Values.config.sessionIdleTTL }}"
+    GOOGLE_IDP_CLIENT_ID: "{{ .Values.config.identityProviders.google.clientId }}"
+    GOOGLE_IDP_CLIENT_SECRET: "{{ .Values.config.identityProviders.google.clientSecret }}"
+    GOOGLE_IDP_ISSUER_SITE: "{{ .Values.config.identityProviders.google.issuerSite }}"
+    LOCAL_IDP_CLIENT_SECRET: "{{ .Values.config.identityProviders.local.clientSecret }}"

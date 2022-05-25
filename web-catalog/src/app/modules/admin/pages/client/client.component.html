@@ -1,0 +1,205 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+            <h5 class="d-inline-block">Client details</h5><app-id class="float-right" [id]="client?.id"></app-id>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col">
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr>
+                        <td>name</td>
+                        <td>{{client?.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>
+                            <ng-container *ngIf="client.team then team else personal"></ng-container>
+                            <ng-template #team>
+                                <span class="badge badge-secondary" [style.fontSize]="'13px'">
+                                    <fa-icon icon="sitemap" class="mr-1 fa-sm"></fa-icon> team client
+                                </span>
+                            </ng-template>
+                            <ng-template #personal>
+                                <span class="badge badge-secondary" [style.fontSize]="'13px'">
+                                    <fa-icon icon="user" class="mr-1 fa-sm"></fa-icon> personal client
+                                </span>
+                            </ng-template>
+                            
+                        </td>
+                    </tr>
+                    <tr *ngIf="client.team as t">
+                        <td>team</td>
+                        <td>{{t.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>creator</td>
+                        <td>{{client?.user | user}}</td>
+                    </tr>
+                    <tr>
+                        <td>id <app-help text="The clientId is part of your client credentials"></app-help></td>
+                        <td>{{client?.id}}</td>
+                    </tr>
+                    <tr>
+                        <td>secret <app-help
+                                text="Never share this key with the public. If your client has client-side code, you must use a PKCE code_challenge.">
+                            </app-help>
+                        </td>
+                        <td>********************
+                            <button class="btn btn-xs btn-outline-danger float-right" (click)="regenerateSecret()">
+                                <fa-icon icon="redo-alt"></fa-icon> Regenerate secret
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>confidential <app-help
+                                text="Client code is not publicly readable (like on websites). Implies a shared secret can be used.">
+                            </app-help>
+                        </td>
+                        <td><span [innerHTML]="client?.confidential | checkmark:true"></span></td>
+                    </tr>
+                    <tr>
+                        <td>user-authed <app-help text="Client acts on behalf of a logged in user, known by Obelisk.">
+                            </app-help>
+                        </td>
+                        <td><span [innerHTML]="client?.onBehalfOfUser | checkmark:true"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-right">
+            <button type="button" class="btn btn-sm btn-danger" (click)="remove()">Delete client</button>
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            <h5>Scope <app-help
+                    text="Client-called APIs must be within these scope, even when acting on behalf of user.">
+                </app-help>
+            </h5>
+        </div>
+    </div>
+    <div class="row pt-2" *ngIf="scopePermissionForm">
+        <div class="col">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center">Read</th>
+                        <th class="text-center">Write</th>
+                        <th class="text-center">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr [formGroup]="scopePermissionForm">
+                        <td class="text-center">
+                            <input type="checkbox" formControlName="read">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" formControlName="write">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" formControlName="manage">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            <h5>Restrictions <app-help text="Client is restricted to these datasets"></app-help>
+            </h5>
+        </div>
+    </div>
+    <div class="row pt-2" *ngIf="restrictionPermissionForm">
+        <div class="col">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Dataset</th>
+                        <th class="text-center">Read</th>
+                        <th class="text-center">Write</th>
+                        <th class="text-center">Manage</th>
+                    </tr>
+                </thead>
+                <tbody [formGroup]="restrictionPermissionForm">
+                    <tr *ngFor="let r of client.restrictions">
+                        <td>{{r.dataset.name}}</td> 
+                        <td class="text-center">
+                            <input type="checkbox" [formControlName]="r.dataset.id+'##READ'">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" [formControlName]="r.dataset.id+'##WRITE'">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" [formControlName]="r.dataset.id+'##MANAGE'">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            <h5>Redirect URIs <app-help text="The URI-(pattern) that will be called when authentiation is complete.">
+                </app-help>
+            </h5>
+        </div>
+    </div>
+    <div class="row pt-2" *ngIf="redirectURIForm">
+        <div class="col">
+            <table class="table">
+                <tbody>
+                    <tr *ngFor="let uri of client?.redirectURIs">
+                        <td class="icon">
+                            <div class="pointer" (click)="removeURI(uri)" ngbTooltip="remove">
+                                <fa-icon icon="trash" class="fa-sm"></fa-icon>
+                            </div>
+                        </td>
+                        <td>{{uri}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" [formGroup]="redirectURIForm">
+                            <div class="input-group input-group-sm">
+                                <input type="url" class="form-control" formControlName="uri">
+                                <div class="input-group-append">
+                                    <button class="btn btn-sm btn-success" (click)="addURI()"
+                                        [disabled]="redirectURIForm.invalid">
+                                        <fa-icon icon="plus"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="row pt-2" *ngIf="(client?.properties | json) !== '{}'">
+        <div class="col">
+            <h5>Properties</h5>
+        </div>
+    </div>
+    <div class="row pt-2" *ngIf="(client?.properties | json) !== '{}'">
+        <div class="col">
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr *ngFor="let entry of client?.properties | keyvalue">
+                        <td>{{entry.key}}</td>
+                        <td>{{entry.value | json}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

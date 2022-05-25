@@ -1,0 +1,42 @@
+@import '/src/common';
+
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    grid-template-rows: 50px;
+    column-gap: 10px;
+    row-gap: 10px;
+}
+
+tr td,
+tr th {
+    vertical-align: baseline;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+tr {
+    height: 36px;
+    th.thumb {
+        width: 80px;
+    }
+    td.thumb {
+        width: 80px;
+        position: relative;
+        padding: 0 0.4em;
+        .img {
+            background-size: cover;
+            background-position: center;
+            width: 80px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+        }
+    }
+}
+
+.myborder {
+    // table {
+        border: solid 1px theme-color-level("primary",-10) !important;
+    // }
+}

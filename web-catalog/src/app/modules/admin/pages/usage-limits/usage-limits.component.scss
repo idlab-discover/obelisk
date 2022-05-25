@@ -1,0 +1,35 @@
+.tag {
+    font-weight: 600;
+    padding: 0 5px;
+}
+
+.checks {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    justify-content: right;
+    padding-left: 15px;
+    align-items: end;
+    height: 100%;
+    line-height: 2.4;
+}
+
+// .searchAndAdd {
+//     display: grid;
+//     grid-template-columns: 1fr auto;
+
+//     button {
+//         margin-left: 5px;
+//     }
+// }
+
+.scopeAndButton {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 5px;
+}
+
+// .lined {
+//     border-left: 5px solid #28a74538;
+//     margin-left: 5px;
+// }

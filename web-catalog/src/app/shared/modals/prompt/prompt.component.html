@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h5 class="modal-title pull-left" *ngIf="options?.title">{{options?.title}}</h5>
+    <div class="close pointer" aria-label="Close" (click)="hide()">
+        <span aria-hidden="true">&times;</span>
+    </div>
+</div>
+<div class="modal-body">
+    <span [innerHTML]="message"></span>
+</div>
+<div class="modal-footer justify-content-end" *ngIf="options.buttonStyle=='yes'">
+    <button type="button" class="btn btn-sm" [ngClass]="options.yesClassName" (click)="confirm()" ngbAutoFocus>
+        {{options.yesLabel}}
+    </button>
+</div>
+<div class="modal-footer justify-content-between" *ngIf="options.buttonStyle=='yes/no'">
+    <button type="button" class="btn btn-sm" [ngClass]="options.noClassName"  (click)="decline()">
+        {{options.noLabel}}
+    </button>
+    <button type="button" class="btn btn-sm" [ngClass]="options.yesClassName" (click)="confirm()" ngbAutoFocus>
+        {{options.yesLabel}}
+    </button>
+</div>

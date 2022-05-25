@@ -1,0 +1,105 @@
+<div class="container-xl full">
+  <div class="row pt-3">
+    <div class="col-lg-7">
+      <div class="row stats">
+        <div class="d-none d-sm-block col-12 col-sm-auto">
+          <mini-graph class="d-inline-block mr-2" [height]="50" [width]="190" [values]="ingestRate" [ts]="ingestTime"
+            [color]="Colors.darkGreen" [min]="0" caption="in" unit="evt/s"></mini-graph>
+          <mini-graph class="d-inline-block" [height]="50" [width]="190" [values]="queryRate" [ts]="queryTime"
+            [color]="Colors.darkBlue" [min]="0" caption="out" unit="evt/s"></mini-graph>
+        </div>
+        <div class="d-none col-sm d-sm-block text-right">
+          <div class="tiles">
+            <tile color="#085f88" [nr]="stats?.totalSizeBytes | filesize:0" caption="size"></tile>
+            <tile color="#085f88" [nr]="stats?.nrOfEvents | nr:0:false" caption="records"></tile>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col shaded">
+          <cdk-virtual-scroll-viewport itemSize="200" minBufferPx="400" maxBufferPx="800" style="height: 500px" #scroll>
+            <div class="news">
+              <div class="news-item px-3 py-2 mb-3 pointer" *cdkVirtualFor="let item of newsDatasource"
+                (click)="openAnnouncement(item)">
+                <div class="caption">{{item.title}}</div>
+                <div class="timestamp">{{item.timestamp | date:'MMM d, YYYY @ HH:mm'}}</div>
+                <div class="content md" [innerHTML]="item.content | markdown"></div>
+              </div>
+            </div>
+          </cdk-virtual-scroll-viewport>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-none col-12 d-lg-block col-lg-5 ">
+      <div class="row">
+        <div class="col tiles">
+          <tile color="#5d6985" [nr]="stats?.nrOfDatasets" caption="datasets"></tile>
+          <tile color="#5d6985" [nr]="stats?.nrOfMetrics" caption="metrics"></tile>
+          <tile color="#5d6985" [nr]="stats?.nrOfClients" caption="clients"></tile>
+          <tile color="#5d6985" [nr]="stats?.nrOfUsers" caption="users"></tile>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-6">
+          <div class="row">
+            <div class="col">
+              <div class="shadow-sm pointer" [routerLink]="'/status'" [ngbTooltip]="statusTipTpl">
+                <oblx-status [values]="status?.history" height="52" autoscale="true"></oblx-status>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-3">
+            <div class="col">
+              <div class="icon-link shadow-sm" (click)="goToApiReference()">
+                <div class="image"><img src="./assets/img/apiary.png"></div>
+                <div class="caption">API Reference</div>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-1">
+            <div class="col">
+              <div class="icon-link shadow-sm" (click)="goToApiConsole()">
+                <div class="image"><img src="./assets/img/terminal.svg"></div>
+                <div class="caption">API Console</div>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-3">
+            <div class="col">
+              <docs-link class="shadow-sm" [caption]="docs.filters.caption" [help]="docs.filters.help"
+                [path]="docs.filters.path">
+              </docs-link>
+            </div>
+          </div>
+          <div class="row pt-1">
+            <div class="col">
+              <docs-link class="shadow-sm" [caption]="docs.auth.caption" [help]="docs.auth.help"
+                [path]="docs.auth.path">
+              </docs-link>
+            </div>
+          </div>
+          <div class="row pt-3">
+            <div class="col">
+              <docs-link class="shadow-sm" [caption]="docs.v2.caption" [help]="docs.v2.help" [path]="docs.v2.path"
+                theme="secondary">
+              </docs-link>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-6 ">
+          <div class="featured">
+            <div class="caption">Featured datasets</div>
+            <div class="fdatasets">
+              <app-big-dataset *ngFor="let ds of datasets" [dataset]="ds"></app-big-dataset>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #statusTipTpl><span [innerHTML]="statusTooltipMsg"></span></ng-template>

@@ -1,0 +1,101 @@
+<div class="container-xl full">
+  <div class="row pt-2">
+    <div class="col">
+      <div class="badges">
+        <div class="badges-left">
+          <div class="metrics d-none d-lg-block">metrics:
+            <ng-container *ngIf="dataset?.metaStats?.nrOfMetrics != null; else spinnerTpl">
+              {{dataset.metaStats.nrOfMetrics | nr:1}}
+            </ng-container>
+          </div>
+          <div class="events d-none d-lg-block">events:
+            <ng-container *ngIf="dataset?.metaStats?.nrOfEvents != null; else spinnerTpl">
+              {{dataset.metaStats.nrOfEvents | nr:1:false}}
+            </ng-container>
+          </div>
+          <div class="size d-none d-lg-block">size:
+            <ng-container *ngIf="dataset?.metaStats?.approxSizeBytes != null; else spinnerTpl">
+              {{dataset.metaStats.approxSizeBytes | filesize:0}}
+            </ng-container>
+          </div>
+        </div>
+        <div class="badges-right">
+          <app-id [id]="dataset?.id"></app-id>
+          <app-license class="d-none d-md-flex" [licenseUri]="dataset?.license"></app-license>
+          <div class="d-none d-md-block" [class]="dataset?.published ? 'published' : 'private'">
+            <fa-icon [icon]="dataset?.published ? 'unlock' : 'lock'"></fa-icon>
+            {{(dataset?.published ? 'open' : 'private')|| '-'}}
+          </div>
+          <div [ngClass]="{'updated pointer': true, 'disabled': justRefreshed}" (click)="refreshData()"
+            [title]="'Refreshed @ '+ (lastRefreshed | date:'HH:mm:ss')"
+            [ngbTooltip]="justRefreshed? 'just refreshed...' : 'refresh'" container="body">
+            <fa-icon [icon]="justRefreshed ? 'exclamation-triangle' : 'history'" style="color: #7f7f7f"></fa-icon>
+            {{(lastRefreshed | ago) || '-'}}
+          </div>
+          <ng-template #spinnerTpl>
+            <div class="spinner-grow spinner-grow-sm" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <div class="col-12">
+      <div class="text-muted text-justify descr">{{dataset?.description}}</div>
+      <div class="keywords text-muted" *ngIf="dataset?.keywords?.length > 0">
+        <div>Keywords:</div>
+        <div><span *ngFor="let k of dataset?.keywords" class="keyword">{{k}}</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <div class="col graphs">
+
+      <apx-chart #ingestChart class="in" [series]="ingestOpt.series" [chart]="ingestOpt.chart" [xaxis]="ingestOpt.xaxis"
+        [yaxis]="ingestOpt.yaxis" [title]="ingestOpt.title" [stroke]="ingestOpt.stroke" [subtitle]="ingestOpt.subtitle"
+        [markers]="ingestOpt.markers" [tooltip]="ingestOpt.tooltip" [theme]="ingestOpt.theme"
+        [legend]="ingestOpt.legend" [dataLabels]="ingestOpt.dataLabels">
+      </apx-chart>
+
+      <apx-chart #consumeChart class="out" [series]="consumeOpt.series" [chart]="consumeOpt.chart"
+        [xaxis]="consumeOpt.xaxis" [yaxis]="consumeOpt.yaxis" [title]="consumeOpt.title" [stroke]="consumeOpt.stroke"
+        [subtitle]="consumeOpt.subtitle" [markers]="consumeOpt.markers" [tooltip]="consumeOpt.tooltip"
+        [theme]="consumeOpt.theme" [legend]="consumeOpt.legend" [dataLabels]="consumeOpt.dataLabels"></apx-chart>
+    </div>
+  </div>
+
+  <div class="row pt-3">
+    <div class="col">
+      <apx-chart #requestChart class="request" [series]="requestOpt.series" [chart]="requestOpt.chart"
+        [xaxis]="requestOpt.xaxis" [yaxis]="requestOpt.yaxis" [title]="requestOpt.title" [stroke]="requestOpt.stroke"
+        [markers]="requestOpt.markers" [tooltip]="requestOpt.tooltip" [theme]="requestOpt.theme"
+        [legend]="requestOpt.legend" [dataLabels]="requestOpt.dataLabels"></apx-chart>
+    </div>
+  </div>
+
+  <div class="row pt-3">
+    <div class="col">
+      <apx-chart #streamChart class="stream" [series]="streamOpt.series" [chart]="streamOpt.chart"
+        [xaxis]="streamOpt.xaxis" [yaxis]="streamOpt.yaxis" [title]="streamOpt.title" [stroke]="streamOpt.stroke"
+        [subtitle]="streamOpt.subtitle" [markers]="streamOpt.markers" [tooltip]="streamOpt.tooltip"
+        [theme]="streamOpt.theme" [fill]="streamOpt.fill" [legend]="streamOpt.legend"
+        [dataLabels]="streamOpt.dataLabels"></apx-chart>
+    </div>
+  </div>
+
+  <div class="row myfooter mt-3 mb-2">
+    <div class="col-auto">
+      <div class="publisher" *ngIf="dataset?.publisher?.name">
+        Publisher: <a *ngIf="dataset?.publisher?.homepage else justName" [href]="dataset?.publisher?.homepage"
+          target="_blank">{{dataset?.publisher?.name}}</a>
+        <ng-template #justName><span>{{dataset?.publisher?.name}}</span></ng-template>
+      </div>
+      <div class="contactPoint"></div>
+    </div>
+    <div class="col text-right" *ngIf="dataset?.contactPoint">
+      Contact: {{dataset.contactPoint}}
+    </div>
+  </div>
+</div>

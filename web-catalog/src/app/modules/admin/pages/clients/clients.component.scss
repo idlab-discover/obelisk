@@ -1,0 +1,22 @@
+.tag {
+    font-weight: 600;
+    padding: 0 5px;
+}
+
+.checks {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto auto;
+    padding-left: 30px;
+    
+    .checkbox {
+        white-space: nowrap;
+        margin-left: 15px;
+    }
+}
+
+.scopeAndButton {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 5px;
+}

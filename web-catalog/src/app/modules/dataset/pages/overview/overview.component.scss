@@ -1,0 +1,177 @@
+@import 'src/common';
+
+.description {
+  position: absolute;
+  color: #eee;
+  font-size: 18pt;
+  left: 40px;
+  bottom: 20px;
+}
+
+.badges {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto;
+  column-gap: 6px;
+  // justify-items: right;
+  align-items: baseline;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  .badges-left,
+  .badges-right {
+    display: grid;
+    grid-auto-columns: auto;
+    grid-template-rows: auto;
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: baseline;
+    column-gap: 6px;
+    div {
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: 10pt;
+      font-weight: bold;
+      color: white;
+
+      fa-icon {
+        padding: 2px 4px;
+      }
+    }
+  }
+
+  .badges-right {
+    justify-content: right;
+  }
+
+  .published {
+    font-weight: unset;
+    border: 1px solid rgb(18, 133, 79);
+    background-color: rgb(24, 168, 101);
+    // border-color: 
+    padding-left: 0px;
+
+    fa-icon {
+      border-color: rgb(24, 168, 101);
+      color: white !important;
+    }
+  }
+
+  .private {
+    font-weight: unset;
+    background-color: rgb(204, 73, 46);
+    border: 1px solid rgb(129, 70, 58);
+    padding-left: 0px;
+
+    fa-icon {
+      border-color: rgb(204, 73, 46);
+      color: white !important;
+    }
+  }
+
+  .metrics {
+    background-color: rgb(195, 138, 127);
+    border: 1px solid rgb(175, 100, 85);
+  }
+
+  .events {
+    background-color: rgb(159, 134, 135);
+    border: 1px solid rgb(133, 105, 106);
+  }
+
+  .size {
+    background-color: rgb(109, 130, 147);
+    border: 1px solid rgb(85, 101, 115);
+  }
+
+  .updated {
+    font-weight: unset;
+    background-color: white;
+    border: 1px solid #7f7f7f;
+    color: #7f7f7f !important;
+    justify-self: right;
+
+    &.disabled {
+      border: 1px solid #bbb;
+      color: #aaa !important;
+      cursor: not-allowed;
+
+      fa-icon {
+        color: #aaa !important;
+      }
+    }
+
+    &:active {
+      background-color: #eee;
+      border-color: black;
+      color: black;
+    }
+
+    &:hover {
+      border-color: black;
+    }
+
+    fa-icon {
+      border-color: transparent;
+    }
+  }
+}
+
+.graphs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+
+  grid-template-areas: "in out"
+    "stream stream";
+
+  row-gap: 10px;
+  column-gap: 10px;
+
+  .inout {
+    grid-area: inout;
+    display: none;
+  }
+
+  .in {
+    grid-area: in;
+  }
+
+  .out {
+    grid-area: out;
+  }
+
+  .stream {
+    grid-area: stream;
+  }
+}
+
+.keywords {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  font-style: italic;
+  padding-top: 4px;
+  font-size: 14px;
+
+  .keyword {
+    margin-left: 4px;
+  }
+}
+
+@include media-breakpoint-down(lg) {
+
+  .descr,
+  .badges,
+  .myfooter {
+    padding-right: 15px;
+  }
+}
+
+.myfooter {
+  font-size: 15px;
+  font-style: italic;
+}

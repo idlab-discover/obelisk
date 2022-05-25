@@ -1,0 +1,17 @@
+<div class="modal-header">
+    <h5 class="modal-title pull-left">Confirm</h5>
+    <div class="close pointer" aria-label="Close" (click)="hide()">
+        <span aria-hidden="true">&times;</span>
+    </div>
+</div>
+<div class="modal-body">
+    <span [innerHTML]="message || 'Are you sure you want to do that?'"></span>
+</div>
+<div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-sm btn-outline-danger" (click)="decline()">
+        {{options.noLabel}}
+    </button>
+    <button type="button" class="btn btn-sm btn-success" (click)="confirm()">
+        {{options.yesLabel}}
+    </button>
+</div>

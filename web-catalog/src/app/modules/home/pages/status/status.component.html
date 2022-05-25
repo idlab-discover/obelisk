@@ -1,0 +1,108 @@
+<div class="container-xl">
+    <ng-container *ngIf="state('global') as service">
+        <div class="row pt-3">
+            <div class="col d-flex justify-content-between">
+                <div class="time">
+                    {{'Updated '+(lastUpdate | ago)}}
+                </div>
+                <h5>
+                    <span>{{'Obelisk' | titlecase}}</span>
+                    <span class="spinner-grow spinner-grow-sm ml-2" [class.up]="isUp(service)" [class.down]="isDown(service)" [class.dud]="isDud(service)" [class.degraded]="isDegraded(service)"></span>
+                </h5>
+            </div>
+        </div>
+        <div class="row pt-1 pb-5">
+            <div class="col">
+                <status-bar [service]="service"></status-bar>
+            </div>
+        </div>
+    </ng-container>
+
+   
+    <ng-container *ngIf="state('ingest-service') as service">
+        <div class="row pt-3">
+            <div class="col text-right">
+                <h6>
+                    <span>{{service.componentId | titlecase}}</span>
+                    <span class="spinner-grow spinner-grow-sm ml-2" [class.up]="isUp(service)" [class.down]="isDown(service)" [class.dud]="isDud(service)" [class.degraded]="isDegraded(service)"></span>
+                </h6>
+            </div>
+        </div>
+        <div class="row pt-1 pb-4">
+            <div class="col">
+                <status-bar [service]="service"></status-bar>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="state('query-service') as service">
+        <div class="row pt-3">
+            <div class="col text-right">
+                <h6>
+                    <span>{{service.componentId | titlecase}}</span>
+                    <span class="spinner-grow spinner-grow-sm ml-2" [class.up]="isUp(service)" [class.down]="isDown(service)" [class.dud]="isDud(service)" [class.degraded]="isDegraded(service)"></span>
+                </h6>
+            </div>
+        </div>
+        <div class="row pt-1 pb-4">
+            <div class="col">
+                <status-bar [service]="service"></status-bar>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="state('streaming-service') as service">
+        <div class="row pt-3">
+            <div class="col text-right">
+                <h6>
+                    <span>{{service.componentId | titlecase}}</span>
+                    <span class="spinner-grow spinner-grow-sm ml-2" [class.up]="isUp(service)" [class.down]="isDown(service)" [class.dud]="isDud(service)" [class.degraded]="isDegraded(service)"></span>
+                </h6>
+            </div>
+        </div>
+        <div class="row pt-1 pb-4">
+            <div class="col">
+                <status-bar [service]="service"></status-bar>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="state('catalog-service-read') as service">
+        <div class="row pt-3">
+            <div class="col text-right">
+                <h6>
+                    <span>{{service.componentId | titlecase}}</span>
+                    <span class="spinner-grow spinner-grow-sm ml-2" [class.up]="isUp(service)" [class.down]="isDown(service)" [class.dud]="isDud(service)" [class.degraded]="isDegraded(service)"></span>
+                </h6>
+            </div>
+        </div>
+        <div class="row pt-1 pb-4">
+            <div class="col">
+                <status-bar [service]="service"></status-bar>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="state('catalog-service-write') as service">
+        <div class="row pt-3">
+            <div class="col text-right">
+                <h6>
+                    <span>{{service.componentId | titlecase}}</span>
+                    <span class="spinner-grow spinner-grow-sm text-secondary ml-2" [class.up]="isUp(service)" [class.down]="isDown(service)" [class.degraded]="isDegraded(service)"></span>
+                </h6>
+            </div>
+        </div>
+        <div class="row pt-1 pb-4">
+            <div class="col">
+                <status-bar [service]="service"></status-bar>
+            </div>
+        </div>
+    </ng-container>
+
+    <div class="row pt-2 pb-4" *ngIf="isAdmin" >
+        <div class="col text-right">
+            <button class="btn btn-primary" [routerLink]="['/admin', 'status']">Advanced</button>
+        </div>
+    </div>
+
+</div>

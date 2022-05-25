@@ -1,0 +1,24 @@
+config:
+  host: "staging.obelisk.ilabt.imec.be"
+  publicUri: "https://staging.obelisk.ilabt.imec.be"
+  logLevel: "debug"
+  auth:
+    adminUser: "admin"
+    adminPassword: ""
+  pulsar:
+    connectionUri: "pulsar://pulsar-broker.pulsar:6650"
+    adminApiUri: "http://pulsar-broker.pulsar:8080"
+  redis:
+    connectionUri: "redis://redis-master.v3-redis:6379"
+  clickhouse:
+    connectionUri: "jdbc:clickhouse://clickhouse-clickhouse.v3-clickhouse:8123/default"
+    clusterName: "oblx-data"
+  mongodb:
+    connectionUri: "mongodb://mongodb.v3-mongodb:27017"
+    database: "obelisk"
+  gubernator:
+    connectionUri: "http://gubernator.v3-gubernator:80"
+  metrics:
+    # Supply a Prometheus URI to allow Obelisk to show limited global and per dataset stats in the Catalog UI.
+    prometheusUri: "http://prometheus-operated.monitoring:9090/monitoring/prometheus"
+    port: 8081

@@ -1,0 +1,47 @@
+:host {
+    position:unset;
+}
+
+div.bg {
+    display:grid;
+    grid-template-rows: 300px auto 1fr;
+    justify-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    background-image: url('/assets/img/project/_generic.jpg'), linear-gradient(to bottom right, #002f4b, #dc4225);//, url('/src/assets/img/bg_landscape.jpg');
+    background-blend-mode: screen;
+    // z-index: 900;
+
+    .brand {
+        color: white;
+        font-size: 36pt;
+        text-shadow: 1px 1px black;
+        font-weight: bold;
+        align-self: stretch;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &:focus {
+            text-decoration: underline;
+            outline: 0;
+        }
+    }
+
+    .loginframe {
+        display: grid;
+        align-items: center;
+        align-content: center;
+        grid-template-columns: auto auto;
+        background-color: rgba(255,255,255,0.6);
+        border-radius: 8px;
+        padding: 20px 40px;
+    }
+}

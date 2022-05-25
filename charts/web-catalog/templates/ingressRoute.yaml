@@ -1,0 +1,47 @@
+{{ include "oblx-service-template.ingressRoute" . }}
+    middlewares:
+      - name: add-slash-catalog
+      - name: strip-prefix-catalog
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: add-slash-catalog
+spec:
+  redirectRegex:
+    regex: ^(.*{{ $.Values.basePath }})$
+    replacement: ${1}/
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-prefix-catalog
+spec:
+  stripPrefix:
+    prefixes:
+      - "{{ $.Values.basePath }}"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: root-route
+spec:
+  entryPoints:
+  - web
+  routes:
+  - match: Path(`/`)
+    kind: Rule
+    services:
+    - name: {{ include "oblx-service-template.fullname" . }}
+      port: {{ .Values.service.port }}
+    middlewares:
+    - name: redirect-to-catalog
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-catalog
+spec:
+  redirectRegex:
+    regex: ^(.*)$
+    replacement: /catalog/

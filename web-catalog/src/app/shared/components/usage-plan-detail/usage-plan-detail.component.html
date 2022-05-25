@@ -1,0 +1,40 @@
+<table class="table table-sm stats" *ngIf="details">
+    <thead class="thead-dark">
+        <th scope="col">Property</th>
+        <th scope="col">Value</th>
+        <th scope="col">Current/max</th>
+    </thead>
+    <tbody></tbody>
+    <tr>
+        <td class="min">Name</td>
+        <td colspan="2">{{details.usagePlan.name}}</td>
+    </tr>
+    <tr>
+        <td class="min">Description</td>
+        <td colspan="2">{{details.usagePlan.description}}</td>
+    </tr>
+    <tr>
+        <td class="min">Max users</td>
+        <td class="bar">
+            <ngb-progressbar [showValue]="true" [type]="type(currentUsers, maxUsers)" [value]="currentUsers"
+                [max]="maxUsers"></ngb-progressbar>
+        </td>
+        <td class="curr min">{{currentOf(currentUsers, maxUsers)}}</td>
+    </tr>
+    <tr>
+        <td class="min">Max clients</td>
+        <td class="bar">
+            <ngb-progressbar [showValue]="true" [type]="type(currentClients, maxClients)" [value]="currentClients"
+                [max]="maxClients"></ngb-progressbar>
+        </td>
+        <td class="curr min">{{currentOf(currentClients, maxClients)}}</td>
+    </tr>
+    <tr>
+        <td class="min">User usage limit</td>
+        <td colspan="2"><info-usage-limits [info]="details.usagePlan.userUsageLimit"></info-usage-limits></td>
+    </tr>
+    <tr>
+        <td class="min">Client usage limit</td>
+        <td colspan="2"><info-usage-limits [info]="details.usagePlan.clientUsageLimit"></info-usage-limits></td>
+    </tr>
+</table>

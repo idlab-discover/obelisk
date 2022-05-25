@@ -1,0 +1,128 @@
+<div class="container-xl full">
+  <div class="row pt-3">
+    <div class="d-none d-sm-block col text-truncate">
+      <div class="info text-truncate" *ngIf="'personal'===mode">Users and their personal clients are rate limited by
+        rules defined
+        in Usage Limits</div>
+      <div class="info text-truncate" *ngIf="'team'===mode">Team Clients rate limited by Usage Limits defined in the
+        Team Usage
+        Plan. Each Team client has it's own instanced pool.</div>
+    </div>
+    <div class="col-sm-auto text-right">
+      <form [formGroup]="radioForm" class="d-inline-block form-inline">
+        <div class="btn-group btn-group-toggle btn-group-sm" ngbRadioGroup name="view" formControlName="view">
+          <label ngbButtonLabel class="btn-outline-secondary">
+            <input ngbButton type="radio" value="personal"> Personal
+          </label>
+          <label ngbButtonLabel class="btn-outline-secondary">
+            <input ngbButton type="radio" value="team"> Team
+          </label>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Personal view -->
+  <ng-container *ngIf="'personal'===mode else teamView">
+    <div class="row pt-2">
+      <div class="col-4 col-md-3">
+        <h6>Affected clients</h6>
+      </div>
+      <div class="col-8 col-md-9 ">
+        <h6>Personal Usage Limit <app-help>This is the biggest possible aggregation of your personal Usage Limit
+            and the User Usage Limits of all your Teams</app-help>
+        </h6>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <div class="col-4 col-md-3">
+        <cdk-virtual-scroll-viewport itemSize="61" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+          <div [hidden]="!(userClientSource?.loading$ | async)">
+            <div class="d-flex align-items-center">
+              <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'">
+              </div>
+              <span class="text-secondary"><em>Loading...</em></span>
+            </div>
+          </div>
+          <div [hidden]="!userClientSource?.isCurrentlyEmpty()">
+            <em>No clients found...</em>
+          </div>
+          <div [hidden]="userClientSource?.isCurrentlyEmpty()" class="client"
+            *cdkVirtualFor="let c of userClientSource">
+            <app-client-detail [active]="c?.id===client?.id" [client]="c" [hover]="false"></app-client-detail>
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </div>
+      <div class="col-8 col-md-9 viewer">
+        <usage-limit-detail [details]="details"></usage-limit-detail>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Team view -->
+  <ng-template #teamView>
+    <div class="row pt-2">
+      <div class="col">
+        <form [formGroup]="teamForm">
+          <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="inputGroupSelect01">Team <app-help class="ml-2">Each
+                  Team
+                  Client has an instanced pool of the Team Usage Plan defined Usage limits for
+                  clients.
+                </app-help></label>
+            </div>
+            <ng-select class="myControl-sm" [items]="teamSource.items$ | async" bindValue="id" bindLabel="name"
+              placeholder="Choose a dataset" formControlName="team" [virtualScroll]="true"
+              (scrollToEnd)="teamSource?.fetchMissingItems()" [typeahead]="teamSource.queryRemote$"
+              [compareWith]="teamSource.compareWith" labelForId="test" [trackByFn]="teamSource?.trackByFn"
+              (close)="teamSource.resetQuery()">
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <div>{{item.name}}
+                  <span class="ml-3 text-muted" *ngIf="item.description as desc">
+                    <small><em>{{desc}}</em></small>
+                  </span>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row" *ngIf="teamForm.get('team').value!=null">
+      <div class="col-4 col-md-3">
+        <h6>Select a team client...</h6>
+      </div>
+      <div class="col-8 col-md-9 ">
+        <h6>Team Client Usage Limit</h6>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <div class="col-4 col-md-3">
+        <cdk-virtual-scroll-viewport itemSize="61" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+          <div [hidden]="!(teamClientSource?.loading$ | async)">
+            <div class="d-flex align-items-center">
+              <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'">
+              </div>
+              <span class="text-secondary"><em>Loading...</em></span>
+            </div>
+          </div>
+          <div [hidden]="!teamClientSource?.isCurrentlyEmpty()">
+            <em>No teams found...</em>
+          </div>
+          <div [hidden]="teamClientSource?.isCurrentlyEmpty()" class="client"
+            *cdkVirtualFor="let c of teamClientSource">
+            <app-client-detail [active]="c?.id===client?.id" [client]="c" [hover]="true" (click)="loadClient(c)">
+            </app-client-detail>
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </div>
+      <div class="col-8 col-md-9 viewer">
+        <usage-limit-detail [details]="details"></usage-limit-detail>
+      </div>
+    </div>
+
+  </ng-template>
+
+</div>

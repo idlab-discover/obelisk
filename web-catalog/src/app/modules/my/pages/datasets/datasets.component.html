@@ -1,0 +1,68 @@
+<div class="container-xl full">
+    <app-create-header help="All datasets that you have access to." createTitle="Create Dataset" [filterSource]="datasetSource" #header>
+        <form class="form" [formGroup]="dsForm" (submit)="add(header)">
+            <div class="row">
+                <div class="col form-group">
+                    <label for="name">Name</label>
+                    <input class="form-control" type="text" formControlName="name" placeholder="Dataset name"
+                        id="name">
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col form-group">
+                    <label for="description">Description <span [style.color]="desc.hasError('maxlength') ? 'red' : 'black'">({{desc.value?.length || 0}}/255)<span *ngIf="desc.hasError('maxlength')"></span></span></label> 
+                    <textarea class="form-control form-control-sm" formControlName="description"
+                        placeholder="Short description" id="description" rows="3"></textarea>
+                </div>
+            </div>
+            
+            <div class="row pt-2">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-sm btn-success float-right"
+                        [disabled]="dsForm.invalid"> Create </button>
+                </div>
+            </div>
+        </form>
+    </app-create-header>
+
+
+    <div class="row pt-3">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="36" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="thumb"></th>
+                            <th width="200">name</th>
+                            <th width="80" class="text-center">metrics</th>
+                            <th width="80" class="text-center">events</th>
+                            <th width="160" class="text-center">updated</th>
+                            <th width="160" class="text-center">Invite users/teams<help class="ml-1">Add new users/teams or your own teams</help></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <tr [hidden]="!(datasetSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!datasetSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No datasets found...</em></td>
+                        </tr>
+                        <tr [hidden]="datasetSource?.isCurrentlyEmpty()" *cdkVirtualFor="let ds of datasetSource" [routerLink]="'/ds/'+ds.id" class="pointer">
+                            <td class="thumb"><div class="img" [style.background-image]="ds.id | resource:'thumbnail':true | async"></div></td>
+                            <td>{{ds.name}}<help *ngIf="ds?.description" icon="info-circle" class="ml-1">{{ds?.description}}</help></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.nrOfMetrics | nr) || '-'}}</small></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.nrOfEvents | nr) || '-'}}</small></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.lastUpdate | ago) || '-'}}</small></td>
+                            <td class="text-center"><button class="btn btn-xs btn-outline-info" (click)="manageTeamAccess($event, ds.id)">manage invites</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

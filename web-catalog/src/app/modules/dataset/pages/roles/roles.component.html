@@ -1,0 +1,108 @@
+<div class="container-xl full">
+    <app-create-header header="Roles" createTitle="Create Role" [filterSource]="rolesSource" help="A role is a collection of permissions granted on a dataset. They can be assigned to
+    individual users or entire teams." #header>
+        <form [formGroup]="roleForm" (submit)="addRole(header)">
+            <div class="form-row">
+                <div class="col form-group">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Name</span></div>
+                        <input class="form-control" type="text" formControlName="name" placeholder="Role name"
+                            id="name">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col form-group">
+                    <label class="form-label"> Description <span
+                            [style.color]="dLength > 80 ? 'darkorange' : 'black'">({{dLength}}/80)<span
+                                *ngIf="dLength > 80"><small> [might be truncated]</small></span></span></label>
+                    <textarea class="form-control form-control-sm" formControlName="description"
+                        placeholder="Short description" id="description" rows="3"></textarea>
+
+                </div>
+            </div>
+            <div class="form-row pt-2">
+                <div class="col-sm-12 col-md form-group">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><span class="input-group-text">Permissions</span></div>
+                        <ng-select class="myControl-sm" [items]="permissions" placeholder="Choose permissions"
+                            formControlName="permissions" multiple="true" labelForId="permissions"
+                            [closeOnSelect]="false">
+                            <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                <span class="ng-value-label tag">{{item}}</span>
+                                <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item}}
+                            </ng-template>
+                        </ng-select>
+                    </div>
+                </div>
+
+
+                <div class="form-group col-sm-12 col-md-3 text-right">
+                    <button type="button" class="btn btn-sm btn-secondary" (click)="openFilterPanel()">
+                        <span>
+                            Filter editor
+                            <fa-icon icon="circle" class="ml-1" [class.active]="filterActive"
+                                [class.inactive]="!filterActive">
+                            </fa-icon>
+                        </span>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-sm btn-success float-right" [disabled]="roleForm.invalid">
+                        Create </button>
+                </div>
+            </div>
+        </form>
+    </app-create-header>
+
+    <div class="row pt-3">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="33" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="icon"></th>
+                            <th width="25%">name</th>
+                            <th width="auto">description</th>
+                            <th width="20%">permissions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(rolesSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!rolesSource?.isCurrentlyEmpty()">
+                            <td colspanner>
+                                <em>No roles found...</em>
+                            </td>
+                        </tr>
+                        <tr [hidden]="rolesSource?.isCurrentlyEmpty()" *cdkVirtualFor="let r of rolesSource"
+                            [routerLink]="r.id" class="pointer">
+                            <td class="icon">
+                                <div (click)="remove($event, r.id)" ngbTooltip="remove">
+                                    <fa-icon icon="trash" class="fa-sm"></fa-icon>
+                                </div>
+                            </td>
+                            <td>{{r.name}}</td>
+                            <td>{{r?.description}}</td>
+                            <td>{{r.grant?.permissions.join(', ')}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="container-xl full">
+  <div class="row pt-3">
+    <div class="col">
+      <h5>Access Requests <app-help
+          text="Users or teams that want to join your dataset are listed here. You can approve or deny their request.">
+        </app-help>
+      </h5>
+    </div>
+  </div>
+
+  <div class="row pt-3">
+    <div class="col">
+      <cdk-virtual-scroll-viewport itemSize="33" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+        <table class="table table-sm table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th width="50%">time</th>
+              <th width="50%">requester</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr [hidden]="!(accessRequestSource?.loading$ | async)">
+              <td colspanner>
+                <div class="d-flex align-items-center">
+                  <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status"
+                    [style.borderRadius]="'4px'"></div>
+                  <span class="text-secondary"><em>Loading...</em></span>
+                </div>
+              </td>
+            </tr>
+            <tr [hidden]="!accessRequestSource?.isCurrentlyEmpty()">
+              <td colspanner><em>No access requests found...</em></td>
+            </tr>
+            <tr [hidden]="accessRequestSource?.isCurrentlyEmpty()" *cdkVirtualFor="let req of accessRequestSource"
+              class="pointer" (click)="openAccessRequest(req)">
+              <td>{{req.timestamp | ago}}</td>
+              <td>
+                <ng-container *ngIf="req.team as team; else userTpl">
+                  <span>
+                    <fa-icon icon="sitemap" class="fa-sm typeIcon"></fa-icon> {{team.name}}
+                  </span>
+                </ng-container>
+                <ng-template #userTpl>
+                  <span>
+                    <fa-icon icon="user" class="fa-sm typeIcon"></fa-icon> {{req.user?.firstName+'
+                    '+req.user?.lastName}}
+                  </span>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+</div>

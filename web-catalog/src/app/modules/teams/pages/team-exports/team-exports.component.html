@@ -1,0 +1,240 @@
+<div class="container-xl full">
+  <app-create-header help="Overview of all team exports and their respective download locations."
+    createTitle="New Team Export" [filterSource]="exportSource" #header>
+    <form class="form" [formGroup]="exportForm" (submit)="addExport(header)">
+      <div class="form-group d-none">
+        <div class="input-group">
+          <input name="datepicker" class="form-control" ngbDatepicker #datepicker="ngbDatepicker"
+            [autoClose]="'outside'" (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t"
+            [footerTemplate]="f" outsideDays="hidden" [startDate]="fromDate!" tabindex="-1" container="body"
+            [positionTarget]="dpTarget">
+          <ng-template #t let-date let-focused="focused">
+            <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)"
+              [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date"
+              (mouseleave)="hoveredDate = null">
+              {{ date.day }}
+            </span>
+          </ng-template>
+          <ng-template #f>
+            <button (click)="datepicker.close()"
+              class="btn btn-sm btn-outline-primary float-right mr-2 mb-2">Close</button>
+          </ng-template>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-sm-12">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Name</span>
+            </div>
+            <input type='text' class="form-control rounded-right" formControlName="name" required>
+          </div>
+          <div *ngIf="fName.errors?.required && fName.touched" class="error-txt">
+            Please choose a name
+          </div>
+        </div>
+      </div>
+      <div class="form-row mt-2">
+        <div class="form-group col-sm-12">
+          <div class="input-group input-group-sm" (click)="datepicker.toggle()">
+            <div class="input-group-prepend">
+              <span class="input-group-text" (click)="ignore($event)">Timespan</span>
+            </div>
+            <input type="text" class="form-control dp pointer" placeholder="dd/mm/yyyy - dd/mm/yyyy"
+              formControlName="timespan" required />
+            <div class="input-group-append">
+              <button type="button" class="btn btn-outline-secondary calendar rounded-right"
+                (click)="toggleDate($event)" #dpTarget>
+                <fa-icon icon="calendar-alt"></fa-icon>
+              </button>
+            </div>
+            <div *ngIf="fTimespan.errors?.required && fTimespan.touched" class="error-txt">
+              Please choose a timespan
+            </div>
+            <div *ngIf="fTimespan.errors?.pattern && fTimespan.touched" class="error-txt">
+              Timespan must be of the form <code>dd/mm/yyyy - dd/mm/yyyy</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row mt-2">
+        <div class="form-group col-sm-12">
+          <h6 class="d-inline-block">Datarange</h6>
+          <button type="button" class="btn btn-xs btn-outline-secondary float-right mt-1"
+            (click)="openDataRangeWizard()">
+            <fa-icon icon="plus"></fa-icon> Add datarange ...
+          </button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-sm-6">
+          <label for="datasets">Datasets</label>
+          <select class="form-control custom-select" size="4" id="datasets" formControlName="selectedDataset">
+            <option *ngFor="let d of rangeDatasets" [value]="d.id">{{d.name}}</option>
+          </select>
+          <button type="button" class="btn btn-xs btn-outline-danger float-right mt-1" (click)="removeDataset()"
+            [disabled]="!isDatasetSelected()">Remove selected</button>
+        </div>
+        <div class="form-group col-sm-6">
+          <label for="metrics">Metrics</label>
+          <select class="form-control custom-select" size="4" id="metrics" formControlName="selectedMetric">
+            <option *ngFor="let m of rangeMetrics">{{m}}</option>>
+          </select>
+          <button type="button" class="btn btn-xs btn-outline-danger float-right mt-1" (click)="removeMetric()"
+            [disabled]="!isMetricSelected()">Remove selected</button>
+        </div>
+      </div>
+
+      <div class="form-row mt-2">
+        <div class="form-group col-sm">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Specify fields</span>
+            </div>
+            <ng-select class="myControl-sm" [items]="allFields" multiple="true" formControlName="fields"
+              placeholder="Default fields" [closeOnSelect]="false">
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item}}
+              </ng-template>
+            </ng-select>
+            <div class="input-group-append">
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="selectAllFields()">Select
+                all</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-sm-2 text-right">
+          <button type="button" class="btn btn-sm btn-secondary" (click)="openFilterPanel()">
+            <span>
+              Filter editor
+              <fa-icon icon="circle" class="ml-1" [class.active]="filterActive" [class.inactive]="!filterActive">
+              </fa-icon>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row mt-2">
+        <div class="form-group col-sm-6">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Timestamp precision</span>
+            </div>
+            <ng-select class="myControl-sm rounded-right" [items]="allPrecision" formControlName="timestampPrecision">
+            </ng-select>
+          </div>
+          <div *ngIf="fTsPrecision.errors?.required && fTsPrecision.touched" class="error-txt">
+            Please choose a timestamp precision
+          </div>
+        </div>
+        <div class="form-group col-sm-6">
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Records limit</span>
+            </div>
+            <input class="form-control" type="number" min="1" formControlName="limit" required>
+          </div>
+          <div *ngIf="fLimit.errors?.required && fLimit.touched" class="error-txt">
+            Please choose a record limit
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row mt-2">
+        <div class="form-group col-sm-12">
+          <button type="submit" class="btn btn-sm btn-success float-right" [disabled]="!isFormValid()">Create
+            export</button>
+        </div>
+      </div>
+    </form>
+  </app-create-header>
+
+  <div class="row pt-2">
+    <div class="col">
+      <cdk-virtual-scroll-viewport itemSize="40" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+        <table class="table table-sm table-hover exports">
+          <thead class="thead-light">
+            <tr>
+              <th class="icon">&nbsp;</th>
+              <th width="auto">Dataset</th>
+              <th width="20%">Requested</th>
+              <th width="15%">Status</th>
+              <th class="min"><button class="btn btn-sm float-right" (click)="refresh()">
+                  <fa-icon icon="sync-alt"></fa-icon>
+                </button></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr [hidden]="!(exportSource?.loading$ | async)">
+              <td colspanner>
+                  <div class="d-flex align-items-center">
+                      <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                      <span class="text-secondary"><em>Loading...</em></span>
+                  </div>
+              </td>
+          </tr>
+            <tr [hidden]="!exportSource?.isCurrentlyEmpty()">
+              <td colspanner><em>No exports found...</em></td>
+            </tr>
+            <tr [hidden]="exportSource?.isCurrentlyEmpty()" *cdkVirtualFor="let export of exportSource"
+              class="pointer-help" (click)="showDetails(export)">
+              <td>
+                <div *ngIf="export.status.status === 'COMPLETED'" (click)="removeExport(export.id,$event)"
+                  ngbTooltip="remove" class="pointer">
+                  <fa-icon icon="trash" class="fa-sm"></fa-icon>
+                </div>
+              </td>
+              <td>{{export.name}}</td>
+              <td>{{export.requestedOn | ago}}</td>
+              <td>
+                <div [ngSwitch]="export.status?.status">
+                  <div *ngSwitchCase="'QUEUING'" class="text-secondary">
+                    <div class="spinner-grow spinner-grow-sm text-secondary"></div> Queued
+                  </div>
+                  <div *ngSwitchCase="'GENERATING'">
+                    <ngb-progressbar [striped]="true" [animated]="true" [value]="export.status.recordsProcessed"
+                      [max]="export.status.recordsEstimate" type="secondary">
+                      {{ export.status.recordsProcessed >= export.status.recordsEstimate ? '&nbsp;Compressing&nbsp;' :
+                      '&nbsp;Exporting&nbsp;'}}
+                    </ngb-progressbar>
+                  </div>
+                  <div *ngSwitchCase="'CANCELED'" class="text-muted">
+                    <span [style.whiteSpace]="'nowrap'">
+                      <fa-icon icon="check-circle"></fa-icon> Aborted
+                    </span>
+                  </div>
+                  <div *ngSwitchCase="'COMPLETED'" class="text-muted">
+                    <span [style.whiteSpace]="'nowrap'">
+                      <fa-icon icon="check-circle"></fa-icon> Complete
+                    </span>
+                  </div>
+                  <div *ngSwitchCase="'FAILED'" class="text-warning">
+                    <span [style.whiteSpace]="'nowrap'">
+                      <fa-icon icon="exclamation-circle"></fa-icon> Failed
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <button *ngIf="export.status.status !== 'COMPLETED' && export.status.status !== 'CANCELLED'"
+                  (click)="cancelExport(export.id, $event)" class="btn btn-sm btn-warning float-right">
+                  <span [style.whiteSpace]="'nowrap'">
+                    <fa-icon icon="ban"></fa-icon> Cancel
+                  </span>
+                </button>
+
+                <a *ngIf="export.status.status === 'COMPLETED'" [downloadFile]="getDownloadUrl(export)"
+                  (click)="stopPropagation($event)" class="btn btn-sm btn-info float-right">
+                  <span [style.whiteSpace]="'nowrap'">
+                    <fa-icon icon="download"></fa-icon> {{export.result.compressedSizeInBytes | filesize:2 }}
+                  </span>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+</div>

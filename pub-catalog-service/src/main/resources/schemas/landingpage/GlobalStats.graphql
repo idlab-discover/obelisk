@@ -1,0 +1,22 @@
+type GlobalMetaStats {
+    # Total number of Datasets
+    nrOfDatasets: Int!
+    # Total number of Metrics
+    nrOfMetrics: Long!
+    # Total number of Users
+    nrOfUsers: Int!
+    # Total number of Clients
+    nrOfClients: Int!
+    # Total number of events
+    nrOfEvents: Long!
+    # Projected number of events if the data continues growing at the average daily rate of the past month.
+    nrOfEventsProjection: Long!
+    # Total number of bytes
+    totalSizeBytes: Long!
+    # Projected number of bytes if the data continues growing at the average daily rate of the past month.
+    totalSizeBytesProjection: Long!
+    # Returns a timeseries representing the event production rate (per second) in the last hour.
+    ingestedEventsRate: [TimedFloat!]!
+    # Returns a timeseries representing the total event consumption rate (per second) in the last hour.
+    consumedEventsRate: [TimedFloat!]!
+}

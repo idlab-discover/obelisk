@@ -1,0 +1,56 @@
+@import '/src/common.scss';
+
+.searchAndAdd {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    button {
+        grid-row: 1;
+        grid-column: 2;
+        margin-left: 5px;
+    }
+}
+
+.lined {
+    border-left: 5px solid #28a74538;
+    margin-left: 5px;
+}
+
+$level: -9;
+
+.lined-primary {
+    border-left: 5px solid theme-color-level("primary", $level);
+    margin-left: 5px;
+}
+.lined-secondary {
+    border-left: 5px solid theme-color-level("secondary", $level);
+    margin-left: 5px;
+}
+.lined-warning {
+    border-left: 5px solid theme-color-level("warning", $level);
+    margin-left: 5px;
+}
+.lined-success {
+    border-left: 5px solid theme-color-level("success", $level);
+    margin-left: 5px;
+}
+.lined-info {
+    border-left: 5px solid theme-color-level("info", $level);
+    margin-left: 5px;
+}
+.lined-danger {
+    border-left: 5px solid theme-color-level("danger", $level);
+    margin-left: 5px;
+}
+.lined-light {
+    border-left: 5px solid theme-color-level("light", $level);
+    margin-left: 5px;
+}
+.lined-dark {
+    border-left: 5px solid theme-color-level("dark", $level);;
+    margin-left: 5px;
+}
+
+.col.tweaked {
+    padding-right: 16px;
+}

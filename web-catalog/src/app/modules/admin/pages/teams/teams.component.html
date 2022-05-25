@@ -1,0 +1,68 @@
+<div class="container-xl full">
+
+    <app-create-header header="Teams" createTitle="Create Team" [filterSource]="teamSource" #header>
+        <form [formGroup]="teamForm" (submit)="addTeam(header)">
+            <div class="row">
+                <div class="col form-group">
+                    <label for="name">Name</label>
+                    <input class="form-control" type="text" formControlName="name" placeholder="Team name" id="name">
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col form-group">
+                    <label for="description">Description <span
+                            [style.color]="dLength > 80 ? 'darkorange' : 'black'">({{dLength}}/80)<span
+                                *ngIf="dLength > 80"><small> [might be truncated]</small></span></span></label>
+                    <textarea class="form-control form-control-sm" formControlName="description"
+                        placeholder="Short description" id="description" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="row pt-2">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-sm btn-success float-right" [disabled]="teamForm.invalid">
+                        Create </button>
+                </div>
+            </div>
+        </form>
+    </app-create-header>
+
+    <div class="row pt-3">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="33" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="icon"></th>
+                            <th width="40%">name</th>
+                            <th width="auto">description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(teamSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!teamSource?.isCurrentlyEmpty()">
+                            <td colspanner>No teams found...</td>
+                        </tr>
+                        <tr [hidden]="teamSource?.isCurrentlyEmpty()" *cdkVirtualFor="let u of teamSource"
+                            [routerLink]="'/teams/'+u.id" class="pointer">
+                            <td class="icon">
+                                <div (click)="removeTeam($event, u.id)" ngbTooltip="remove">
+                                    <fa-icon icon="trash" class="fa-sm"></fa-icon>
+                                </div>
+                            </td>
+                            <td>{{u.name}}</td>
+                            <td class="trunc"><span>{{u.description}}</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

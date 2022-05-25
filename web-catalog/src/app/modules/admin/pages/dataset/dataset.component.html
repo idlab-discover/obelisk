@@ -1,0 +1,65 @@
+<div class="container-xl full">
+    <div class="row pt-2">
+        <div class="col">
+            <h5>General details</h5>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col">
+            <em>{{dataset?.description}}</em>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col">
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>{{dataset?.id}}</td>
+                    </tr>
+                    <tr>
+                        <td>name</td>
+                        <td>{{dataset?.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>locked <app-help text="A locked dataset is virtually removed. It cannot be listed or acted upon anymore."></app-help></td>
+                        <td>
+                            <fa-icon [icon]="dataset?.archived? 'lock':'lock-open'" class="fa-sm"></fa-icon>
+                            <button class="btn btn-xs btn-secondary btn-blocky float-right" (click)="toggleLocked()">{{dataset?.archived ? 'unlock' : 'lock'}}</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>published <app-help text="A dataset is listed on the front page with name, description, and thumbnail image."></app-help></td>
+                        <td>
+                            <span [innerHTML]="dataset?.published | checkmark:true"></span>
+                            <button class="btn btn-xs btn-secondary btn-blocky float-right" (click)="togglePublish()">{{dataset?.published ? 'hide' : 'publish'}}</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>openData  <app-help text="Every user has automatic read rights to the dataset."></app-help></td>
+                        <td>
+                            <span [innerHTML]="dataset?.openData | checkmark:true"></span>
+                            <button class="btn btn-xs btn-secondary btn-blocky float-right" (click)="toggleOpenData()">{{dataset?.openData ? 'close' : 'open'}}</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col">
+            <h5>Metrics</h5>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col">
+            <table class="table table-sm table-striped">
+                <tbody>
+                    <tr *ngFor="let m of dataset?.metrics?.items">
+                        <td>{{m.id}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

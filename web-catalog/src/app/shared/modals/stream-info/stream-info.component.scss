@@ -1,0 +1,7 @@
+.btns {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto;
+    column-gap: 10px;
+    justify-items: left;
+}

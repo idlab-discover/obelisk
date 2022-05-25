@@ -1,0 +1,30 @@
+.middle-section {
+    display: grid;
+    grid-template-columns: 1fr auto ;
+    grid-template-rows: auto;
+
+    .requested {
+        padding-left: 15px;
+    }
+}
+
+.msg {
+    padding-right: 15px;
+    
+    pre.message {
+        white-space: pre-line;
+        padding: 0.4rem;
+        padding-left: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: #f6f6f6;
+        font-size: smaller;
+        color: brown;
+    }
+}
+
+.modal-footer {
+    display:grid;
+    grid-template-columns: 1fr auto auto;
+    justify-items: left;
+}

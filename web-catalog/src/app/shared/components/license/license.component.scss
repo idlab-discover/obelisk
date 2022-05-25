@@ -1,0 +1,29 @@
+.license {
+    display: flex;
+    padding: 0 !important;
+    font-size: 14px;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 10pt;
+    font-weight: bold;
+    color: white;
+
+    .caption {
+      color: white;
+      background-color: #555;
+      border: 1px solid #555;
+      padding: 2px 4px;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+
+    .content {
+      background-color: white;
+      border: 1px solid #555;
+      color: #555;
+      padding: 2px 4px;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      font-weight: normal !important;
+    }
+  }

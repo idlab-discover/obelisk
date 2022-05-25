@@ -1,0 +1,69 @@
+<div class="container-xl full">
+    <app-create-header header="News" createTitle="Post News" [filterSource]="newsSource" #header>
+        <form class="form" [formGroup]="newsForm" (submit)="add(header)">
+            <div class="form-row">
+                <div class="form-group col">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Title</span>
+                        </div>
+                        <input class="form-control form-control" type="text" formControlName="title"
+                            placeholder="News title" id="name">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="content">Content</label>
+                    <textarea class="form-control" formControlName="content" rows="6" id="content"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-12 btns">
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="reset()">Reset</button>
+                    <span class="text-muted"><small><em>Markdown support enabled</em></small></span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="preview()"
+                        [disabled]="newsForm.invalid">Preview</button>
+                    <button type="submit" [disabled]="newsForm.invalid" class="btn btn-sm btn-success">Create</button>
+                </div>
+            </div>
+        </form>
+    </app-create-header>
+
+    <div class="row pt-3">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="33" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="15%">timestamp</th>
+                            <th width="30%">title</th>
+                            <th width="auto">content</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(newsSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status"
+                                        [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!newsSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No news items found...</em></td>
+                        </tr>
+
+                        <tr [hidden]="newsSource?.isCurrentlyEmpty()" *cdkVirtualFor="let n of newsSource"
+                            [routerLink]="n.id" class="pointer">
+                            <td><small>{{n?.timestamp | date:'dd MMM, YYYY @ HH:mm'}}</small></td>
+                            <td>{{n?.title}}</td>
+                            <td class="trunc"><span [innerHTML]="n?.content"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.svg?v=0.0.1">
+    <script src="script.js"></script>
+    <title>Login to Obelisk</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="title mt-5">Obelisk Auth</h1>
+
+        <div class="logo">
+            <img src="assets/logo.svg">
+        </div>
+
+        <div class="idps">
+            <div class="formtitle mb-3">Choose an identity provider</div>
+            <div class="idp">
+                <div class="google_btn" onclick="doIdp('google')"></div>
+            </div>
+        </div>
+
+        <div class="remember">
+            <div class="checkbox">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input pointer" id="checkRememberMe" onclick="rememberMeToggled()">
+                    <label class="custom-control-label pointer" for="checkRememberMe">Remember me</label>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <a class="btn btn-outline-dark btn-sm float-left" href="javascript:goBack();">Go back home</a>
+        </div>
+    </div>
+
+    <div class="admin" id="adminLoginBtn">
+        <button class="btn btn-outline-dark btn-sm" onclick="toggleAdmin()">Admin login</button>
+    </div>
+
+    <div class="admin form adminLogin" id="adminLoginForm">
+        <button type="button" class="close float-right" aria-label="Close" onclick="toggleAdmin()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="formtitle mb-3">Admin login</div>
+
+        <form onsubmit="postLogin(event)">
+            <div class="text-danger myError d-none" id="authError">
+                Incorrect credentials!
+            </div>
+            <div class="input-group input-group-sm mb-1">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">User</span>
+                </div>
+                <input type="text" class="form-control err" aria-label="Username" aria-describedby="basic-addon1"
+                    id="user">
+            </div>
+            <div class="input-group input-group-sm mb-1">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon2">Pass</span>
+                </div>
+                <input type="password" class="form-control err" aria-label="Password" aria-describedby="basic-addon2"
+                    id="pass">
+            </div>
+            <div>
+                <div class="checkbox sm float-left">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input pointer" id="checkRememberMeAdmin" onclick="rememberMeToggled()">
+                        <label class="custom-control-label pointer" for="checkRememberMeAdmin">Remember me</label>
+                    </div>
+                </div>
+                <button class="btn btn-light btn-sm float-right" type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+
+    <script language="javascript">
+        window.onload = function () {
+            // Set correct value for rememberMe if in querystring
+            setRememberMe('checkRememberMe');
+            // Show error if any
+            showOnError('authError', 'err');
+        }
+    </script>
+</body>
+
+</html>

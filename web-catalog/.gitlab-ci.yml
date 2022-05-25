@@ -1,0 +1,100 @@
+.web-catalog:
+  tags:
+    - cache
+  variables:
+    DOCKER_DRIVER: overlay2
+    BASE_HREF: 'catalog'
+    PROJECT_SUBDIR: 'web-catalog'
+
+.npm_image: &npm_image
+  image: node:16.12.0-alpine3.13
+
+npm-dependencies-web-catalog:
+  <<: *npm_image
+  rules:
+    - if: '$MODE=="version-check" || $MODE=="badges"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $REBUILD'
+      when: never
+    - changes:
+      - web-catalog/yarn.lock
+  extends:
+   - .web-catalog
+  cache:
+    key: $CI_COMMIT_REF_SLUG-${PROJECT_SUBDIR}
+    paths:
+      - ${PROJECT_SUBDIR}/node_modules/
+  script:
+    - cd ${PROJECT_SUBDIR}
+    - yarn
+  stage: pre
+
+build-web-catalog:
+  <<: *npm_image
+  rules:
+    - if: '$MODE=="version-check" || $MODE=="badges"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $REBUILD'
+      when: on_success
+    - if: "$CI_COMMIT_TAG != null"
+      when: on_success
+    - changes:
+      - web-catalog/src/**/*
+      - web-catalog/*
+      when: on_success
+  extends:
+    - .web-catalog
+  cache:
+    key: $CI_COMMIT_REF_SLUG-${PROJECT_SUBDIR}
+    paths:
+      - ${PROJECT_SUBDIR}/node_modules/
+    policy: pull
+  before_script:
+    - cd ${PROJECT_SUBDIR}
+    - yarn --version
+  script:
+    - yarn run build --configuration production --base-href /${BASE_HREF}/
+  artifacts:
+    paths:
+      - ${PROJECT_SUBDIR}/docker/
+    expire_in: 2 weeks
+  stage: build
+
+docker-web-catalog:
+  needs:
+    - build-web-catalog
+  rules:
+    - if: '$MODE=="version-check" || $MODE=="badges"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "web" && $REBUILD'
+      when: on_success
+    - if: "$CI_COMMIT_TAG != null"
+      when: on_success
+    - changes:
+      - web-catalog/docker/**/*
+      - web-catalog/src/**/*
+      - web-catalog/*
+      when: on_success
+  extends:
+    - .web-catalog
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  before_script:
+    - if [ -z ${CI_COMMIT_TAG+x} ]; then export VERSION_TAG=$(sed -En 's/\s*<revision>(.*)<\/revision>/\1/p' pom.xml); else export VERSION_TAG=$CI_COMMIT_TAG; fi
+    - cd ${PROJECT_SUBDIR}
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY_IMAGE\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - echo "Dockerizing $CI_REGISTRY_IMAGE/$PROJECT_SUBDIR:$VERSION_TAG"
+    - /kaniko/executor --context docker --destination $CI_REGISTRY_IMAGE/$PROJECT_SUBDIR:$VERSION_TAG
+    - if [ -z ${CI_COMMIT_TAG+x} ]; then
+        /kaniko/executor --context docker --destination $CI_REGISTRY_IMAGE/$PROJECT_SUBDIR:$VERSION_TAG;
+      else
+        /kaniko/executor --context docker --destination $CI_REGISTRY_IMAGE/$PROJECT_SUBDIR:$VERSION_TAG --destination $CI_REGISTRY_IMAGE/$PROJECT_SUBDIR:$VERSION_TAG-SNAPSHOT;
+        echo "Dockerizing $CI_REGISTRY_IMAGE/$PROJECT_SUBDIR:latest";
+        sed -i -E 's/(<base href=").*(">)/\1\/\2/' docker/dist/index.html;
+        /kaniko/executor --context docker --destination $CI_REGISTRY_IMAGE/$PROJECT_SUBDIR:latest;
+      fi
+  dependencies:
+    - build-web-catalog
+  stage: package

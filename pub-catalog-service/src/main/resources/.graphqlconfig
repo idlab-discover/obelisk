@@ -1,0 +1,15 @@
+{
+  "name": "Obelisk Catalog GraphQL Schema",
+  "includes": ["schemas/**/*.graphql"],
+  "extensions": {
+    "endpoints": {
+      "Obelisk Catalog API": {
+        "url": "http://localhost:8080/catalog/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": false
+      }
+    }
+  }
+}

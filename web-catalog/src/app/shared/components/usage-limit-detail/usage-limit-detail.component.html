@@ -1,0 +1,120 @@
+<table class="table table-sm stats" *ngIf="details">
+    <thead class="thead-dark">
+        <th scope="col">Statistic</th>
+        <th scope="col">Progress</th>
+        <th scope="col" class="curr">Current/max</th>
+    </thead>
+    <thead class="thead-light">
+        <tr>
+            <th colspan="3" scope="col">Maximum hourly...</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="min">Primitive events stored</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxHourlyPrimitiveEventsStored')"
+                    [value]="current('maxHourlyPrimitiveEventsStored')"
+                    [max]="max('maxHourlyPrimitiveEventsStored')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxHourlyPrimitiveEventsStored')}}</td>
+        </tr>
+        <tr>
+            <td class="min">Primitive event queries</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxHourlyPrimitiveEventQueries')"
+                    [value]="current('maxHourlyPrimitiveEventQueries')"
+                    [max]="max('maxHourlyPrimitiveEventQueries')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxHourlyPrimitiveEventQueries')}}</td>
+        </tr>
+        <tr>
+            <td class="min">Primitive stats queries</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxHourlyPrimitiveStatsQueries')"
+                    [value]="current('maxHourlyPrimitiveStatsQueries')"
+                    [max]="max('maxHourlyPrimitiveStatsQueries')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxHourlyPrimitiveStatsQueries')}}</td>
+        </tr>
+        <tr>
+            <td class="min">Primitive events streamed</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxHourlyPrimitiveEventsStreamed')"
+                    [value]="current('maxHourlyPrimitiveEventsStreamed')"
+                    [max]="max('maxHourlyPrimitiveEventsStreamed')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxHourlyPrimitiveEventsStreamed')}}</td>
+        </tr>
+        <tr>
+            <td class="min">Complex events stored</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxHourlyComplexEventsStored')"
+                    [value]="current('maxHourlyComplexEventsStored')"
+                    [max]="max('maxHourlyComplexEventsStored')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxHourlyComplexEventsStored')}}</td>
+
+        </tr>
+        <tr>
+            <td class="min">Complex event queries</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxHourlyComplexEventQueries')"
+                    [value]="current('maxHourlyComplexEventQueries')"
+                    [max]="max('maxHourlyComplexEventQueries')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxHourlyComplexEventQueries')}}</td>
+        </tr>
+        <tr>
+            <td class="min">Complex stats queries</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxHourlyComplexStatsQueries')"
+                    [value]="current('maxHourlyComplexStatsQueries')"
+                    [max]="max('maxHourlyComplexStatsQueries')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxHourlyComplexStatsQueries')}}</td>
+        </tr>
+        <tr>
+            <td class="min">Complex events streamed</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxHourlyComplexEventsStreamed')"
+                    [value]="current('maxHourlyComplexEventsStreamed')"
+                    [max]="max('maxHourlyComplexEventsStreamed')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxHourlyComplexEventsStreamed')}}</td>
+        </tr>
+    </tbody>
+    <thead class="thead-light">
+
+        <tr>
+            <th colspan="3" scope="col">Maximum...</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="min">Data exports</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxDataExports')"
+                    [value]="current('maxDataExports')" [max]="max('maxDataExports')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxDataExports')}}</td>
+        </tr>
+        <tr>
+            <td class="min">Data export records</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxDataExportRecords')"
+                    [value]="current('maxDataExportRecords')" [max]="max('maxDataExportRecords')">
+                </ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxDataExportRecords')}}</td>
+        </tr>
+        <tr>
+            <td class="min">Data streams</td>
+            <td class="bar">
+                <ngb-progressbar [showValue]="true" [type]="type('maxDataStreams')"
+                    [value]="current('maxDataStreams')" [max]="max('maxDataStreams')"></ngb-progressbar>
+            </td>
+            <td class="curr min">{{currentOf('maxDataStreams')}}</td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,65 @@
+<div class="container-lg">
+    <div class="row pt-3">
+        <div class="col">
+            <div class="h5">Insights <help>Gather insights on how your dataset is growing over time</help></div>
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <ng-template #spinnerSizeTpl>
+            <div class="d-flex align-items-center">
+                <div class="spinner-grow spinner-grow-sm bg-primary"></div>
+                <div class="ml-1">Projecting dataset size...</div>
+            </div>
+        </ng-template>
+        <ng-template #spinnerEventTpl>
+            <div class="d-flex align-items-center">
+                <div class="spinner-grow spinner-grow-sm bg-primary"></div>
+                <div class="ml-1">Projecting total events...</div>
+            </div>
+        </ng-template>
+        <div class="col-6">
+            <apx-chart class="sizeChart" *ngIf="insights else spinnerSizeTpl"
+            [series]="sizeOpt.series" 
+            [chart]="sizeOpt.chart"
+                
+            [xaxis]="sizeOpt.xaxis" 
+            [yaxis]="sizeOpt.yaxis" 
+            [title]="sizeOpt.title" 
+            [stroke]="sizeOpt.stroke"
+            
+            [markers]="sizeOpt.markers" 
+            [tooltip]="sizeOpt.tooltip" 
+            [theme]="sizeOpt.theme"
+            
+            [legend]="sizeOpt.legend" 
+            [dataLabels]="sizeOpt.dataLabels" 
+            [grid]="sizeOpt.grid" 
+            [annotations]="sizeOpt.annotations">
+            </apx-chart>
+            <div class="text-muted" *ngIf="insights">Your dataset is growing <b>{{sizePerDay | filesize:1}} each day</b> on average.</div>
+        </div>
+        
+        <div class="col-6">
+            <apx-chart class="eventChart" *ngIf="insights else spinnerEventTpl"
+            [series]="eventOpt.series" 
+            [chart]="eventOpt.chart"
+            
+            [xaxis]="eventOpt.xaxis" 
+            [yaxis]="eventOpt.yaxis" 
+            [title]="eventOpt.title" 
+            [stroke]="eventOpt.stroke"
+            
+            [markers]="eventOpt.markers" 
+            [tooltip]="eventOpt.tooltip" 
+            [theme]="eventOpt.theme"
+            
+            [legend]="eventOpt.legend" 
+            [dataLabels]="eventOpt.dataLabels" 
+            [grid]="eventOpt.grid" 
+            [annotations]="eventOpt.annotations">
+        </apx-chart>
+        <div class="text-muted" *ngIf="insights">Your dataset is storing <b>{{eventsPerDay | number:'1.0-0':'nl-BE'}} events each day</b> on average.</div>
+    </div>
+</div>
+</div>

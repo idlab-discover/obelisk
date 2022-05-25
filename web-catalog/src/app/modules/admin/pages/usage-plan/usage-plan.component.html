@@ -1,0 +1,125 @@
+<div class="container-xl full">
+    <form [formGroup]="upForm">
+        <div class="row pt-3">
+            <div class="col form-group">
+                <label for="name">Name</label>
+                <div *ngIf="upForm?.value.defaultPlan" class="badge badge-success float-right help" ngbTooltip="Select another default in the Usage Plan overview." container="body" placement="bottom">Marked as default</div>
+                <div *ngIf="!upForm?.value.defaultPlan" class="badge badge-secondary float-right help" ngbTooltip="Select a default in the Usage Plan overview." container="body" placement="bottom">Not marked as default</div>
+                <input class="form-control" type="text" formControlName="name" placeholder="Usage Plan name" id="name">
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col form-group">
+                <label for="description">Description <span [style.color]="dLength > 80 ? 'darkorange' : 'black'">({{dLength}}/80)<span *ngIf="dLength > 80"><small> [might be truncated]</small></span></span></label> 
+                <textarea class="form-control form-control-sm" formControlName="description"
+                    placeholder="Short description" id="description" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col">
+                        <label for="users">Users</label>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">User amount</span>
+                            </div>
+                            <input type="number" min="0" formControlName="maxUsers" class="form-control">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum amount of users"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">User usage limit</span>
+                            </div>
+                            <ng-select class="myControl-sm" [items]="usageLimitSource.items$ | async" bindLabel="name"
+                                bindValue="id" placeholder="Default usage limit" formControlName="userUsageLimitId"
+                                [virtualScroll]="true" (scrollToEnd)="usageLimitSource.fetchMissingItems()"
+                                [typeahead]="usageLimitSource.queryRemote$" [trackByFn]="usageLimitSource.trackByFn"
+                                typeToSearchText="Please enter 2 or more characters" labelForId="users">
+                            </ng-select>
+                            <div class="input-group-append" ngbTooltip="Create new Usage Limit">
+                                <a class="btn btn-outline-secondary" (click)="goToCreateUsageLimit()">
+                                    <fa-icon icon="external-link-alt"></fa-icon>
+                                </a>
+                            </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top"
+                                        text="Usage Limits that will apply to users falling under this plan">
+                                    </app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col">
+                        <label for="clients">Clients</label>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Client amount</span>
+                            </div>
+                            <input type="number" min="0" formControlName="maxClients" class="form-control">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top" text="Maximum amount of clients"></app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Client usage limit</span>
+                            </div>
+                            <ng-select class="myControl-sm" [items]="usageLimitSource.items$ | async" bindLabel="name"
+                                bindValue="id" placeholder="Default usage limit" formControlName="clientUsageLimitId"
+                                [virtualScroll]="true" (scrollToEnd)="usageLimitSource.fetchMissingItems()"
+                                [typeahead]="usageLimitSource.queryRemote$" [trackByFn]="usageLimitSource.trackByFn"
+                                typeToSearchText="Please enter 2 or more characters" labelForId="clients">
+                            </ng-select>
+                            <div class="input-group-append" ngbTooltip="Create new Usage Limit">
+                                <a class="btn btn-outline-secondary" (click)="goToCreateUsageLimit()">
+                                    <fa-icon icon="external-link-alt"></fa-icon>
+                                </a>
+                            </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <app-help placement="top"
+                                        text="Usage Limits that will apply to clients falling under this plan">
+                                    </app-help>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-md-12">
+                <button class="btn btn-sm btn-dark" (click)="reset()">Reset</button>
+                <button class="btn btn-sm btn-warning float-right" (click)="save()">Save</button>
+            </div>
+        </div>
+    </form>
+</div>

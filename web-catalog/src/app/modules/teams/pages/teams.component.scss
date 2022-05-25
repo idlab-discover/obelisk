@@ -1,0 +1,16 @@
+.ds-cont {
+    display: grid;
+    grid-template-rows: 100%;
+    grid-template-columns: auto 1fr;
+    height: 100%;
+  
+    .ds {
+      overflow: auto;
+      overflow-y: overlay;
+    }
+  
+    .last {
+      box-shadow: inset 0 1px 0 #e5e5e5;
+    }
+  }
+  

@@ -1,0 +1,60 @@
+<div class="modal-header">
+    <h5 class="modal-title">Request access to <samp>{{dataset?.name}}</samp></h5>
+    <div class="close pointer" aria-label="Close" (click)="dismiss()"><span aria-hidden="true">&times;</span></div>
+</div>
+<div class="modal-body">
+    <form [formGroup]="requestForm">
+        <div class="row mb-3" *ngIf="requestForm.get('team')">
+            <div class="col">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Request access as</span>
+                    </div>
+                    <ng-select class="myControl-sm" [items]="teams" bindValue="id" bindLabel="name" placeholder="please choose a team" formControlName="team" [compareWith]="teamCompareFn()"></ng-select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" [formGroup]="type">
+                <label for="type" class="d-block">What sort of access are you requesting?</label>
+                <div class="ml-3 form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="defaultCheck1" formControlName="READ">
+                    <label class="form-check-label" for="defaultCheck1">
+                        Read <app-help text="Querying, streaming & exporting data"></app-help>
+                    </label>
+                </div>
+                <div class="ml-3 form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="defaultCheck2" formControlName="WRITE">
+                    <label class="form-check-label" for="defaultCheck2">
+                        Write <app-help text="Ingesting data to the dataset"></app-help>
+                    </label>
+                </div>
+                <div class="ml-3 form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="defaultCheck3" formControlName="MANAGE">
+                    <label class="form-check-label" for="defaultCheck3">
+                        Manage <app-help text="Administration-level rights"></app-help>
+                    </label>
+
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <label for="message">Leave a message for the dataset owner(s)</label>
+                <textarea class="form-control" id="message" rows="3"
+                    placeholder="Reason why you are requesting access..." formControlName="message"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer" *ngIf="viewMode==='input'; else viewFooter">
+    <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">Close</button>
+    <button type="button" class="btn btn-primary" (click)="close()" [disabled]="requestForm.invalid" ngbAutoFocus>Send</button>
+    
+</div>
+<ng-template #viewFooter>
+    <div class="modal-footer justify-content-between">
+        <button #revokeBtn type="button" class="btn btn-outline-danger" (click)="close()">Revoke</button>
+        <button type="button" class="btn btn-primary" (click)="dismiss()" ngbAutoFocus>Close</button>
+    </div>
+</ng-template>

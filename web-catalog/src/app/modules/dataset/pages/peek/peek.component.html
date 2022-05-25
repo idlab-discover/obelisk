@@ -1,0 +1,89 @@
+<div class="container-xl full">
+  <div class="row pt-2">
+    <div class="col">
+      <div class="badges" *ngIf="dataset">
+        <div class="metrics">metrics: {{(dataset.metaStats?.nrOfMetrics | nr:1)|| '-'}}</div>
+        <div class="events">events: {{(dataset.metaStats?.nrOfEvents | nr:1) || '-'}}</div>
+        <div class="size">size: {{(dataset.metaStats?.approxSizeBytes | filesize:0) || '-'}}</div>
+        <app-id [id]="dataset?.id"></app-id>
+        <div [class]="dataset.published ? 'published' : 'private'">
+          <fa-icon [icon]="dataset.published ? 'unlock' : 'lock'"></fa-icon>
+          {{(dataset.published ? 'open' : 'private')|| '-'}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <div class="col ">
+      <ngb-alert type="warning" (closed)="onCloseAlert()" [class.d-none]="alertIsClosed">
+        You are not a member of this dataset and can only see limited information. To see more, consider
+        <a (click)="scrollDown()">requesting access</a> below.
+      </ngb-alert>
+    </div>
+  </div>
+  <div class="row pt-1">
+    <div class="col">
+      <div class="text-muted">{{dataset?.description}}</div>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <div class="col graphs">
+      <apx-chart #ingestChart class="in" [series]="ingestOpt.series" [chart]="ingestOpt.chart" [xaxis]="ingestOpt.xaxis"
+        [yaxis]="ingestOpt.yaxis" [title]="ingestOpt.title" [stroke]="ingestOpt.stroke" [subtitle]="ingestOpt.subtitle"
+        [markers]="ingestOpt.markers" [tooltip]="ingestOpt.tooltip" [theme]="ingestOpt.theme"
+        [legend]="ingestOpt.legend" [dataLabels]="ingestOpt.dataLabels">
+      </apx-chart>
+
+      <apx-chart #consumeChart class="out" [series]="consumeOpt.series" [chart]="consumeOpt.chart"
+        [xaxis]="consumeOpt.xaxis" [yaxis]="consumeOpt.yaxis" [title]="consumeOpt.title" [stroke]="consumeOpt.stroke"
+        [subtitle]="consumeOpt.subtitle" [markers]="consumeOpt.markers" [tooltip]="consumeOpt.tooltip"
+        [theme]="consumeOpt.theme" [legend]="consumeOpt.legend" [dataLabels]="consumeOpt.dataLabels"></apx-chart>
+    </div>
+  </div>
+
+
+  <div class="row pt-4 pb-3">
+    <div class="col requests shadow p-3 bg-white rounded">
+      <div class="title">
+        <h5 class="text-primary">Request access</h5>
+        <p class="text-muted">To see more of this dataset you will have to apply for membership.</p>
+      </div>
+
+      <div class="pending text-secondary lead mb-2" *ngIf="nrOfPendingReqs">
+        <strong>There {{nrOfPendingReqs==1 ? 'is' : 'are'}} {{nrOfPendingReqs}} active
+          pending requests</strong>
+      </div>
+
+      <div class="sAction">
+        <button *ngIf="nrOfPendingReqs > 1" class="btn btn-outline-secondary" (click)="goToMyAccessRequests()">
+          Go to my pending requests
+        </button>
+        <button *ngIf="nrOfPendingReqs === 1" class="btn btn btn-outline-secondary mt-2 sAction"
+          (click)="showPendingAccessRequest(pendingAccessRequests[0])">
+          Show pending request
+        </button>
+      </div>
+
+      <div class="pAction">
+        <div *ngIf="!pendingForUser&&viableTeamsLeft" ngbDropdown #myDrop2="ngbDropdown">
+          <button class="btn btn-lg btn-primary" id="dropdownManual" ngbDropdownAnchor (focus)="myDrop2.open()">Request
+            access</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownManual">
+            <button ngbDropdownItem (click)="requestAccessAsUser()">...for yourself</button>
+            <button ngbDropdownItem (click)="requestAccessAsTeam()">...for another team</button>
+          </div>
+        </div>
+
+        <button *ngIf="!pendingForUser&&!viableTeamsLeft" class="btn btn-lg btn-primary"
+          (click)="requestAccessAsUser()">
+          Request access
+        </button>
+
+        <button *ngIf="pendingForUser&&viableTeamsLeft" class="btn btn-lg btn-primary" (click)="requestAccessAsTeam()">
+          Request access for your team
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

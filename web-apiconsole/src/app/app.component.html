@@ -1,0 +1,33 @@
+<div class="root">
+  <mat-toolbar color="primary">
+    <div class="logo">
+      <img src="./assets/img/logo.svg">
+      {{title}}
+    </div>
+    <div class="nav" routerLink="home" routerLinkActive="active">GraphiQL</div>
+    <div class="nav" routerLink="http" routerLinkActive="active">Http client</div>
+    <span class="fill"></span>
+    <div class="version">{{version}}</div>
+    <mat-button-toggle-group class="toggles" name="login" *ngIf="!isLoggedIn(); else logoutRef">
+      <!-- <mat-button-toggle value="client"  disabled>
+        <mat-icon>desktop_windows</mat-icon> Login
+      </mat-button-toggle> -->
+      <mat-button-toggle value="user" (click)="login()">
+        <mat-icon>account_circle</mat-icon> Login
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </mat-toolbar>
+  <router-outlet></router-outlet>
+  <div class="check" *ngIf="!router.navigated">
+    Checking login...
+  </div>
+</div>
+<ng-template #logoutRef>
+  <mat-button-toggle-group class="toggles" name="login">
+    <mat-button-toggle value="copyToken" (click)="copyToken()">
+      <mat-icon id="copy-token-icon">file_copy</mat-icon> Copy token
+    </mat-button-toggle>
+    <mat-button-toggle value="logout" (click)="logout()"><img [src]="getPictureUrl()" class="avatar" /> Logout
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</ng-template>

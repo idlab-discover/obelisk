@@ -1,0 +1,85 @@
+.grantTag {
+    font-weight: 600;
+    padding: 0 5px;
+}
+
+table.v-align-middle {
+    td {
+        vertical-align: middle;
+    }
+}
+
+.viewer {
+    padding: 0 0.8rem 0.8rem;
+    border-left: 1px solid #eee;
+}
+
+.info {
+    padding: 0 0.8rem 0.8rem;
+    border-left: 1px solid #eee;
+
+    dl {
+        dt {
+            border-top: 1px solid #eee;
+            padding-top: 0.4rem;
+            font-size: small;
+
+            &:first-of-type {
+                border-top: none;
+            }
+        }
+
+        dd {
+            font-size: small;
+        }
+
+        color: #999;
+
+        .active {
+            color: black;
+        }
+    }
+}
+
+.user,
+.team {
+    &:last-of-type {
+        margin-bottom: unset;
+    }
+
+    &:first-of-type {
+        margin-top: unset;
+    }
+
+    border-bottom: 1px solid #eee;
+}
+
+.btns {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    column-gap: 10px;
+    justify-items: left;
+}
+
+.accesslist {
+    display: grid;
+    grid-template-areas:
+        "header filter"
+        "list list";
+    grid-template-columns: auto 1fr;
+    column-gap: 40px;
+    align-items: baseline;
+
+    h6 {
+        grid-area: header;
+    }
+
+    form {
+        grid-area: filter;
+        justify-self: stretch;
+    }
+
+    cdk-virtual-scroll-viewport {
+        grid-area: list;
+    }
+}

@@ -1,0 +1,14 @@
+<div class="client-detail" [ngClass]="getCss()" >
+    <div class="avatar"><img [src]="getAvatar()"></div>
+    <div class="name">{{client?.name}}
+        
+    </div>
+    <div class="extras" *ngIf="client.confidential || client.onBehalfOfUser">
+        <help *ngIf="client.confidential" icon='user-secret'>confidential</help>
+        <help *ngIf="client.onBehalfOfUser" icon='exchange-alt'>authenticate as obelisk user</help>
+    </div> 
+
+    <div class="info">
+        <info-client [info]="client" asIcon="info-circle"></info-client>
+    </div>
+</div>

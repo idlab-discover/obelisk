@@ -1,0 +1,10 @@
+forceRecreate: true
+
+oblxConfig:
+  host: dev.obelisk.ilabt.imec.be
+
+image:
+  pullPolicy: Always
+
+
+

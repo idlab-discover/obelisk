@@ -1,0 +1,25 @@
+.btns {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    justify-items: start;
+    column-gap: 6px;
+}
+
+.container-fluid.full {
+    position: relative;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr ;
+}
+
+.myForm {
+    display:grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    position: relative;
+
+    textarea {
+        height: 100%;
+        resize: none;
+    }
+}

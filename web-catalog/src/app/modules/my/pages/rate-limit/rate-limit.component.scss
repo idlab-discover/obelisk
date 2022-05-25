@@ -1,0 +1,25 @@
+.table {
+    .bar {
+        vertical-align: middle;
+    }
+    .curr {
+        text-align: right;
+    }
+}
+
+.client {
+    &:last-of-type {
+        margin-bottom: unset;
+    }
+
+    &:first-of-type {
+        margin-top: unset;
+    }
+
+    border-bottom: 1px solid #eee;
+}
+
+.viewer {
+    padding: 0 0.8rem 0.8rem;
+    border-left: 1px solid #eee;
+}

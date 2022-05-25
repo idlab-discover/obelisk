@@ -1,0 +1,74 @@
+<div class="ds-cont">
+    <sidebar>
+        <div class="up">
+            <sb-btn link="./profile" help="My Account">
+                <sb-icon icon="user-circle"></sb-icon>
+                <sb-label text="My Account"></sb-label>
+            </sb-btn>
+            <div class="divider"></div>
+            <sb-btn link="./teams" help="My Teams">
+                <sb-icon icon="sitemap"></sb-icon>
+                <sb-label text="My Teams"></sb-label>
+            </sb-btn>
+            <sb-btn link="./datasets" help="My Datasets">
+                <sb-icon icon="database"></sb-icon>
+                <sb-label text="My Datasets"></sb-label>
+            </sb-btn>
+            <sb-btn link="./clients" help="My Clients">
+                <sb-icon icon="tablet-alt"></sb-icon>
+                <sb-label text="My Clients"></sb-label>
+            </sb-btn>
+
+            <div class="divider"></div>
+
+            <sb-btn link="./accessrequests" help="My Access Requests">
+                <sb-icon icon="hands-helping"></sb-icon>
+                <sb-label text="My Access Requests"></sb-label>
+            </sb-btn>
+
+            <sb-btn link="./ratelimit" help="My Rate Limits">
+                <sb-icon icon="tachometer-alt"></sb-icon>
+                <sb-label text="My Rate limits"></sb-label>
+            </sb-btn>
+
+            <sb-btn link="./streams" help="My Streams">
+                <sb-icon icon="stream"></sb-icon>
+                <sb-label text="My Streams"></sb-label>
+            </sb-btn>
+             
+            <sb-btn link="./exports" help="My Exports">
+                <sb-icon icon="file-export"></sb-icon>
+                <sb-label text="My Exports"></sb-label>
+            </sb-btn>
+            
+            <div class="divider"></div>
+            
+            <sb-btn link="./removal" help="Data Removal">
+                <sb-icon icon="trash"></sb-icon>
+                <sb-label text="Data Removal"></sb-label>
+            </sb-btn>            
+
+            <div class="divider"></div>
+            <sb-btn link="./tickets" help="My Tickets">
+                <sb-icon icon="headset"></sb-icon>
+                <sb-label text="My Tickets"></sb-label>
+            </sb-btn> 
+           
+            <!-- <div class="divider"></div>
+            <sb-btn link="./settings" help="My Settings">
+                <sb-icon icon="user-cog"></sb-icon>
+                <sb-label text="My Settings"></sb-label>
+            </sb-btn> -->
+            
+        </div>        
+        <div class="down">
+            <sb-btn help="Toggle sidebar" sbToggle>
+                <sb-icon icon="angle-double-right" iconExpanded="angle-double-left"></sb-icon>
+                <sb-label text="Collapse sidebar"></sb-label>
+            </sb-btn>
+        </div>
+    </sidebar>
+    <div class="ds" [@fadeAnimation]="o.isActivated ? o.activatedRoute : ''">
+        <router-outlet #o="outlet"></router-outlet>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+@import '/src/common';
+
+.tile {
+    display: grid;
+    grid-template-rows: 1fr 20px;
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-items:center;
+    justify-content: stretch;
+    padding: 4px 8px;
+    // background-color: theme-color('primary');
+    color: white;
+
+    height: 50px;
+
+    .nr {
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    .caption {
+        font-size: 14px;
+        line-height: 14px;
+        align-self: flex-start;
+    }
+}

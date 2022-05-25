@@ -1,0 +1,9 @@
+.monolith:
+  variables:
+    PROJECT_SUBDIR: 'monolith'
+
+build-monolith:
+  extends:
+    - .monolith
+    - .maven-run-module
+  stage: build:lib

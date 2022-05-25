@@ -1,0 +1,34 @@
+div.bg {
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-size: cover;
+  background-image: url('/src/assets/img/bg_landscape.jpg');
+  background-color: #5e2121;
+  background-blend-mode: soft-light;
+
+  div.cont {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+    grid-row-gap: 14px;
+    margin-top: -100px;
+
+    div,
+    h1 {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 1px 1px black;
+    }
+
+    h1 {
+      font-size: 36px;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+            <h5>{{user?.email}}</h5>
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            <form [formGroup]="userForm" (submit)="save()">
+                <table class="table table-sm">
+                    <tr>
+                        <th scope="row" class="col-3">id</th>
+                        <td>{{user?.id}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="col-3">first name</th>
+                        <td>{{user?.firstName}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="col-3">last name</th>
+                        <td>{{user?.lastName}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="col-3">email</th>
+                        <td>{{user?.email}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="col-3">hide origin</th>
+                        <td><span [innerHTML]="user?.hideOrigin | checkmark:true"></span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="col-3">admin</th>
+                        <td><span [innerHTML]="user?.platformManager | checkmark:true"></span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="col-3">usage limit <help class="pl-1" (click)="goToUsageLimits()" icon="external-link-alt" cursor="pointer">Manage usage limits</help></th>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend" ngbTooltip="View details">
+                                    <button class="btn btn-outline-info" type="button" (click)="viewSelectedUsageLimit()"><fa-icon icon="eye"></fa-icon></button>
+                                </div>
+                                <ng-select class="myControl-sm" [items]="usageLimitSource?.items$ | async"
+                                    bindLabel="name" placeholder="Default usage limit"
+                                    formControlName="usageLimitId" [virtualScroll]="true"
+                                    (scrollToEnd)="usageLimitSource?.fetchMissingItems()"
+                                    [typeahead]="usageLimitSource?.queryRemote$" [trackByFn]="usageLimitSource?.trackByFn"
+                                    [compareWith]="usageLimitSource?.compareWith" (close)="usageLimitSource?.resetQuery()"
+                                    typeToSearchText="Please enter 2 or more characters" labelForId="usageLimit">
+                                </ng-select>
+                                <div class="input-group-append" ngbTooltip="Create new Usage Limit">
+                                    <button class="btn btn-primary" type="submit" [disabled]="isSaveDisabled()">Save</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>

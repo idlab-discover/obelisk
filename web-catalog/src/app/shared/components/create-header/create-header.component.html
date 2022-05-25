@@ -1,0 +1,57 @@
+<ng-template #defaultTemplate>
+    <ng-content></ng-content>
+</ng-template>
+
+<div>
+
+    <div [ngbCollapse]="collapsed" [animation]=true class="row">
+        <div class="col tweaked">
+            <div class="row pt-3">
+                <div class="col-4">
+                    <h5>{{createTitle}}</h5>
+                </div>
+                <div class="col text-right">
+                    <button class="btn btn-sm btn-outline-{{btnStyle}}" (click)="collapsed = !collapsed">
+                        <span>
+                            <fa-icon icon="chevron-down"></fa-icon> {{label}}
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="row pt-2 lined-{{btnStyle}}">
+                <div class="col">
+                    <ng-container [ngTemplateOutlet]="template || defaultTemplate"></ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="d-none d-md-block col-md-6 col-lg-7 col-xl-8">
+            <ng-container *ngIf="title then titleTpl else descTpl"></ng-container>
+            <ng-template #titleTpl>
+                <h5>{{title}} <app-help *ngIf="help" [text]="help"></app-help></h5>
+            </ng-template>
+            <ng-template #descTpl>
+                <div class="info text-truncate">{{help}}</div>
+            </ng-template>
+        </div>
+        <div class="col col-md searchAndAdd">
+            <form [formGroup]="searchForm" *ngIf="filterSource">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Filter</span>
+                    </div>
+                    <input type="text" class="form-control" formControlName="search">
+                </div>
+            </form>
+            <button *ngIf="collapsed" class="btn btn-sm" [ngClass]="mainBtnStyle" (click)="collapsed = !collapsed">
+                <span>
+                    <fa-icon [icon]="icon"></fa-icon> {{label}}
+                </span>
+            </button>
+        </div>
+    </div>
+
+</div>

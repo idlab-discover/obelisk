@@ -1,0 +1,42 @@
+# Default values for oblx-pub-streaming.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+forceRecreate: false
+
+replicaCount: 1
+
+oblxConfig:
+  commonsConfigMap: oblx-commons-config
+  host: obelisk.ilabt.imec.be
+  basePath: /docs
+  oblxApiPrefix: /api/v3
+  oblxAuthEndpoint: /auth
+  clientBasePath: /catalog
+  clientId: 0
+
+image:
+  repository: gitlab.ilabt.imec.be:4567/ibcndevs/obelisk/obelisk
+  name: mkdocs
+  pullPolicy: IfNotPresent
+
+# Set the imagePullSecret used to access the private Obelisk Container Registry (MUST BE AVAILABLE IN THE DEPLOYMENT NAMESPACE)
+imagePullSecrets:
+  - name: oblx-commons-docker-reg-creds
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podSecurityContext: {}
+
+securityContext: {}

@@ -1,0 +1,87 @@
+site_name: Obelisk documentation
+
+theme:
+  name: material
+  icon:
+    logo: fontawesome/solid/book
+  palette:
+    scheme: obelisk
+  features:
+    - navigation.instant
+
+use_directory_urls: false
+
+nav:
+  - 'index.md'
+  - 'concepts.md'
+  - 'Technical Reference':
+      - 'tech_reference/data_format.md'
+      - 'tech_reference/queries.md'
+      - 'tech_reference/filters.md'
+      - 'tech_reference/standards_compatibility.md'
+  - 'Guides':
+      - 'guides/auth.md'
+      - 'guides/data_ingestion.md'
+      - 'guides/data_querying.md'
+      - 'guides/data_stream.md'
+      - 'guides/data_export.md'
+  - Client Libraries: 'clients.md'
+  - FAQ: 'faq.md'
+
+extra_css:
+  - stylesheets/obelisk-theme.css
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/sorts/tablesort.number.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/sorts/tablesort.date.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/sorts/tablesort.dotsep.min.js
+  - javascripts/tables.js
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.saneheaders
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+plugins:
+  - macros
+  - search
+
+
+extra:
+  obelisk:
+    name: "Obelisk"
+    url: "https://rc.obelisk.ilabt.imec.be"
+  catalog:
+    name: "Obelisk Catalog UI"
+    url: "https://rc.obelisk.ilabt.imec.be/catalog"
+  apidocs:
+    name: "API Documentation"
+    url: "https://obelisk.docs.apiary.io"
+  contact:
+    name: "Contact"
+    url: "https://rc.obelisk.ilabt.imec.be/catalog/home(x:ticket/new)"

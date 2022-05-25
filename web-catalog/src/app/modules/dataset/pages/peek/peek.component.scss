@@ -1,0 +1,121 @@
+@import "/src/common";
+
+.description {
+  position: absolute;
+  color: #eee;
+  font-size: 18pt;
+  left: 40px;
+  bottom: 20px;
+}
+
+.badges {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr auto;
+  column-gap: 6px;
+  justify-items: right;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  div {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 10pt;
+    font-weight: bold;
+    color: white;
+
+    fa-icon {
+      padding: 2px 4px;
+    }
+  }
+
+  .published {
+    font-weight: unset;
+    background-color: rgb(24, 168, 101);
+    border-color: rgb(17, 128, 76);
+    padding-left: 0px;
+    fa-icon {
+      border-color: rgb(24, 168, 101);
+      color: white !important;
+    }
+  }
+
+  .private {
+    font-weight: unset;
+    background-color: rgb(204, 73, 46);
+    border-color: rgb(129, 70, 58);
+    padding-left: 0px;
+    fa-icon {
+      border-color: rgb(204, 73, 46);
+      color: white !important;
+    }
+  }
+
+  .metrics {
+    background-color: rgb(195, 138, 127);
+    border-color: rgb(175, 100, 85);
+  }
+
+  .events {
+    background-color: rgb(159, 134, 135);
+    border-color: rgb(133, 105, 106);
+  }
+  .size {
+    background-color: rgb(109, 130, 147);
+    border-color: rgb(85, 101, 115);
+  }
+}
+
+.graphs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  row-gap: 10px;
+  column-gap: 10px;
+}
+
+ngb-alert {
+  a {
+    font-weight: bold;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.requests {
+  border: 1px dashed theme-color("primary");
+  margin: 16px;
+
+  display: grid;
+  grid-template-areas:
+    "title pAction"
+    "pending pAction"
+    "sAction pAction";
+  grid-template-rows: auto auto auto;
+  grid-template-columns: auto 1fr;
+
+  .title {
+    grid-area: title;
+  }
+
+  .pending {
+    grid-area: pending;
+  }
+
+  .pAction {
+    grid-area: pAction;
+    justify-self: right;
+    align-self: center;
+  }
+
+  .sAction {
+    grid-area: sAction;
+  }
+}

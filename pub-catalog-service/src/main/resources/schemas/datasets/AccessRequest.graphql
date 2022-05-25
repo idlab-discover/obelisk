@@ -1,0 +1,41 @@
+type AccessRequest {
+    # Id of the access request
+    id: String!
+    # Timestamp (UTC) of when the request was created
+    timestamp: Long!
+    # User that made the request
+    user: User!
+    # If the request was made for a Team, this attribute will reference that Team
+    team: Team
+    # Dataset the request is for
+    dataset: Dataset!
+    # Permissions that are requested
+    type: [Permission!]!
+    # An optional message provided by the requesting user
+    message: String
+    status: AccessRequestStatus!
+}
+
+type AccessRequestMutation {
+    # Accept the access request (and removes it)
+    accept(roleIds: [String!]): AccessRequestResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER])
+    # Remove the access request
+    remove: AccessRequestResponse! @restricted(level: [DATASET_MANAGER, PLATFORM_MANAGER, TEAM_MANAGER, ME])
+}
+
+input RequestAccessInput {
+    # Optional indication of the type of access you are requesting (as a list of Permissions). Defaults to no particular preference (i.e. let the Dataset manager decide).
+    type: [Permission!]
+    # Optional message for the request: allows the user to motivate why he/she needs the requested permissions.
+    message: String
+}
+
+enum AccessRequestStatus {
+    PENDING, APPROVED, DENIED
+}
+
+type AccessRequestResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: AccessRequest
+}

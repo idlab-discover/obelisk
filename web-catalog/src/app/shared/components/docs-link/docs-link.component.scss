@@ -1,0 +1,53 @@
+@import "/src/common";
+
+.docs-link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto;
+    column-gap: 10px;
+    padding: 0 10px;
+    align-items: center;
+    // border: 1px solid theme-color-level("primary", -3);
+    // color: theme-color-level("primary", -3);
+
+    .caption {
+        font-size: 15px;
+    }
+
+    // &:hover {
+    //     border: 1px solid theme-color-level("primary", 0);
+    //     color: theme-color-level("primary", 0);
+    //     fill:  theme-color-level("primary", 0);
+    //     cursor: pointer;
+    // }
+
+    help {
+        align-self: center;
+        justify-self: flex-end;
+    }
+}
+
+.primary {
+    border: 1px solid theme-color-level("primary", -3);
+    color: theme-color-level("primary", -3);
+    
+    &:hover {
+        border: 1px solid theme-color-level("primary", 0);
+        color: theme-color-level("primary", 0);
+        fill:  theme-color-level("primary", 0);
+        cursor: pointer;
+    }
+}
+
+.secondary {
+    border: 1px solid theme-color-level("secondary", -3);
+    color: theme-color-level("secondary", -3);
+    
+    &:hover {
+        border: 1px solid theme-color-level("secondary", 0);
+        color: theme-color-level("secondary", 0);
+        fill:  theme-color-level("secondary", 0);
+        cursor: pointer;
+    }
+}
+

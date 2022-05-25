@@ -1,0 +1,76 @@
+type UsagePlan {
+    id: String!
+    name: String! @searchable
+    description: String @searchable
+    defaultPlan: Boolean! @searchable
+    maxUsers: Int!
+    userUsageLimitAssigned: Boolean!
+    userUsageLimit: UsageLimit
+    maxClients: Int!
+    clientUsageLimitAssigned: Boolean!
+    clientUsageLimit: UsageLimit
+}
+
+type UsageLimit {
+    # Limit id, can be null if the limit is virtual (e.g. aggregated limits for a User or Client based on team relations).
+    id: String
+    name: String! @searchable
+    description: String @searchable
+    defaultLimit: Boolean! @searchable
+    values: JSON!
+}
+
+type UsagePlanMutation {
+    update(input: UpdateUsagePlanInput!): UsagePlanResponse! @restricted(level: [PLATFORM_MANAGER])
+    makeDefault: UsagePlanResponse! @restricted(level: [PLATFORM_MANAGER])
+    remove: UsagePlanResponse! @restricted(level: [PLATFORM_MANAGER])
+}
+
+type UsageLimitMutation {
+    update(input: UpdateUsageLimitInput!): UsageLimitResponse! @restricted(level: [PLATFORM_MANAGER])
+    makeDefault: UsageLimitResponse! @restricted(level: [PLATFORM_MANAGER])
+    remove: UsageLimitResponse! @restricted(level: [PLATFORM_MANAGER])
+}
+
+
+input CreateUsagePlanInput {
+    name: String!
+    description: String
+    maxUsers: Int!
+    userUsageLimitId: String
+    maxClients: Int!
+    clientUsageLimitId: String
+}
+
+input UpdateUsagePlanInput {
+    name: String
+    description: String
+    maxUsers: Int
+    userUsageLimitId: String
+    maxClients: Int
+    clientUsageLimitId: String
+}
+
+type UsagePlanResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: UsagePlan
+}
+
+input CreateUsageLimitInput {
+    name: String!
+    description: String
+    values: JSON!
+}
+
+input UpdateUsageLimitInput {
+    name: String
+    description: String
+    values: JSON
+}
+
+type UsageLimitResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: UsageLimit
+}

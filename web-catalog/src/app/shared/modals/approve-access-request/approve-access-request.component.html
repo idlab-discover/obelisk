@@ -1,0 +1,77 @@
+<div class="modal-header">
+    <h5 class="modal-title">Access request by {{title}}</h5>
+    <div class="close pointer" aria-label="Close" (click)="dismiss()"><span aria-hidden="true">&times;</span></div>
+</div>
+<div class="modal-body">
+
+    <div class="row">
+        <div class="col middle-section">
+
+            <div class="msg border-right">
+                <strong>Message</strong>
+                <pre class="message">{{ar?.message || '(They did not leave a message...)'}}</pre>
+            </div>
+            <div class="requested">
+                <strong>Requested by</strong>
+                <app-user-detail [user]="ar?.user" [hoverClass]="'d'"></app-user-detail>
+                <span *ngIf="ar?.team">On behalf of <fa-icon icon="sitemap" class="fa-sm mr-1"></fa-icon> <strong>Team
+                        "{{ar?.team.name}}"</strong>
+                    <app-help *ngIf="ar.team.description" [text]="ar?.team.description"></app-help>
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row mt-4">
+        <div class="col">
+            <div><strong>Requested permissions on dataset (<samp>{{ar?.dataset?.name}}</samp>):</strong></div>
+            <div *ngIf="ar?.type?.length == 0"><i>No special permissions asked</i></div>
+            <div class="badge badge-secondary mr-2" *ngFor="let t of ar?.type">{{t}}</div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <form [formGroup]="roleForm">
+                <div><strong>Grant roles <app-help text="When approving the request, immediatly grant these roles">
+                        </app-help></strong></div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Roles</span>
+                    </div>
+                    <ng-select class="myControl-sm" [items]="roleSource?.items$ | async" bindLabel="name"
+                        placeholder="Choose roles" formControlName="roles" [virtualScroll]="true"
+                        (scrollToEnd)="roleSource?.fetchMissingItems()" [typeahead]="roleSource?.queryRemote$"
+                        [trackByFn]="roleSource?.trackByFn" [compareWith]="roleSource?.compareWith"
+                        typeToSearchText="Choose roles" [multiple]="true" labelForId="roles" appendTo="body"
+                        [closeOnSelect]="false" (close)="roleSource?.resetQuery()">
+                        <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                            <span class="ng-value-label tag">{{item.name}}</span>
+                            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index"
+                            let-search="searchTerm">
+                            <div class="d-flex justify-content-between">
+                                <div><input id="item-{{index}}" type="checkbox" [checked]="item$.selected" />
+                                    {{item.name}}</div>
+                                <div>
+                                    <div class="badge badge-secondary mr-2" *ngFor="let t of item.grant.permissions">
+                                        {{t}}</div>
+                                </div>
+                            </div>
+                            <div class="text-muted"><small><em>{{item.description}}</em></small></div>
+                        </ng-template>
+                    </ng-select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="decline()">Decline</button>
+
+    <button type="button" class="btn btn-outline-secondary" (click)="dismiss()" ngbAutoFocus>Close</button>
+    <button type="button" class="btn btn-success" (click)="close()">Approve</button>
+</div>

@@ -1,0 +1,90 @@
+@import "/src/common";
+
+.my-avatar {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-content: center;
+  align-items: center;
+  grid-template-rows: auto;
+  height: 40px;
+}
+
+.brand {
+  position: absolute;
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 20pt;
+  z-index: 1;
+  left: 0;
+  background-color: #fafafa;
+  padding: 5px 18px 4px 12px;
+  border-radius: 0 0px 6px 0;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.parent {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  position: relative;
+
+  .header {
+    position: relative;
+  }
+
+  .pages {
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.ticket-knob {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  cursor: pointer;
+
+  border-radius: 50%;
+  background-color: theme-color("secondary");
+  width: 60px;
+  height: 60px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+
+  z-index: 300;
+}
+
+.ticket-outlet {
+  position: fixed;
+  bottom: 15px;
+  right: 100px;
+  left: calc(100vw - clamp(400px, 40vw, 600px) - 100px);
+  top: calc(100vh - 260px - 15px);
+  border: 1px solid theme-color("secondary");
+  background-color: white;
+  padding: 0.8em 0px;
+  transition: ease-in-out 400ms all; 
+
+  z-index: 300;
+
+  div.close {
+    position: absolute;
+    padding: 0.2em 12px 5px 5px;
+    right: 0;
+    top: 0;
+    z-index: 300;
+  }
+
+  &.large {
+    width: unset;
+    height: unset;
+    left: 100px;
+    right: 100px;
+    bottom: 15px;
+    top: 155px;
+    transition: ease-in-out 400ms all; 
+  }
+
+}

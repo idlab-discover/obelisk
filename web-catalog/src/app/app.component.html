@@ -1,0 +1,22 @@
+<div class="parent">
+  <div class="header">
+    <div class="container-fluid">
+      <app-header [datasetId]="activeDataset" [mode]="mode"></app-header>
+    </div>
+  </div>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+  <div class="pages" [@fadeAnimation]="outlet.isActivated ? outlet.activatedRoute : ''">
+    <router-outlet #outlet="outlet"></router-outlet>
+  </div>
+</div>
+<div class="ticket-knob" ngbTooltip="New ticket" [routerLink]="[{outlets: {x: 'ticket' } }]"
+  (click)="toggleTicketFrame($event)">
+  <fa-icon class="fa-2x" icon="headset" [style.color]="'white'"></fa-icon>
+</div>
+
+<div class="ticket-outlet shadow" [hidden]="frameHidden" [class.large]="isLarge()">
+  <div class="close pointer" aria-label="Close" (click)="closeTicketFrame()">
+    <span aria-hidden="true">&times;</span>
+  </div>
+  <router-outlet name="x"></router-outlet>
+</div>

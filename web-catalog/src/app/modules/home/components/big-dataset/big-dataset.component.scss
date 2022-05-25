@@ -1,0 +1,58 @@
+.ds {
+  position: relative;
+  height: 100%;
+  border: 1px solid #666;
+  -webkit-box-shadow: 2px 2px 5px 0px #ccc;
+  -moz-box-shadow: 2px 2px 5px 0px #ccc;
+  box-shadow: 2px 2px 5px 0px #ccc;
+
+  &:hover {
+    -webkit-box-shadow: inset 2px 2px 5px 0px #ccc;
+    -moz-box-shadow: inset 2px 2px 5px 0px #ccc;
+    box-shadow: inset 2px 2px 5px 0px #ccc;
+    top: 1px;
+    left: 1px;
+  }
+
+  .img {
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    top: 0;
+    height: calc(100% - 28px);
+    padding: 0px;
+    position: absolute;
+    left: 0;
+    border-bottom: 1px solid #999;
+  }
+
+  .sub {
+    position: absolute;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 28px;
+    align-items: center;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .title {
+    // position: absolute;
+    // bottom: 0;
+    color: black;
+    font-weight: bold;
+    // width: 100%;
+    // height: 50px;
+    font-size: 16px;
+  }
+
+  .description {
+    // position: absolute;
+    // bottom: 10px;
+    // right: 0;
+    // text-align: right;
+    // margin-right: 10px;
+    cursor: help;
+  }
+}

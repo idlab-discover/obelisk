@@ -1,0 +1,7 @@
+.btns{
+    display:grid;
+    grid-template-columns: auto 1fr auto auto auto;
+    justify-items: left;
+
+    column-gap: 8px;
+}

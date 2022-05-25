@@ -1,0 +1,83 @@
+# Similar to Metric, but without being tied to a single database. Used for metric lookups at the user level.
+type MetricId {
+    id: String! @searchable(path: ["metric"])
+    datasets: [Dataset] @paged @searchable(idContainer: "dataset")
+}
+
+type User {
+    id: String! @searchable
+    email: String! @searchable
+    firstName: String @searchable
+    lastName: String @searchable
+    platformManager: Boolean! @searchable
+    hideOrigin: Boolean!
+    notificationAddress: String
+    usageLimitAssigned: Boolean!
+    usageLimit: UsageLimit!
+    aggregatedUsageLimit: UsageLimit!
+    usageRemaining: JSON!
+    # Access a specific Dataset the User is member of
+    dataset(id: String!): Dataset @restricted(level: [PLATFORM_MANAGER, ME])
+    # Retrieve all the datasets (including not published datasets) the user has access to.
+    datasets: [Dataset] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, ME])
+    # Access membership information for the dataset with the specified id (id is datasetId)
+    membership(id: String!): Membership @restricted(level: [PLATFORM_MANAGER, DATASET_MANAGER, ME])
+    # Access membership information
+    memberships: [Membership] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, ME])
+    # Access a specific Team the User is part of
+    team(id: String!): Team @restricted(level: [PLATFORM_MANAGER, ME])
+    # Access the Teams the User is part of
+    teams: [Team] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, ME])
+    # Access a specific Client
+    client(id: String!): Client @restricted(level: [PLATFORM_MANAGER, ME])
+    # Clients associated with this user
+    clients: [Client] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, ME])
+    # Get a specific access request associated with this user.
+    accessRequest(id: String!): AccessRequest @restricted(level: [PLATFORM_MANAGER, ME])
+    # Access requests associated with this user
+    accessRequests: [AccessRequest] @paged @restricted(level: [PLATFORM_MANAGER, ME])
+    # Access a specific data stream
+    activeStream(id: String!): DataStream @restricted(level: [PLATFORM_MANAGER, ME])
+    # Active streams associated with this user
+    activeStreams: [DataStream] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, ME])
+    # Access a specific export
+    export(id: String!): DataExport @restricted(level: [PLATFORM_MANAGER, ME])
+    # Data exports associated with this user
+    exports: [DataExport] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, ME])
+
+    metric(id: String!): MetricId @restricted(level: [PLATFORM_MANAGER, ME])
+    # Metrics the user has access to aggregated over (selected) accessible datasets
+    metrics: [MetricId] @paged @enable_filter @restricted(level: [PLATFORM_MANAGER, ME])
+}
+
+type UserMutation {
+    update(input: UpdateUserInput!): UserResponse!
+
+    # Perform mutations on a specific AccessRequest
+    onAccessRequest(id: String!): AccessRequestMutation!
+
+    # Set if the User is a platform manager (admin)
+    setPlatformManager(platformManager: Boolean!): UserResponse! @restricted(level: [PLATFORM_MANAGER]) @deprecated
+
+    # Set if the User is visible as an origin in a Dataset (occurs when the User has posted data to a Dataset personally)
+    setHideOrigin(hideOrigin: Boolean!): UserResponse! @restricted(level: [PLATFORM_MANAGER, ME]) @deprecated
+
+    setUsageLimit(usageLimitId: String): UserResponse! @restricted(level: [PLATFORM_MANAGER]) @deprecated
+
+    # Request the deletion of data produced by the User (or one of his / her clients)
+    requestDataRemoval(input: DataRemovalRequestInput!): UserResponse! @restricted(level: [PLATFORM_MANAGER, ME])
+}
+
+
+type UserResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: User
+}
+
+input UpdateUserInput {
+    platformManager: Boolean @restricted(level: [PLATFORM_MANAGER])
+    hideOrigin: Boolean @restricted(level: [PLATFORM_MANAGER, ME])
+    usageLimitId: String @restricted(level: [PLATFORM_MANAGER])
+    notificationAddress: String @restricted(level: [PLATFORM_MANAGER, ME])
+}

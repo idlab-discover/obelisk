@@ -1,0 +1,401 @@
+namespace: pulsar
+namespaceCreate: false
+
+## clusterDomain as defined for your k8s cluster
+clusterDomain: cluster.local
+
+## Volume settings
+volumes:
+  persistence: true
+  # configure the components to use local persistent volume
+  # the local provisioner should be installed prior to enable local persistent volume
+  local_storage: false
+
+
+## AntiAffinity
+##
+## Flag to enable and disable `AntiAffinity` for all components.
+## This is a global setting that is applied to all components.
+## If you need to disable AntiAffinity for a component, you can set
+## the `affinity.anti_affinity` settings to `false` for that component.
+affinity:
+  anti_affinity: true
+  # Set the anti affinity type. Valid values:
+  # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
+  # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
+  type: preferredDuringSchedulingIgnoredDuringExecution
+
+## Components
+##
+## Control what components of Apache Pulsar to deploy for the cluster
+components:
+  # zookeeper
+  zookeeper: true
+  # bookkeeper
+  bookkeeper: true
+  # bookkeeper - autorecovery
+  autorecovery: true
+  # broker
+  broker: true
+  # functions
+  functions: false
+  # proxy
+  proxy: false
+  # toolset
+  toolset: true
+  # pulsar manager
+  pulsar_manager: true
+
+## Monitoring Components
+##
+## Control what components of the monitoring stack to deploy for the cluster
+monitoring:
+  # monitoring - prometheus
+  prometheus: false
+  # monitoring - grafana
+  grafana: false
+  # monitoring - node_exporter
+  node_exporter: false
+  # alerting - alert-manager
+  alert_manager: false
+
+
+## TLS
+## templates/tls-certs.yaml
+##
+## The chart is using cert-manager for provisioning TLS certs for
+## brokers and proxies.
+tls:
+  enabled: false
+
+# Enable or disable broker authentication and authorization.
+auth:
+  authentication:
+    enabled: false
+
+######################################################################
+# Below are settings for each component
+######################################################################
+
+zookeeper:
+  # use a component name that matches your grafana configuration
+  # so the metrics are correctly rendered in grafana dashboard
+  component: zookeeper
+  # the number of zookeeper servers to run. it should be an odd number larger than or equal to 3.
+  replicaCount: 3
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: OrderedReady
+  # If using Prometheus-Operator enable this PodMonitor to discover zookeeper scrape targets
+  # Prometheus-Operator does not add scrape targets based on k8s annotations
+  podMonitor:
+    enabled: true
+    interval: 10s
+    scrapeTimeout: 10s
+
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 0.2
+  volumes:
+    # use a persistent volume or emptyDir
+    persistence: true
+    data:
+      name: data
+      size: 20Gi
+      local_storage: false
+      ## If you already have an existent storage class and want to reuse it, you can specify its name with the option below
+      ##
+      # storageClassName: existent-storage-class
+      #
+      ## Instead if you want to create a new storage class define it below
+      ## If left undefined no storage class will be defined along with PVC
+      ##
+      # storageClass:
+        # type: pd-ssd
+        # fsType: xfs
+        # provisioner: kubernetes.io/gce-pd
+
+  ## Zookeeper configmap
+  ## templates/zookeeper-configmap.yaml
+  ##
+  configData:
+    PULSAR_MEM: >
+      -Xms256m -Xmx512m
+    PULSAR_GC: >
+      -XX:+UseG1GC
+      -XX:MaxGCPauseMillis=10
+      -Dcom.sun.management.jmxremote
+      -Djute.maxbuffer=10485760
+      -XX:+ParallelRefProcEnabled
+      -XX:+UnlockExperimentalVMOptions
+      -XX:+DoEscapeAnalysis
+      -XX:+DisableExplicitGC
+      -XX:+ExitOnOutOfMemoryError
+      -XX:+PerfDisableSharedMem
+
+## Pulsar: Bookkeeper cluster
+## templates/bookkeeper-statefulset.yaml
+##
+bookkeeper:
+  # use a component name that matches your grafana configuration
+  # so the metrics are correctly rendered in grafana dashboard
+  component: bookie
+  ## BookKeeper Cluster Initialize
+  ## templates/bookkeeper-cluster-initialize.yaml
+  metadata:
+    resources: {}
+    ## Set the resources used for running `bin/bookkeeper shell initnewcluster`
+    ##
+    # resources:
+    #   requests:
+    #     memory: 4Gi
+    #     cpu: 1
+  replicaCount: 3
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: Parallel
+  # If using Prometheus-Operator enable this PodMonitor to discover bookie scrape targets
+  # Prometheus-Operator does not add scrape targets based on k8s annotations
+  podMonitor:
+    enabled: true
+    interval: 10s
+    scrapeTimeout: 10s
+
+  affinity:
+    anti_affinity: true
+    # Set the anti affinity type. Valid values:
+    # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
+    # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
+    type: preferredDuringSchedulingIgnoredDuringExecution
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 0.4
+
+  volumes:
+    # use a persistent volume or emptyDir
+    persistence: true
+    journal:
+      name: journal
+      size: 10Gi
+      local_storage: false
+
+    ledgers:
+      name: ledgers
+      size: 50Gi
+      local_storage: false
+
+  ## Bookkeeper configmap
+  ## templates/bookkeeper-configmap.yaml
+  ##
+  configData:
+    # we use `bin/pulsar` for starting bookie daemons
+    PULSAR_MEM: >
+      -Xms1g
+      -Xmx2g
+      -XX:MaxDirectMemorySize=2g
+    PULSAR_GC: >
+      -XX:+UseG1GC
+      -XX:MaxGCPauseMillis=10
+      -XX:+ParallelRefProcEnabled
+      -XX:+UnlockExperimentalVMOptions
+      -XX:+DoEscapeAnalysis
+      -XX:ParallelGCThreads=4
+      -XX:ConcGCThreads=4
+      -XX:G1NewSizePercent=50
+      -XX:+DisableExplicitGC
+      -XX:-ResizePLAB
+      -XX:+ExitOnOutOfMemoryError
+      -XX:+PerfDisableSharedMem
+    # configure the memory settings based on jvm memory settings
+    dbStorage_writeCacheMaxSizeMb: "32"
+    dbStorage_readAheadCacheMaxSizeMb: "32"
+    dbStorage_rocksDB_writeBufferSizeMB: "8"
+    dbStorage_rocksDB_blockCacheSize: "8388608"
+  ## Bookkeeper Service
+  ## templates/bookkeeper-service.yaml
+  ##
+  service:
+    spec:
+      publishNotReadyAddresses: true
+  ## Bookkeeper PodDisruptionBudget
+  ## templates/bookkeeper-pdb.yaml
+  ##
+  pdb:
+    usePolicy: true
+    maxUnavailable: 1
+
+## Pulsar: Bookkeeper AutoRecovery
+## templates/autorecovery-statefulset.yaml
+##
+autorecovery:
+  # use a component name that matches your grafana configuration
+  # so the metrics are correctly rendered in grafana dashboard
+  component: recovery
+  replicaCount: 1
+  # If using Prometheus-Operator enable this PodMonitor to discover autorecovery scrape targets
+  # # Prometheus-Operator does not add scrape targets based on k8s annotations
+  podMonitor:
+    enabled: true
+    interval: 10s
+    scrapeTimeout: 10s
+  # True includes annotation for statefulset that contains hash of corresponding configmap, which will cause pods to restart on configmap change
+  restartPodsOnConfigMapChange: true
+  ports:
+    http: 8000
+  # nodeSelector:
+    # cloud.google.com/gke-nodepool: default-pool
+  affinity:
+    anti_affinity: true
+    # Set the anti affinity type. Valid values:
+    # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
+    # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
+    type: preferredDuringSchedulingIgnoredDuringExecution
+  annotations: {}
+  # tolerations: []
+  gracePeriod: 30
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 0.1
+  ## Bookkeeper auto-recovery configmap
+  ## templates/autorecovery-configmap.yaml
+  ##
+  configData:
+    BOOKIE_MEM: >
+      -Xms128m -Xmx256m
+
+## Pulsar Zookeeper metadata. The metadata will be deployed as
+## soon as the last zookeeper node is reachable. The deployment
+## of other components that depends on zookeeper, such as the
+## bookkeeper nodes, broker nodes, etc will only start to be
+## deployed when the zookeeper cluster is ready and with the
+## metadata deployed
+pulsar_metadata:
+  component: pulsar-init
+
+## Pulsar: Broker cluster
+## templates/broker-statefulset.yaml
+##
+broker:
+  # use a component name that matches your grafana configuration
+  # so the metrics are correctly rendered in grafana dashboard
+  component: broker
+  replicaCount: 3
+  # If using Prometheus-Operator enable this PodMonitor to discover broker scrape targets
+  # Prometheus-Operator does not add scrape targets based on k8s annotations
+  podMonitor:
+    enabled: true
+    interval: 10s
+    scrapeTimeout: 10s
+  # True includes annotation for statefulset that contains hash of corresponding configmap, which will cause pods to restart on configmap change
+  restartPodsOnConfigMapChange: true
+  ports:
+    http: 8080
+    https: 8443
+    pulsar: 6650
+    pulsarssl: 6651
+
+  affinity:
+    anti_affinity: true
+    # Set the anti affinity type. Valid values:
+    # requiredDuringSchedulingIgnoredDuringExecution - rules must be met for pod to be scheduled (hard) requires at least one node per replica
+    # preferredDuringSchedulingIgnoredDuringExecution - scheduler will try to enforce but not guranentee
+    type: preferredDuringSchedulingIgnoredDuringExecution
+
+  gracePeriod: 30
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 0.4
+  ## Broker configmap
+  ## templates/broker-configmap.yaml
+  ##
+  configData:
+    PULSAR_MEM: >
+      -Xms512m -Xmx1g -XX:MaxDirectMemorySize=1g
+    PULSAR_GC: >
+      -XX:+UseG1GC
+      -XX:MaxGCPauseMillis=10
+      -Dio.netty.leakDetectionLevel=disabled
+      -Dio.netty.recycler.linkCapacity=1024
+      -XX:+ParallelRefProcEnabled
+      -XX:+UnlockExperimentalVMOptions
+      -XX:+DoEscapeAnalysis
+      -XX:ParallelGCThreads=4
+      -XX:ConcGCThreads=4
+      -XX:G1NewSizePercent=50
+      -XX:+DisableExplicitGC
+      -XX:-ResizePLAB
+      -XX:+ExitOnOutOfMemoryError
+      -XX:+PerfDisableSharedMem
+    managedLedgerDefaultEnsembleSize: "2"
+    managedLedgerDefaultWriteQuorum: "2"
+    managedLedgerDefaultAckQuorum: "2"
+
+
+## Pulsar ToolSet
+## templates/toolset-deployment.yaml
+##
+toolset:
+  component: toolset
+  useProxy: false
+  replicaCount: 1
+  # True includes annotation for statefulset that contains hash of corresponding configmap, which will cause pods to restart on configmap change
+  restartPodsOnConfigMapChange: false
+  # nodeSelector:
+    # cloud.google.com/gke-nodepool: default-pool
+
+  gracePeriod: 30
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 0.1
+  ## Bastion configmap
+  ## templates/bastion-configmap.yaml
+  ##
+  configData:
+    PULSAR_MEM: >
+      -Xms128M
+      -Xmx256M
+      -XX:MaxDirectMemorySize=256M
+
+## Components Stack: pulsar_manager
+## templates/pulsar-manager.yaml
+##
+pulsar_manager:
+  component: pulsar-manager
+  replicaCount: 1
+  # True includes annotation for statefulset that contains hash of corresponding configmap, which will cause pods to restart on configmap change
+  restartPodsOnConfigMapChange: false
+  # nodeSelector:
+  # cloud.google.com/gke-nodepool: default-pool
+  annotations: {}
+  tolerations: []
+  gracePeriod: 30
+
+  ## Pulsar manager service
+  ## templates/pulsar-manager-service.yaml
+  ##
+  service:
+    type: ClusterIP
+    port: 9527
+    targetPort: 9527
+    annotations: {}
+  ## Pulsar manager ingress
+  ## templates/pulsar-manager-ingress.yaml
+  ##
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+
+    hostname: "dev.obelisk.ilabt.imec.be"
+    path: "/pulsar(/|$)(.*)"
+
+  ## If set use existing secret with specified name to set pulsar admin credentials.
+  existingSecretName:
+  admin:
+    user: pulsar
+    password: oblx-pulsar

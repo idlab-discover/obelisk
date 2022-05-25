@@ -1,0 +1,36 @@
+{{- $fullName := include "oblx-mkdocs.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $fullName }}-route
+spec:
+  entryPoints:
+  - web
+  routes:
+  - match: (Host(`{{ .Values.oblxConfig.host }}`) || Host(`rc.{{ .Values.oblxConfig.host }}`)) && PathPrefix(`{{ $.Values.oblxConfig.basePath }}`)
+    kind: Rule
+    services:
+    - name: {{ $fullName }}
+      port: {{ $svcPort }}
+    middlewares:
+      - name: add-slash-docs
+      - name: strip-prefix-docs
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: add-slash-docs
+spec:
+  redirectRegex:
+    regex: ^(.*{{ $.Values.oblxConfig.basePath }})$
+    replacement: ${1}/
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-prefix-docs
+spec:
+  stripPrefix:
+    prefixes:
+      - "{{ $.Values.oblxConfig.basePath }}"

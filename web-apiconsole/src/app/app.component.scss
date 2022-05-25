@@ -1,0 +1,71 @@
+.root {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 64px 0 1fr;
+  height: 100%;
+  color: white;
+}
+.fill {
+  flex: 1 1 auto;
+}
+
+.nav {
+  margin-left: 16px;
+  font-size: 18px;
+  color: rgb(220,220,220);
+  cursor: pointer;
+
+  &.active {
+    color: unset;
+  }
+
+  &:hover {
+    color: white;
+  }
+}
+
+.version {
+  margin-right: 8px;
+  font-size: smaller;
+  color: #ccc;
+}
+
+.toggles {
+  height: 36px;
+  button {
+      vertical-align: middle;
+  }
+  .mat-button-toggle-label-content {
+    line-height: unset !important;
+  }
+}
+
+.check {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  justify-items: center;
+  align-items: center;
+  color: black;
+  height: 40vh;
+  font-size: 24px;
+}
+
+
+.avatar {
+  height: 24px;
+  border-radius: 50%;
+}
+
+.logo {
+  img {
+    height: 28px;
+    margin-right: 0.4em;
+    vertical-align: text-bottom;
+  }
+  margin-right: 0.4em;
+}
+
+mat-toolbar {
+  align-items: center;
+}

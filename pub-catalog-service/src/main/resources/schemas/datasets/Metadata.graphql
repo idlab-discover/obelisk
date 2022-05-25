@@ -1,0 +1,54 @@
+type Thing {
+    id : String! @searchable(path: ["source"])
+    # Meta-data properties attached to the thing
+    properties: JSON
+    # Metrics that are associated with this thing
+    metrics: [Metric] @paged @enable_filter
+    # Timestamp (UTC) of when the thing started sending
+    started: Long
+    # Timestamp (UTC) of when a new event was last received from the thing
+    lastUpdate: Long
+}
+
+type ThingMutation {
+    update(properties: JSON): ThingResponse!
+}
+
+type Metric {
+    id: String! @searchable(path: ["metric"])
+    # Meta-data properties attached to the metric
+    properties: JSON
+    # Things that are associated with this metric
+    things: [Thing] @paged @enable_filter
+    # Timestamp (UTC) of when the first event for the Metric was sent
+    started: Long
+    # Timestamp (UTC) of when a new event was last received for this Metric
+    lastUpdate: Long
+}
+
+type MetricMutation {
+    update(properties: JSON): MetricResponse!
+}
+
+type Origin {
+    # The client that is producing the data for this origin
+    producer: OriginProducer!
+    # Timestamp (UTC) of when the producer started sending
+    started: Long
+    # Timestamp (UTC) of when a new event was last received from the producer
+    lastUpdate: Long
+}
+
+union OriginProducer = Client | User
+
+type ThingResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Thing
+}
+
+type MetricResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Metric
+}

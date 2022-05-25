@@ -1,0 +1,26 @@
+tr td,
+tr th {
+    vertical-align: baseline;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+tr {
+    height: 36px;
+    th.thumb {
+        width: 80px;
+    }
+    td.thumb {
+        width: 80px;
+        position: relative;
+        padding: 0 0.4em;
+        .img {
+            background-size: cover;
+            background-position: center;
+            width: 80px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+        }
+    }
+}

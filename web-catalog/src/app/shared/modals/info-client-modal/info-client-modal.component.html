@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{info?.name}}</h4>
+    <div class="close pointer" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col">
+        <table class="table table-sm">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Property</th>
+              <th scope="col">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td>id</td>
+                <td>{{info?.id}}</td>
+            </tr>
+            <tr>
+                <td>confidential</td>
+                <td><span [innerHTML]="info?.confidential | checkmark:true"></span></td>
+            </tr>
+            <tr>
+                <td>authenticates users</td>
+                <td><span [innerHTML]="info?.onBehalfOfUser | checkmark:true"></span></td>
+            </tr>
+            <tr>
+                <td>Scope</td>
+                <td><div class="badge badge-secondary mr-2" *ngFor="let s of info?.scope">{{s}}</div></td>
+            </tr>
+            <tr>
+                <td>RedirectUris</td>
+                <td>{{info?.redirectURIs.join('\n')}}</td>
+            </tr>
+            <tr>
+                <td>Restrictions</td>
+                <td>{{info?.restrictions | mapList:'dataset.name'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

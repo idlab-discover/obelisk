@@ -1,0 +1,5 @@
+<div class="user" [ngClass]="getCss()" >
+    <div class="avatar"><img [src]="getAvatar()"></div>
+    <div class="name">{{user?.firstName+ ' ' + user?.lastName}}</div>
+    <div class="email">{{user?.email}}</div>
+</div>

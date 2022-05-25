@@ -1,0 +1,64 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+            <h5>Users</h5>
+        </div>
+        <div class="col offset-md-1 offset-lg-3 searchAndAdd">
+            <form [formGroup]="searchForm">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Filter</span>
+                    </div>
+                    <input type="text" class="form-control" formControlName="search">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="40" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="33%">firstname</th>
+                            <th width="33%">lastname</th>
+                            <th width="auto">email</th>
+                            <th width="10%" class="text-center">admin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(userSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!userSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No users found...</em></td>
+                        </tr>
+                        <tr [hidden]="userSource?.isCurrentlyEmpty()" *cdkVirtualFor="let u of userSource"
+                            [routerLink]="u.id" class="pointer">
+                            <td>{{u.firstName}}</td>
+                            <td>{{u.lastName}}</td>
+                            <td>{{u.email}}</td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-toggle btn-group-xs" ngbRadioGroup (click)="stopPropagation($event)"
+                                    name="radioBasic" [(ngModel)]="u.platformManager" (change)="toggleAdmin(u)" [disabled]="isMeOrAdminAccount(u)">
+                                    <label ngbButtonLabel class="btn-outline-danger">
+                                        <input ngbButton type="radio" [value]="false"> {{false|checkmark}}
+                                    </label>
+                                    <label ngbButtonLabel class="btn-outline-success">
+                                        <input ngbButton type="radio" [value]="true"> {{true|checkmark}}
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

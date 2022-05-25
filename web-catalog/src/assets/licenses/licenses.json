@@ -1,0 +1,109 @@
+{
+    "licenses": [
+        {
+            "spdx": "AGPL-3.0",
+            "name": "GNU Affero General Public License v3.0",
+            "uri": "https://opensource.org/licenses/AGPL-3.0"
+        },
+        {
+            "spdx": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "uri": "https://opensource.org/licenses/Apache-2.0"
+        },
+        {
+            "spdx": "CC0-1.0",
+            "name": "Creative Commons Zero v1.0 Universal",
+            "uri": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+            "spdx": "CC-BY-4.0",
+            "name": "Creative Commons Attribution 4.0 International",
+            "uri": "https://creativecommons.org/licenses/by/4.0/legalcode"
+        },
+        {
+            "spdx": "CC-BY-SA-4.0",
+            "name": "Creative Commons Attribution Share Alike 4.0 International",
+            "uri": "https://creativecommons.org/licenses/by-sa/4.0/legalcode"
+        },
+        {
+            "spdx": "CDLA-Sharing-1.0",
+            "name": "Community Data License Agreement Sharing 1.0",
+            "uri": "https://cdla.io/sharing-1-0"
+        },
+        {
+            "spdx": "ODbL-1.0",
+            "name": "Open Data Commons Open Database License v1.0",
+            "uri": "https://opendatacommons.org/licenses/odbl/1-0/"
+        },
+        {
+            "spdx": "CC-BY-NC-4.0",
+            "name": "Creative Commons Attribution Non Commercial 4.0 International",
+            "uri": "https://creativecommons.org/licenses/by-nc/4.0/legalcode"
+        },
+        {
+            "spdx": "CC-BY-NC-ND-4.0",
+            "name": "Creative Commons Attribution Non Commercial No Derivatives 4.0 International",
+            "uri": "https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode"
+        },
+        {
+            "spdx": "CC-BY-NC-SA-4.0",
+            "name": "Creative Commons Attribution Non Commercial Share Alike 4.0 International",
+            "uri": "https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode"
+        },
+        {
+            "spdx": "CC-BY-ND-4.0",
+            "name": "Creative Commons Attribution No Derivatives 4.0 International",
+            "uri": "https://creativecommons.org/licenses/by-nd/4.0/legalcode"
+        },
+        {
+            "spdx": "CDLA-Permissive-1.0",
+            "name": "Community Data License Agreement Permissive 1.0",
+            "uri": "https://cdla.io/permissive-1-0"
+        },
+        {
+            "spdx": "CDLA-Permissive-2.0",
+            "name": "Community Data License Agreement Permissive 2.0",
+            "uri": "https://cdla.dev/permissive-2-0"
+        },
+        {
+            "spdx": "GPL-2.0",
+            "name": "GNU General Public License v2.0",
+            "uri": "https://opensource.org/licenses/GPL-2.0"
+        },
+        {
+            "spdx": "GPL-3.0",
+            "name": "GNU General Public License v3.0",
+            "uri": "https://opensource.org/licenses/GPL-3.0"
+        },
+        {
+            "spdx": "LGPL-2.1",
+            "name": "GNU Lesser General Public License v2.1",
+            "uri": "https://opensource.org/licenses/LGPL-2.1"
+        },
+        {
+            "spdx": "LGPL-3.0",
+            "name": "GNU Lesser General Public License v3.0",
+            "uri": "https://opensource.org/licenses/LGPL-3.0"
+        },
+        {
+            "spdx": "MIT",
+            "name": "MIT License",
+            "uri": "https://opensource.org/licenses/MIT"
+        },
+        {
+            "spdx": "ODC-By-1.0",
+            "name": "Open Data Commons Attribution License v1.0",
+            "uri": "https://opendatacommons.org/licenses/by/1.0/"
+        },
+        {
+            "spdx": "PDDL-1.0",
+            "name": "Open Data Commons Public Domain Dedication",
+            "uri": "https://opendatacommons.org/licenses/pddl/1-0/"
+        },
+        {
+            "spdx": "PDM",
+            "name": "Public Domain",
+            "uri": "https://creativecommons.org/share-your-work/public-domain/pdm/"
+        }
+    ]
+}

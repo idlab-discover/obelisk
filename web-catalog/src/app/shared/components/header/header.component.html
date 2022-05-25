@@ -1,0 +1,127 @@
+<div class="parent" *ngIf="mode !== 'invisible'">
+  <div class="toolbar">
+    <a class="tb-brand" routerLink="/home">
+      <img src="./assets/img/logo.svg">
+      <!-- <div class="d-none d-md-block mr-4"> Obelisk Catalog</div> -->
+    </a>
+
+    <div class="tb-cont d-none d-md-flex">
+      <div class="toolbar-left">
+        
+        <div class="tb-item">
+          <div class="nav-link">
+            <a class="btn btn-tb" routerLink="/my/datasets">My workspace</a>
+          </div>
+        </div>
+
+        <div class="tb-item">
+          <div class="nav-link">
+            <a class="btn btn-tb" routerLink="/ds">Discover</a>
+          </div>
+        </div>
+
+        <div class="tb-item pointer" ngbDropdown>
+          <div class="nav-link" ngbDropdownToggle>Tools</div>
+          <div ngbDropdownMenu aria-labelledby="Tools menu">
+            <a ngbDropdownItem role="menuitem" [href]="getApiConsoleLink()" target="_blank">API Console</a>
+          </div>
+        </div>     
+
+        <div class="tb-item" *ngIf="isAdmin" ngbTooltip="Admin area" container="body">
+          <div class="nav-link">
+            <button class="btn btn-tb" [routerLink]="'/admin'">
+              <fa-icon icon="tools"></fa-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+
+        <div class="tb-item">
+          <div class="nav-link">
+            <a class="btn btn-tb" [href]="getDocsLink()" target="_blank">
+              <div class="d-block d-lg-none" ngbTooltip="Documentation">
+                <fa-icon icon="question-circle"></fa-icon>
+              </div>
+              <div class="d-none d-lg-block">Documentation</div>
+            </a>
+          </div>
+        </div>
+
+        <div class="tb-item pointer text-right" ngbDropdown placement="bottom-right" *ngIf="loggedIn">
+          <div class="nav-link" ngbDropdownToggle><img class="avatar-btn" [src]="avatarUri"></div>
+          <div ngbDropdownMenu aria-labelledby="Account menu">
+            <div ngbDropdownItem routerLink="/my/profile">
+              <div class="avatar-card">
+                <img class="avatar-img" [src]="avatarUri">
+                <div class="name">{{name}}</div>
+                <div class="email"><small>{{email}}</small></div>
+              </div>
+            </div>
+            <!-- <div class="dropdown-divider"></div>
+            <a ngbDropdownItem role="menuitem" routerLink="/my" class="text-right">My account</a> -->
+            <div class="dropdown-divider"></div>
+            <a ngbDropdownItem role="menuitem" (click)="logout()"  class="text-right">Sign out</a>
+          </div>
+        </div>
+
+        <div class="tb-item" *ngIf="!loggedIn">
+          <a class="btn btn-sm btn-light" [routerLink]="'/login'">Log in</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="toggler d-sm-block d-md-none">
+      <a class="btn btn-sm btn-outline-light" (click)="isMenuCollapsed = !isMenuCollapsed">
+        &#9776;
+      </a>
+    </div>
+    
+    <div [ngbCollapse]="isMenuCollapsed" class="mobileMenu">
+      <ul>
+        <li>
+          <a *ngIf="!loggedIn" [routerLink]="'/login'" (click)="isMenuCollapsed = true">Log in</a>
+          <a *ngIf="loggedIn" class="pointer" (click)="openLogout()">Sign out</a>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <a [routerLink]="'/my/datasets'" (click)="isMenuCollapsed = true">My workspace</a>
+        </li>
+        <li>
+          <a [routerLink]="'/ds'" (click)="isMenuCollapsed = true">Discover</a>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <a class="pointer" (click)="openDocsLink()">Documentation</a>
+        </li>
+        <li *ngIf="isAdmin" class="divider"></li>
+        <li *ngIf="isAdmin">
+          <a [routerLink]="'/admin'" (click)="isMenuCollapsed = true">Administration</a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+  <div class="bg rel" #bg [style.background-image]="datasetId | resource:'banner':true | async">
+
+    <div class="container-xl rel">
+      <div class="row navigation">
+        <div class="col">
+          <div class="pagetitle text-truncate">
+            <span *ngIf="header.getIcon()" class="mr-1">
+              <fa-icon [icon]="header.getIcon()" class="fa-sm"></fa-icon>
+            </span>
+            {{header.getTitle()}}
+          </div>
+        </div>
+      </div>
+
+      <div class="my-version">
+        v{{version}}
+      </div>
+
+    </div>
+  </div>
+
+</div>

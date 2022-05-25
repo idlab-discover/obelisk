@@ -1,0 +1,58 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        <fa-icon icon="stream" class="fa-sm mr-1"></fa-icon>{{stream?.name}}
+    </h4>
+    <div class="close pointer" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </div>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col">
+            <div class="alert alert-info">
+                <fa-icon icon="info-circle" class="mr-1"></fa-icon> You can listen to this stream using the <app-id [id]="stream?.id"></app-id> with the <a
+                    href="https://obelisk.docs.apiary.io/#/reference/data-api/streaming-data?mc=reference%2Fdata-api%2Fstreaming-data%2Fopening-a-stream%2F200" target="_blank">Streaming
+                    API</a>.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-sm">
+                <thead class="thead-light">
+                    <tr>
+                        <th>property</th>
+                        <th>value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>data range (datasets)</td>
+                        <td>{{stream?.dataRange.datasets | mapList:'name'}}</td>
+                    </tr>
+                    <tr>
+                        <td>data range (metrics)</td>
+                        <td>{{stream?.dataRange.metrics?.join(', ')}}</td>
+                    </tr>
+                    <tr>
+                        <td>timestamp precision</td>
+                        <td>{{stream?.timestampPrecision}}</td>
+                    </tr>
+                    <tr>
+                        <td>fields</td>
+                        <td>{{stream?.fields.join(', ')}}</td>
+                    </tr>
+                    <tr>
+                        <td>client connected</td>
+                        <td>{{stream?.clientConnected ? 'yes' : 'no'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer btns">
+    <button class="btn btn-sm btn-outline-danger" (click)="activeModal.close('remove')">Remove</button>
+    <button class="btn btn-sm btn-outline-warning" (click)="activeModal.close('end')">End active sessions</button>
+    <button class="btn btn-sm btn-secondary" ngbAutoFocus (click)="activeModal.dismiss()">Close</button>
+</div>

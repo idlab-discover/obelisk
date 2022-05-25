@@ -1,0 +1,11 @@
+type Membership {
+    dataset: Dataset! @searchable(idContainer: "datasetId")
+    roles: [Role]!
+    aggregatedGrant: Grant @searchable(idContainer: "datasetId")
+}
+
+type MembershipResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Membership
+}

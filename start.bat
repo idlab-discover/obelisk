@@ -1,0 +1,1 @@
+wsl.exe ./start.sh %*

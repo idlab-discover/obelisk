@@ -1,0 +1,49 @@
+<div class="ticket shadow-sm">
+    <div class="headline d-flex justify-content-between align-items-center" [class.btn3]="!personal"
+        [class.btn2]="personal">
+        <div class="reporter">
+            <user-tag [user]="ticket?.reporter" size="20"></user-tag>
+            <button class="btn btn-xs btn-outline-warning xxs" (click)="editIssue()" *ngIf="!personal">{{edit ?
+                'discard': 'edit'}}</button>
+            <button class="btn btn-xs btn-outline-danger xxs" (click)="removeIssue()" *ngIf="!personal">remove</button>
+        </div>
+        <div class="created"><small>{{ticket?.createdAt | date:'dd MMM, yyyy @ HH:mm:ss'}}</small></div>
+    </div>
+    <div class="content">
+        <ng-container *ngIf="edit then editBox else viewBox"></ng-container>
+        <ng-template #viewBox>
+            <div class="summary">{{ticket?.summary}}</div>
+            <div class="description" markdown [data]="ticket?.description"></div>
+            <div class="modified" *ngIf="ticket?.modifiedAt">(edited {{ticket?.modifiedAt | date:'d MMM, yyyy @ HH:mm:ss'}})</div>
+        </ng-template>
+        <ng-template #editBox>
+            <form class="form" [formGroup]="editForm">
+                <div class="row mt-2">
+                    <div class="col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend"><span class="input-group-text">summary</span></div>
+                            <input type="text" class="form-control" formControlName="summary">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col">
+                        <textarea class="form-control form-control-sm" formControlName="description"
+                            rows="10"></textarea>
+                    </div>
+                </div>
+                <div class="row mt-1 mb-2">
+                    <div class="col btns">
+                        <button class="btn btn-xs xxs btn-outline-secondary" (click)="reset()">Reset</button>
+                        <button class="btn btn-xs xxs btn-secondary" (click)="showPreview()">Preview</button>
+                        <button class="btn btn-xs xxs btn-warning" (click)="updateIssue()" [disabled]="editForm.invalid">Save</button>
+                    </div>
+                </div>
+            </form>
+        </ng-template>
+    </div>
+    <div class="mybtns d-flex justify-content-end" *ngIf="personal">
+        <button class="btn btn-xs btn-outline-success" (click)="resolveIssue()" *ngIf="ticketNotClosed()">Mark as
+            resolved</button>
+    </div>
+</div>

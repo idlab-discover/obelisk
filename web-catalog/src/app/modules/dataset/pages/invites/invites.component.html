@@ -1,0 +1,159 @@
+<div class="container-xl full">
+    <app-create-header header="Invite links" createTitle="Create invite link"
+        help="An invite generates a URL that can be shared with users or team owners to invite them or their teams." #header>
+        <form [formGroup]="inviteForm" (submit)="addInvite(header)">
+            <div class="form-row">
+                <div class="col form-group">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                Role <help class="ml-2">Users that use this invite, will be assigned this role
+                                    automatically.</help>
+                            </span>
+                        </div>
+                        <ng-select class="myControl-sm" [items]="rolesSource?.items$ | async" bindLabel="name"
+                            bindValue="id" placeholder="No roles selected" formControlName="roles"
+                            [virtualScroll]="true" (scrollToEnd)="rolesSource?.fetchMissingItems()"
+                            [typeahead]="rolesSource?.queryRemote$" [trackByFn]="rolesSource?.trackByFn"
+                            typeToSearchText="Please enter 2 or more characters" multiple="true"
+                            labelForId="restrictions" [closeOnSelect]="false" (close)="rolesSource.resetQuery()">
+                            <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                <span class="ng-value-label tag">{{item.name}}</span>
+                                <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item.name}}
+                            </ng-template>
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="col-auto form-group checker">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="customCheck1"
+                            formControlName="disallowTeams">
+                        <label class="custom-control-label" for="customCheck1">Disallow teams <help>This invite can only
+                                be accepted by users and not by teams.</help></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col form-group">
+                    <button type="submit" class="btn btn-sm btn-success float-right" [disabled]="inviteForm.invalid">
+                        Create </button>
+                </div>
+            </div>
+        </form>
+    </app-create-header>
+
+    <div class="row pt-3">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="40" minBufferPx="200" maxBufferPx="800" style="height: 280px">
+                <table class="table table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="icon"></th>
+                            <th width="15%">id</th>
+                            <th width="auto">roles</th>
+                            <th width="20%">expires</th>
+                            <th class="icon">type</th>
+                            <th class="min text-center">
+                                share
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(invitesSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status"
+                                        [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!invitesSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No invites found...</em></td>
+                        </tr>
+                        <tr [hidden]="invitesSource?.isCurrentlyEmpty()" *cdkVirtualFor="let invite of invitesSource">
+                            <td class="icon">
+                                <div (click)="remove($event, invite.id)" ngbTooltip="revoke" class="pointer">
+                                    <fa-icon icon="trash" class="fa-sm"></fa-icon>
+                                </div>
+                            </td>
+                            <td class="trunc"><span [title]="invite.id"><small>{{invite.id}}</small></span></td>
+                            <td>{{invite.roles | mapList:'name':', '}}</td>
+                            <td>{{invite.expiresInMs | duration:false:true}}</td>
+                            <td class="icon">
+                                <help *ngIf="invite.disallowTeams" icon="users-slash">Disallow teams</help>
+                                <help *ngIf="!invite.disallowTeams" icon="user-friends">Allow users & teams</help>
+                            </td>
+                            <td class="min text-center">
+                                <button class="btn btn-xs btn-outline-warning" (click)="copyInviteLink(invite)">Copy
+                                    invite link</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col">
+            <h5>My teams <help class="ml-1">Manage access for my teams on this dataset</help>
+            </h5>
+        </div>
+    </div>
+
+    <div class="row pt-2">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="40" minBufferPx="200" maxBufferPx="800" style="height: 360px">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="auto">name</th>
+                            <th width="50%">description</th>
+                            <th class="text-center">dataset access</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(teamSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status"
+                                        [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!teamSource?.isCurrentlyEmpty()">
+                            <td colspanner="No teams found..."><em>No teams found...</em></td>
+                        </tr>
+                        <tr [hidden]="teamSource?.isCurrentlyEmpty()" *cdkVirtualFor="let t of teamSource">
+                            <td>{{t.name}}</td>
+                            <td class="trunc"><span>{{t.description}}</span></td>
+                            <td class="text-center">
+                                <ng-template *ngIf="t?.user?.manager then manager else noManager"></ng-template>
+
+                                <ng-template #manager>
+                                    <button ngbTooltip="manage roles" class="btn btn-xs btn-outline-secondary" *ngIf="isDatasetAdded(t.id) else notAdded" type="button" (click)="grantReadAccess(t.id)">
+                                        manage
+                                    </button>
+                                    <ng-template #notAdded>
+                                        <button ngbTooltip="Add team and manage roles" class="btn btn-xs btn-outline-info" type="button" (click)="grantReadAccess(t.id)">add team</button>
+                                    </ng-template>
+                                </ng-template>
+                                <ng-template #noManager>
+                                    <span ngbTooltip="Only allowed as team manager">
+                                        <button type="button" class="btn btn-xs btn-outline-info" [disabled]="true">add team</button>
+                                    </span>
+                                </ng-template>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

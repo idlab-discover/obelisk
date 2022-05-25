@@ -1,0 +1,29 @@
+directive @restricted(
+    # Indicates the clearance level required to access a field
+    level: [ClearanceLevel!]!
+) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @paged(exposeCount: Boolean = true) on FIELD_DEFINITION
+directive @enable_filter on FIELD_DEFINITION
+directive @searchable(
+    # (Optional) Use to define alternative search path (e.g. name is actually stored in properties->name, then path is ["properties", "name"])
+    path: [String!]
+    # (Optional) If the searchable field is a relation, the search wil be conducted in another collection, and the matching IDs will be returned and filtered again using the property specified here.
+    idContainer: String
+) on FIELD_DEFINITION
+
+enum ClearanceLevel {
+    PLATFORM_MANAGER,
+    DATASET_MANAGER,
+    DATASET_MEMBER,
+    TEAM_MANAGER,
+    TEAM_MEMBER,
+    ME
+}
+
+enum ResponseCode {
+    SUCCESS, BAD_REQUEST, NOT_FOUND, NOT_AUTHORIZED, SERVER_ERROR
+}
+
+scalar JSON
+scalar Long

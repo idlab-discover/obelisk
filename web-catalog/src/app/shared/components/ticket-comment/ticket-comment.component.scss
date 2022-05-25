@@ -1,0 +1,127 @@
+@import "/src/common";
+
+$shadeBorder: -8;
+$commentTopMargin: 15px;
+$stateTopMargin: 10px;
+$commentIndent: 50px;
+$stateIndent: 75px;
+$animTime: 300ms;
+
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@-moz-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.xxs {
+    height: 23px;
+    font-size: 13px;
+    line-height: 13px;
+}
+
+
+.ticket-comment {
+    -webkit-animation: fadeIn $animTime ease-in-out;
+    -moz-animation: fadeIn $animTime ease-in-out;
+    animation: fadeIn $animTime ease-in-out;
+    transition: margin-left $animTime ease-in-out;
+
+    margin-top: $commentTopMargin;
+    display: grid;
+    border: 1px solid theme-color-level("secondary", $shadeBorder);
+    background-color: white;
+    z-index: 50;
+    position: relative;
+
+    .headline {
+        border-bottom: 1px solid theme-color-level("secondary", $shadeBorder);
+        padding: 0.2em 0.4em;
+        .created {
+            font-style: italic;
+            color: #666;
+        }
+
+        .reporter {
+            display: grid;
+            grid-template-columns: auto auto auto auto;
+            column-gap: 4px;
+            align-items: center;
+        }
+    }
+
+    .content {
+        padding: 0.2em 0.8em;
+        .summary {
+            font-weight: bold;
+            font-size: 15px;
+            &::first-letter {
+                text-transform: uppercase;
+            }
+        }
+        .description {
+            margin-top: 4px;
+            font-size: 14px;
+        }
+        .modified {
+            font-size:12px;
+            padding-bottom: 0.4em;
+            font-style: italic;
+            color: #777;
+        }
+    }
+}
+
+.state-change {
+    margin-top: $stateTopMargin;
+    margin-left: $stateIndent;
+    z-index: 50;
+    position: relative;
+}
+
+.indentState {
+    margin-left: $stateIndent;
+}
+
+.indentNone {
+    margin-left: 0px;
+}
+
+.indentCommentMe {
+    margin-left: $commentIndent;
+}
+
+.internal {
+    border-style: dashed;
+    border-width: 2px;
+}
+.internal .headline {
+    border-bottom-style: dashed;
+    border-bottom-width: 2px;
+}
+
+
+.btns {
+    display:grid;
+    column-gap: 4px;
+    grid-template-columns: auto 1fr auto;
+    justify-items: end;
+}

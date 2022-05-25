@@ -1,0 +1,4 @@
+<div class="lbl" [@inOut]  *ngIf="expanded">
+    <ng-container *ngIf="text else tpl">{{text}}</ng-container>
+</div>
+<ng-template #tpl><ng-content></ng-content></ng-template>

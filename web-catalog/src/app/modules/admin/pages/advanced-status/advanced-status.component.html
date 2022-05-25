@@ -1,0 +1,55 @@
+<div class="container-xl full">
+
+    <div class="row pt-3">
+        <div class="col">
+            <h4>Advanced status <div class="float-right"><button class="btn btn-secondary btn-sm" (click)="refresh()">Refresh</button></div></h4>
+        </div>
+    </div>
+
+    <div class="row pt-2" class="status-grid">
+        <div *ngFor="let st of status; index as idx" class="status-cont">
+            <div *ngIf="isService(st)" class="service">
+                <div class="title">{{st.component}}</div>
+                <div class="success">
+                    <div [style.color]="st.lastCallSucceeded ? 'green':'red'">{{st.lastCallSucceeded
+                        ? 'Last call succeeded' : 'Last call failed'}}</div>
+                    <div [style.color]="colorGrade(st.callSuccessRate)" ngbTooltip="call success rate"
+                        [style.cursor]="'help'"><small>{{st.callSuccessRate | percent:"1.0-2":'nl-BE'}}</small></div>
+                </div>
+                <div class="mmm-title">RTT (ms)</div>
+                <div class="min-mean-max" id="mmm-{{idx}}">
+                    <div class="min">{{st.minRTT | number:'1.0-0':'nl-BE'}}</div>
+                    <div class="max">{{st.maxRTT | number:'1.0-0':'nl-BE'}}</div>
+                    <div class="mean" id="mean-{{idx}}">{{st.meanRTT | number:'1.0-0':'nl-BE'}}</div>
+                </div>
+                <div class="props">
+                    <div *ngIf="st?.persistedRate != null">Persisted rate: {{st.persistedRate | percent:'1.0-2':'nl-BE'}}</div>
+                    <div *ngIf="st?.['fetchedRecords#'] != null">Fetched records: {{st['fetchedRecords#'] | number}}
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="isStreamer(st)" class="streamer">
+                <div class="title">{{st.component}}</div>
+                <div class="success">
+                    <div [style.color]="st.lastCallSucceeded ? 'green':'red'">{{st.lastCallSucceeded
+                        ? 'Last call succeeded' : 'Last call failed'}}</div>
+                    <div [style.color]="colorGrade(st.successRate)" ngbTooltip="success rate"
+                        [style.cursor]="'help'"><small>{{st.successRate | percent:'1.0-2':'nl-BE'}}</small></div>
+                </div>
+                <div class="mmm-title">Lag (ms)</div>
+                <div class="min-mean-max" id="mmm-{{idx}}">
+                    <div class="min">{{st.minLagMs | number:'1.0-0':'nl-BE'}}</div>
+                    <div class="max">{{st.maxLagMs | number:'1.0-0':'nl-BE'}}</div>
+                    <div class="mean" id="mean-{{idx}}">{{st.meanLagMs | number:'1.0-0':'nl-BE'}}</div>
+                </div>
+                <div class="props">
+                    <div *ngIf="st?.connectionDropouts != null">Connection dropouts: {{st.connectionDropouts | number}}
+                    </div>
+                    <div *ngIf="st?.lastEventThrough != null"
+                        ngbTooltip="{{lastEvent(st) | date: 'dd/MM/yyyy @ HH:mm:ss -SSS'}}" [style.cursor]="'help'">Last event: {{lastEvent(st)
+                        | ago }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

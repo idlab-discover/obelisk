@@ -1,0 +1,85 @@
+@import "~codemirror/lib/codemirror.css";
+@import "~codemirror/theme/eclipse.css";
+@import "/src/common";
+
+.modal-footer {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr auto;
+    justify-items: left;
+
+}
+
+.frames {
+    display: grid;
+    grid-template-areas:
+    "toolbar toolbar"
+    "code docs";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 40px 1fr;
+    align-content: stretch;
+    align-items: stretch;
+    position: relative;
+    width: 100%;
+    
+    .tb {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto;
+        column-gap: 4px;
+        align-items: center;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+        grid-area: toolbar;
+        
+        .hint {
+            font-size: 13px;
+            color: #666;
+            font-style: italic;
+        }
+    }
+    
+    form {
+        box-shadow: 0.2rem 0 0.2rem rgb(0 0 0 / 10%); //, inset 0 0.2rem 0.4rem rgb(0 0 0 / 20%);
+        z-index: 10;
+        height: 100%;
+        position: relative;
+        grid-area: code;
+
+        .my-cm .CodeMirror {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+    }
+    .docs {
+        border-left: 1px solid #d5d9dd; //theme-color-level('primary', -8);
+        z-index: 5;
+        grid-area: docs;
+        overflow: auto;
+    }
+}
+
+.noDocs {
+    grid-template-columns: 1fr;
+}
+
+.special {
+    .modal-dialog {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        .modal-content {
+            position: relative;
+            height: 100%;
+        }
+    }
+
+    app-filter-editor {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        height: 100%;
+    }
+}

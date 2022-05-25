@@ -1,0 +1,30 @@
+.team {
+    padding: 0.4rem 0.8rem;
+
+    display: grid;
+    grid-template-areas:
+        "avatar name";
+
+    justify-content: left;
+    align-items: center;
+    column-gap: 12px;
+
+    .avatar {
+        grid-area: avatar;
+        align-self: center;
+    }
+
+    .name {
+        grid-area: name;
+        font-weight: bold;
+    }
+
+    &.active {
+        background-color: #f0f0f0;
+    }
+
+    &.hover:hover {
+        background-color: #f6f6f6;
+        cursor: pointer;
+    }
+}

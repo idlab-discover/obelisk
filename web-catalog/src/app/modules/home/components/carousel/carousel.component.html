@@ -1,0 +1,17 @@
+<div class="carousel" [style.height]="(carouselHeight*rows)+'px'" #carousel>
+    <div class="arrow" (click)="previous()">
+        <fa-icon [class]="{disabled: !datasource.hasPreviousPage()}" size="lg" icon="chevron-circle-left"></fa-icon>
+    </div>
+    <div class="viewport">
+        <div class="window" #window>
+            <div class="spinner" [hidden]="!isFetching">
+                <app-spinner></app-spinner>
+            </div>
+            <app-big-dataset [hidden]="isFetching" *ngFor="let ds of datasource.items$ | async" [dataset]="ds"
+                [style.height]="(carouselHeight-7)+'px'" @fadeSlideIn></app-big-dataset>
+        </div>
+    </div>
+    <div class="arrow" (click)="next()">
+        <fa-icon [class]="{disabled: !datasource.hasNextPage()}" size="lg" icon="chevron-circle-right"></fa-icon>
+    </div>
+</div>

@@ -1,0 +1,124 @@
+.http {
+  color: black;
+  margin: 10px 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  height: calc(100vh - 86px);
+  row-gap: 10px;
+
+  form {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto 100px;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 12px;
+
+    .historyBtn {
+      align-self: stretch;
+    }
+  }
+
+  .body {
+    grid-column: 1 / 6;
+    grid-row: 2;
+
+    textarea {
+      color: black;
+      height: 160px;
+      padding: 0 10px;
+    }
+  }
+
+  .output {
+    border: 3px dashed #ccc;
+    color: black;
+    overflow: auto;
+    padding: 0 10px;
+
+    position: relative;
+
+    &.success {
+      border-color: green;
+    }
+
+    &.failed {
+      border-color: red;
+    }
+
+    #btn-fab {
+      top: 10px;
+      right: 10px;
+      position: absolute;
+    }
+  }
+
+  .btns {
+    display: flex;
+    justify-content: space-between;
+  }
+
+}
+
+.mat-sidenav {
+  width: 340px;
+}
+
+$margin: 6px;
+
+.history {
+  
+  .head {
+    display: grid; 
+    grid-template-columns: 1fr auto;
+    column-gap: 4px;
+    font-size: 17px;
+    margin: 10px;
+    align-items: center;
+  }
+
+  .item {
+    cursor: pointer;
+    padding-bottom: $margin;
+    padding-top: $margin;
+    padding: $margin 10px;
+    border-bottom: 1px solid #ddd;
+
+    font-size: 13px;
+
+    &:last-of-type {
+      border-bottom: unset;
+    }
+
+    &:hover {
+      background-color: rgb(208, 217, 235);
+    }
+
+    display:grid;
+
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas: 
+    'm p'
+    'b b';
+
+    column-gap: 4px;
+    .method {
+      grid-area: m;
+    }
+
+    .path {
+      grid-area: p;
+    }
+
+    .body {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      grid-area: b;
+      font-size: 12px;
+      padding-top: 4px;
+    }
+  }
+}

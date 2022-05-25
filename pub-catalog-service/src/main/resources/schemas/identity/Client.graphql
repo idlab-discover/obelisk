@@ -1,0 +1,84 @@
+type Client {
+    id: String!
+    user: User!,
+    team: Team,
+    name: String! @searchable
+    confidential: Boolean! @searchable
+    onBehalfOfUser: Boolean! @searchable
+    properties: JSON,
+    restrictions: [ClientRestriction]
+    scope: [Permission]
+    redirectURIs: [String]
+    hideOrigin: Boolean!
+
+    # Get the usage limits to Client is subjected to (derived from the User (owner) or the optional Team)
+    usageLimit: UsageLimit!
+    # Current quota remaning for the limits (not available for Clients that work on behalf of Users)
+    usageRemaining: JSON
+}
+
+type ClientMutation {
+    update(input: UpdateClientInput!): ClientResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+
+    setName(name: String!): ClientResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+    setConfidential(confidential: Boolean!): ClientResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+    setOnBehalfOfUser(onBehalfOfUser: Boolean!): ClientResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+    setProperties(properties: JSON!): ClientResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+    setRestrictions(restrictions: [ClientRestrictionInput]!): ClientResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+    setScope(permissions: [Permission]!): ClientResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+    setRedirectURIs(redirectURIs: [String]): ClientResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+    # Set if the Client is visible as an origin in a Dataset (occurs when the Client was used to post data to a Dataset)
+    setHideOrigin(hideOrigin: Boolean!): ClientResponse! @deprecated @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+
+    # Generate a new secret for the client (only has effect if the client is a confidential client). Make sure to store the secret yourself as it cannot be retrieved (you will need to generate another secret)!
+    generateSecret: ClientSecretResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+
+    # Delete the client
+    remove: ClientResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+
+    # Request the deletion of data produced by the client
+    requestDataRemoval(input: DataRemovalRequestInput!): ClientResponse! @restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER, ME])
+}
+
+input CreateClientInput {
+    name: String!,
+    confidential: Boolean = false
+    onBehalfOfUser: Boolean = true
+    properties: JSON
+    restrictions: [ClientRestrictionInput]
+    scope: [Permission] = [READ]
+    redirectURIs: [String]
+}
+
+input UpdateClientInput {
+    name: String
+    confidential: Boolean
+    onBehalfOfUser: Boolean
+    properties: JSON
+    restrictions: [ClientRestrictionInput!]
+    scope: [Permission!]
+    redirectURIs: [String!]
+    hideOrigin: Boolean
+}
+
+type ClientResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Client
+}
+
+type ClientSecretResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: String
+}
+
+type ClientRestriction {
+    dataset: Dataset!
+    permissions: [Permission!]!
+}
+
+input ClientRestrictionInput {
+    datasetId: String
+    permissions: [Permission!]!
+}

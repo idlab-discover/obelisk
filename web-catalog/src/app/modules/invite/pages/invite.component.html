@@ -1,0 +1,74 @@
+<div class="bg">
+  <div class="brand">{{brand}}</div>
+
+  <div class="loginframe">
+    <h5>Hi {{user?.firstName}}</h5>
+    <div [ngSwitch]="type">
+      <div *ngSwitchCase="'dataset'">
+        <ng-container *ngTemplateOutlet="tmplDataset"></ng-container>
+      </div>
+      <div *ngSwitchCase="'team'">
+        <ng-container *ngTemplateOutlet="tmplTeam"></ng-container>
+      </div>
+      <div *ngSwitchCase="'invalid'">
+        <ng-container *ngTemplateOutlet="tmplInvalid"></ng-container>
+      </div>
+    </div>
+    <div class="pt-4" *ngIf="((type == 'team' && team.usersRemaining > 0) || type =='dataset') else invalidBtns">
+      <button class="btn btn-sm btn-outline-danger" (click)="declineInvite()">Decline</button>
+      <button class="btn btn-sm btn-success float-right" (click)="acceptInvite()">Accept</button>
+      <div ngbDropdown class="d-inline-block float-right mr-2"
+        *ngIf="'dataset'===type && (!invite?.disallowTeams) && (teams?.length > 0)">
+        <button class="btn btn-sm btn-outline-success" id="dropdownBasic1" ngbDropdownToggle>Accept as Team</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+          <button *ngFor="let t of teams" ngbDropdownItem (click)="acceptInviteAsTeam(t)">{{t.name}}</button>
+        </div>
+      </div>
+    </div>
+    <ng-template class="pt-4" #invalidBtns>
+      <a class="btn btn-sm btn-outline-secondary" href="javascript:history.back();"> Go back</a>
+      <a class="btn btn-sm btn-primary float-right" [routerLink]="['']">Home page</a>
+    </ng-template>
+  </div>
+
+  <ng-template #tmplDataset>
+    You have been invited to join dataset
+    <span [style.white-space]="'nowrap'">
+      <b>{{dataset?.name}}</b>
+      <span *ngIf="dataset?.description as desc" [style.margin-left]="'4px'" [ngbTooltip]="desc">
+        <fa-icon icon="info-circle"></fa-icon>
+      </span>
+    </span>
+    <div *ngIf="invite?.roles?.length > 0">
+      You will be granted the following roles:
+      <ul>
+        <li *ngFor="let role of invite?.roles">{{role.name}}</li>
+      </ul>
+    </div>
+    <div class="mt-2"><em>This invite will expire {{invite?.expiresInMs | duration:false:true }}.</em></div>
+  </ng-template>
+
+  <ng-template #tmplTeam>
+    <div class="pb-2">You have been invited to join team
+      <span [style.white-space]="'nowrap'">
+        <b>{{team?.name}}</b>
+        <span *ngIf="team?.description as desc" [style.margin-left]="'4px'" [ngbTooltip]="desc">
+          <fa-icon icon="info-circle"></fa-icon>
+        </span>
+      </span>
+    </div>
+    <div *ngIf="team.usersRemaining > 0 else noUsersRemaining">
+      <em>This invite will expire {{teamInvite?.expiresInMs | duration:false:true }}.</em>
+    </div>
+    <ng-template #noUsersRemaining>
+      <ngb-alert type="danger" [dismissible]="false">
+        <strong>This team has no more open user spots.</strong> Contact the team's responsible to increase their usage plan.
+      </ngb-alert>
+    </ng-template>
+  </ng-template>
+
+  <ng-template #tmplInvalid>
+    This is an invalid invite link. Make sure you are browsing to the full url.<p>
+  </ng-template>
+
+</div>

@@ -1,0 +1,10 @@
+<div class="ds pointer" [routerLink]="['/ds',dataset.id]">
+    <div class="img" [style.background-image]="dataset.id | resource:'thumbnail':true | async"></div>
+    <div class="sub">
+        <div class="title">{{dataset.name}}</div>
+        <div class="description" *ngIf="dataset.description" [ngbTooltip]="dataset.description" container="body"
+            placement="auto">
+            <fa-icon class="fa-1x" icon="info-circle"></fa-icon>
+        </div>
+    </div>
+</div>

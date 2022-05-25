@@ -1,0 +1,17 @@
+<div class="modal-header md">
+    <h1 class="modal-title">{{announcement?.title}}</h1>
+    <div class="close pointer" aria-label="Close" (click)="activeModal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </div>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col">
+            <div class="content md" [innerHTML]="announcement?.content | markdown"></div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer justify-content-between">
+    <div class="ts">{{announcement?.timestamp | date:'dd MMM, YYYY @ HH:mm'}}</div>
+    <button class="btn btn-sm btn-primary" (click)="activeModal.dismiss()">Close</button>
+</div>

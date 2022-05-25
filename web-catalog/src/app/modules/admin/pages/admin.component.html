@@ -1,0 +1,55 @@
+<div class="ds-cont">
+    <sidebar>
+        <div class="up">
+            <sb-btn link="./datasets" help="Datasets">
+                <sb-icon icon="database"></sb-icon>
+                <sb-label text="Datasets"></sb-label>
+            </sb-btn>
+            <sb-btn link="./users" help="Users">
+                <sb-icon icon="user"></sb-icon>
+                <sb-label text="Users"></sb-label>
+            </sb-btn>
+            <sb-btn link="./teams" help="Teams">
+                <sb-icon icon="sitemap"></sb-icon>
+                <sb-label text="Teams"></sb-label>
+            </sb-btn>
+            <sb-btn link="./clients" help="Clients">
+                <sb-icon icon="tablet-alt"></sb-icon>
+                <sb-label text="Clients"></sb-label>
+            </sb-btn>
+            <div class="divider"></div>
+            <sb-btn link="./news" help="News">
+                <sb-icon icon="newspaper"></sb-icon>
+                <sb-label text="News"></sb-label>
+            </sb-btn>
+            <div class="divider"></div>
+            <sb-btn link="./usagelimit" help="Usage Limits">
+                <sb-icon icon="tachometer-alt"></sb-icon>
+                <sb-label text="Usage Limits"></sb-label>
+            </sb-btn>
+            <sb-btn link="./usageplan" help="Usage Plans">
+                <sb-icon icon="handshake"></sb-icon>
+                <sb-label text="Usage Plans"></sb-label>
+            </sb-btn>
+            <div class="divider"></div>
+            <sb-btn link="./tickets" help="Tickets">
+                <sb-icon icon="headset"></sb-icon>
+                <sb-label text="Tickets"></sb-label>
+            </sb-btn>
+            <sb-btn link="./status" help="Advanced status">
+                <sb-icon icon="heartbeat"></sb-icon>
+                <sb-label text="Advanced status"></sb-label>
+            </sb-btn>
+        </div>
+        <div class="down">
+            <sb-btn help="Toggle sidebar" sbToggle>
+                <sb-icon icon="angle-double-right" iconExpanded="angle-double-left"></sb-icon>
+                <sb-label text="Collapse sidebar"></sb-label>
+            </sb-btn>
+        </div>
+    </sidebar>
+   
+    <div class="ds" [@fadeAnimation]="o.isActivated ? o.activatedRoute : ''">
+        <router-outlet #o="outlet"></router-outlet>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+@import "/src/common";
+
+.notify:after {
+    position: absolute;
+    right: 0.4rem;
+    bottom: -0.16rem;
+    content: "";
+    font-size: 30%;
+    border-radius: 50%;
+    color: white;
+    background: theme-color("info");
+    width: 11px;
+    height: 11px;
+    border: 1px solid #FAFAFA;
+}
+
+.icon {
+    position: relative;
+}

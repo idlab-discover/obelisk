@@ -1,0 +1,54 @@
+type Query {
+    # Get data accessible from the current auth session
+    me: User!
+    # List all published datasets. This is a public call, no login is required
+    publishedDatasets: [Dataset] @paged @enable_filter
+    # Retrieve info about a specific dataset (note: most Dataset fields will be blocked if you are not a member of the dataset)
+    dataset(id: String!): Dataset
+    # Retrieve info about a specific team (shortcut e.g. used in UI when accepting a team invite)
+    team(id: String!): Team
+
+    # Access data restricted to Platform Managers
+    admin: Admin @restricted(level: [PLATFORM_MANAGER])
+
+    globalStats: GlobalMetaStats!
+    announcement(id: String): Announcement
+    announcements: [Announcement] @paged @enable_filter
+}
+
+type Mutation {
+    # General mutations
+    # Create a new dataset
+    createDataset(input: CreateDatasetInput!) : DatasetResponse!
+    # Create a new client (e.g. for standalone service, web application using Obelisk)
+    createClient(input: CreateClientInput!): ClientResponse!
+    # Setup a new push-based data stream (there are a limited number of streams allowed per user)
+    createStream(input : CreateStreamInput!): StreamResponse!
+    # Request a data export
+    createExport(input : CreateExportInput!) : ExportResponse!
+    # Create a new Team
+    createTeam(input: CreateTeamInput!): TeamResponse!
+    # Create a new Usage Plan
+    createUsagePlan(input: CreateUsagePlanInput!): UsagePlanResponse! @restricted(level: [PLATFORM_MANAGER])
+    # Create a new Usage Limit
+    createUsageLimit(input: CreateUsageLimitInput!): UsageLimitResponse! @restricted(level: [PLATFORM_MANAGER])
+    # Access mutations for a specific Dataset
+    onDataset(id: String!): DatasetMutation!
+    # Access mutations for a specific User
+    onUser(id: String!): UserMutation!
+    # Access mutations for a specific Client
+    onClient(id: String!): ClientMutation!
+    # Access mutations for a specific Stream
+    onStream(id: String!): StreamMutation!
+    # Access mutations for a specific Export
+    onExport(id: String!): ExportMutation!
+    # Access mutations for a specific Team
+    onTeam(id: String!): TeamMutation!
+    # Access mutations for a specific Usage Plan
+    onUsagePlan(id: String!): UsagePlanMutation @restricted(level: [PLATFORM_MANAGER])
+    # Access mutations for a specific Usage Limt
+    onUsageLimit(id: String!): UsageLimitMutation @restricted(level: [PLATFORM_MANAGER])
+
+    createAnnouncement(input: CreateAnnouncement): AnnouncementResponse! @restricted(level: [PLATFORM_MANAGER])
+    onAnnouncement(id: String!): AnnouncementMutation @restricted(level: [PLATFORM_MANAGER])
+}

@@ -1,0 +1,283 @@
+<div class="container-xl full">
+    <div class="row pt-3">
+        <div class="col">
+
+            <div class="section">
+                <div class="row">
+                    <div class="col pointer" (click)="toggle($event,'general', true)">
+                        <h4 class="d-inline-block">General</h4>
+                        <button class="btn btn-sm btn-outline-secondary collapser"
+                            (click)="toggle($event,'general', true)">{{collapseGeneral ? 'Expand' :
+                            'Collapse'}}</button>
+                        <div class="font-weight-light">General settings for your dataset like public availability, open
+                            data toggle, etc.
+                        </div>
+                    </div>
+                </div>
+                <div class="row" [ngbCollapse]="collapseGeneral">
+                    <div class="col mt-4 mb-4">
+                        <form [formGroup]="generalForm">
+                            <div class="row">
+                                <div class="col-md-6 col-lg-8 pb-2">
+                                    <h6>Name <small>(required)</small></h6>
+                                    <input type="text" class="form-control" formControlName="name">
+                                </div>
+                                <div class="col-md-6 col-lg-8 pb-2">
+                                    <h6>Description <small><span [style.color]="desc.hasError('maxlength') ? 'red' : 'black'">({{desc.value?.length || 0}}/255)<span *ngIf="desc.hasError('maxlength')"></span></span></small></h6>
+                                    <textarea class="form-control" formControlName="description" rows="4"></textarea>
+                                </div>
+
+                                <div class="col-md-6 col-lg-4">
+                                    <h6>Settings</h6>
+                                    <div class="row">
+                                        <div class="col">
+                                            <span>Public availability <help>Private dataset are
+                                                    only listed in My Datasets, public datasets are listed in All
+                                                    Datasets</help>
+                                            </span>
+                                            <div class="float-right">
+                                                <div class="btn-group btn-group-xs btn-group-toggle" ngbRadioGroup
+                                                    name="radioBasic" formControlName="published">
+                                                    <label ngbButtonLabel [style.width]="'55px'"
+                                                        class="btn-outline-danger">
+                                                        <input ngbButton type="radio" [value]="false"> private
+                                                    </label>
+                                                    <label ngbButtonLabel [style.width]="'55px'"
+                                                        class="btn-outline-success">
+                                                        <input ngbButton type="radio" [value]="true"> public
+                                                    </label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <span class="d-inline-block">Open data <help>Open dataset are accessible for
+                                                    everyone</help>
+                                            </span>
+                                            <div class="float-right">
+                                                <div class="btn-group btn-group-xs btn-group-toggle" ngbRadioGroup
+                                                    name="radioBasic" formControlName="openData">
+                                                    <label ngbButtonLabel [style.width]="'55px'"
+                                                        class="btn-outline-secondary">
+                                                        <input ngbButton type="radio" [value]="false"> closed
+                                                    </label>
+                                                    <label ngbButtonLabel [style.width]="'55px'"
+                                                        class="btn-outline-secondary">
+                                                        <input ngbButton type="radio" [value]="true"> open
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row pt-4">
+                                        <div class="col text-right">
+                                            <button class="btn btn-sm btn-outline-secondary" (click)="resetGeneral()"
+                                            [disabled]="generalForm.pristine">Reset</button>
+                                            <button class="btn btn-sm btn-primary ml-1" (click)="saveGeneral()"
+                                            [disabled]="generalForm.pristine || generalForm.invalid">Save
+                                            changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="row">
+                    <div class="col pointer" (click)="toggle($event,'metadata', true)">
+                        <h4 class="d-inline-block">Metadata</h4>
+                        <button class="btn btn-sm btn-outline-secondary collapser"
+                            (click)="toggle($event,'metadata', true)">{{collapseMetadata ? 'Expand' :
+                            'Collapse'}}</button>
+                        <div class="font-weight-light">Edit the metadata of this dataset.</div>
+                    </div>
+                </div>
+                <div class="row" [ngbCollapse]="collapseMetadata">
+                    <div class="col mt-4 mb-4">
+                        <form [formGroup]="metadataForm" (submit)="saveMetadata()" class="form">
+                            <div class="form-group row">
+                                <label for="keywords" class="col-sm-2 col-form-label col-form-label-sm">Keywords <help>Space separated
+                                        list of keywords</help></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control form-control-sm" id="keywords" formControlName="keywords">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="license" class="col-sm-2 col-form-label col-form-label-sm">License <help>The name of the
+                                        license</help></label>
+                                <div class="col-sm-10">
+                                    <select id="license" formControlName="license" class="custom-select custom-select-sm">
+                                        <option [ngValue]="null">Select a license</option>
+                                        <option *ngFor="let license of licenses" [value]="license">{{license}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="contactPoint" class="col-sm-2 col-form-label col-form-label-sm">Contactpoint <help>Email of
+                                        the person to contact</help></label>
+                                <div class="col-sm-10">
+                                    <input type="email" class="form-control form-control-sm" id="contactPoint"
+                                        formControlName="contactPoint">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="publisherName" class="col-sm-2 col-form-label col-form-label-sm">Publisher name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control form-control-sm" id="publisherName"
+                                        formControlName="publisherName">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="publisherHomepage" class="col-sm-2 col-form-label col-form-label-sm">Publisher
+                                    homepage</label>
+                                <div class="col-sm-10">
+                                    <input type="url" class="form-control form-control-sm" id="publisherHomepage"
+                                        formControlName="publisherHomepage">
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col">
+                                    <button class="btn btn-sm btn-primary float-right" type="submit">Save
+                                        changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="row">
+                    <div class="col pointer" (click)="toggle($event,'customization', true)">
+                        <h4 class="d-inline-block">Customization</h4>
+                        <button class="btn btn-sm btn-outline-secondary collapser"
+                            (click)="toggle($event,'customization', true)">{{collapseCustomization ? 'Expand' :
+                            'Collapse'}}</button>
+                        <div class="font-weight-light">Customize your dataset banners and thumbnail, but also the
+                            main page template.
+                        </div>
+                    </div>
+                </div>
+                <div class="row" [ngbCollapse]="collapseCustomization">
+                    <div class="col mt-4 mb-4">
+                        <form [formGroup]="customizationForm">
+                            <div class="row">
+                                <div class="col">
+                                    <h6>Banner</h6>
+                                    <div class="banner-cont" (click)="editBanner()">
+                                        <img [src]="bannerDsId | resource:'banner' | async">
+                                        <div>
+                                            <a class="a-edit pointer">(edit banner)</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-3">
+                                <div class="col">
+                                    <h6>Thumbnail</h6>
+                                    <div class="thumbnail-cont" (click)="editThumbnail()">
+                                        <img [src]="thumbnailDsId | resource:'thumbnail' | async" #thumbnail>
+                                        <div>
+                                            <a class="a-edit pointer">(edit thumbnail)</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="row pt-2">
+                                <div class="col">
+                                    <button class="btn btn-sm btn-primary float-right"
+                                        (click)="saveCustomization()">Save
+                                        changes</button>
+                                </div>
+                            </div> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="row">
+                    <div class="col pointer" (click)="toggle($event,'readme', true)">
+                        <h4 class="d-inline-block">Readme</h4>
+                        <button class="btn btn-sm btn-outline-secondary collapser"
+                            (click)="toggle($event,'readme', true)">{{collapseReadme ? 'Expand' : 'Collapse'}}</button>
+                        <div class="font-weight-light">Edit the readme page to help visitors understand how to digest
+                            the
+                            data they see.
+                        </div>
+                    </div>
+                </div>
+                <div class="row" [ngbCollapse]="collapseReadme">
+                    <div class="col mt-4 mb-4">
+                        <form [formGroup]="readmeForm" class="form" (submit)="saveReadme()">
+                            <div class="row pt-3">
+                                <div class="col">
+                                    <h6 class="d-inline-block">Readme (markdown)</h6>
+                                    <button class="btn btn-sm btn-dark float-right" type="button" (click)="toggleViewMode()">Toggle
+                                        view</button>
+                                    <button class="btn btn-sm btn-danger float-right mr-2" type="button" (click)="resetReadme()">Reset
+                                        to default</button>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col">
+                                    <div class="view" [ngClass]="viewClass">
+                                        <div class="framed" [hidden]="hideEditor">
+                                            <ngx-codemirror #cm formControlName="mdSrc" [options]="options"
+                                                class="my-cm"></ngx-codemirror>
+                                        </div>
+                                        <div class="framed md" [hidden]="hidePreview" markdown [data]="mdSrc">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col">
+                                    <button class="btn btn-sm btn-primary float-right" type="submit">Save
+                                        changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="row">
+                    <div class="col pointer" (click)="toggle($event,'advanced', true)">
+                        <h4 class="d-inline-block">Advanced</h4>
+                        <button class="btn btn-sm btn-outline-secondary collapser"
+                            (click)="toggle($event,'advanced', true)">{{collapseAdvanced ? 'Expand' : 'Collapse'}}</button>
+                        <div class="font-weight-light">Advanced settings for your dataset like data removal.
+                        </div>
+                    </div>
+                </div>
+                <div class="row" [ngbCollapse]="collapseAdvanced">
+                    <div class="col mt-4 mb-4">
+                        <div class="row">
+                            <div class="col">
+                                <h6>Data removal</h6>
+                                <div class="text-muted">This allows you to delete the entire dataset, including data and
+                                    metadata. <strong>Be careful when using this button, it is irreversable!</strong>
+                                </div>
+                                <button class="btn btn-sm btn-danger mt-2" (click)="removeDataset()">Delete entire
+                                    dataset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

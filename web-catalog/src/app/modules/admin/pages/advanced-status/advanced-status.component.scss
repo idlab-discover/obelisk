@@ -1,0 +1,72 @@
+@import '/src/common';
+
+.status-grid {
+
+    display: grid;
+    row-gap: 10px;
+    column-gap: 10px;
+
+    grid-template-columns: repeat(auto-fit,  minmax(200px, 300px));
+    grid-auto-rows: auto;
+
+}
+.status-cont {
+    border: 1px solid theme-color('primary');
+    padding: 4px 8px;
+
+    .service, .streamer {
+        position: relative;
+
+
+        .title {
+            font-weight: bold;
+        }
+        
+        .mmm-title {
+            font-weight: bold;
+            font-size: 12px;
+            padding-top: 10px;
+        }
+
+        .success {
+            position: relative;
+            font-size: 14px;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .min-mean-max {
+            position: relative;
+            border: 1px solid black;
+            height: 20px;
+            width: 100%;
+
+            display: grid;
+            grid-template-columns: auto auto;
+            justify-content: space-between;
+
+            .min, .mean, .max {
+                font-size: 11px;
+                padding-left: 2px;
+                padding-right: 2px;
+            }
+
+            .mean{
+                position: absolute;
+                border-left: 1px solid black;
+                left: 50%;
+                height: 19px;
+                padding-left: 2px;
+            }
+        }
+        
+        .props {
+            padding-top: 10px;
+            font-size: 12px;
+        }
+    }
+    
+
+}

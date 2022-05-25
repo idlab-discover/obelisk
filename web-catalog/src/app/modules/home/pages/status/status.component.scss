@@ -1,0 +1,30 @@
+@import '/src/common';
+
+.time {
+    font-size: 14px;
+    font-style: italic;
+    color: theme-color('secondary');
+}
+
+.up {
+    background-color: #3cd671;
+}
+
+.down {
+    background-color: #dd484a;
+}
+
+.dud {
+    background-color: theme-color("secondary");
+}
+
+.degraded {
+    background-color: #EB9413;
+}
+
+h5 > * {
+    vertical-align: baseline;
+}
+h6 > * {
+    vertical-align: text-bottom;
+}

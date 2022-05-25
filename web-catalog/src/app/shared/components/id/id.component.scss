@@ -1,0 +1,45 @@
+$bgColor: #555;
+$fgColor: white;
+$hoverColor: black;
+
+.cont {
+    display: inline-flex;
+    border-radius: 4px;
+
+    font-size: 10pt;
+    font-weight: bold;
+
+    .lbl {
+        border: 1px solid $bgColor;
+        border-right: none;
+        padding: 2px 4px;
+        background-color: $bgColor;
+        color: $fgColor;
+        border-top-left-radius: inherit;
+        border-bottom-left-radius: inherit;
+    }
+    .id {
+        border: 1px solid $bgColor;
+        border-left: none;
+        padding: 2px 4px;
+        background-color: $fgColor;
+        color: $bgColor;
+        border-top-right-radius: inherit;
+        border-bottom-right-radius: inherit;
+        font-weight: normal;
+    }
+
+    &:hover {
+        cursor: pointer;
+
+        .lbl {
+            background-color: $hoverColor;
+            border-color: $hoverColor;
+        }
+
+        .id {
+            border-color: $hoverColor;
+            color: $hoverColor;
+        }
+    }
+}

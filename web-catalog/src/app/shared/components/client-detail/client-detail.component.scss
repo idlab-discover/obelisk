@@ -1,0 +1,54 @@
+.client-detail {
+    padding: 0.4rem 0.8rem;
+
+    display: grid;
+    grid-template-areas:
+        "avatar name info"
+        "avatar extras extras";
+    grid-template-rows: 1fr;
+    grid-template-columns: auto auto 1fr;
+
+    justify-content: left;
+    align-items: center;
+    column-gap: 12px;
+
+    height: 61px;
+
+    .avatar {
+        grid-area: avatar;
+        align-self: center;
+    }
+
+    .name {
+        grid-area: name;
+        font-size: 14px;
+        white-space: nowrap;
+        // font-weight: bold;
+    }
+
+    .info {
+        grid-area: info;
+        align-self: flex-start;
+        justify-self: right;
+    }
+
+    &.active {
+        background-color: #f0f0f0;
+    }
+
+    &.hover:hover {
+        background-color: #f6f6f6;
+        cursor: pointer;
+    }
+
+    .extras {
+        grid-area: extras;
+        fa-icon {
+            color: #444 !important;
+        }
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: left;
+        column-gap: 10px;
+    }
+}

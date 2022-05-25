@@ -1,0 +1,51 @@
+@import '/src/common';
+
+fa-icon.active {
+    color: #3CD671;
+}
+
+fa-icon.inactive {
+    color: theme-color-level("secondary", -8);
+}
+
+.division {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    column-gap: 20px;
+}
+
+.divider-vertical {
+    background-color: #ccc;
+    width: 1px;
+    margin-top: 36px;
+}
+
+.titleAndFilter {
+    display: grid;
+    grid-template-areas: 
+        "header filter"
+        "list list";
+    grid-template-columns: auto 1fr;
+    column-gap: 60px;
+    align-items: baseline;
+
+    h6 {
+        grid-area: header;
+    }
+
+    .filter {
+        grid-area: filter;
+        justify-self: stretch;
+    }
+
+    .list {
+        grid-area: list;
+    }
+}
+
+.btns {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    column-gap: 6px;
+    justify-items: left;
+}

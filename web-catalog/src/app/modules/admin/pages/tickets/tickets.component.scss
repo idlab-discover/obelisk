@@ -1,0 +1,10 @@
+.filter-form {
+    display: grid;
+    grid-template-columns: 1fr 250px auto auto;
+    column-gap: 4px;
+    align-items: center;
+}
+
+.controlFont {
+    font-size: 14px;
+}

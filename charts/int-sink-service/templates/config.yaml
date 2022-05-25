@@ -1,0 +1,11 @@
+# Additional config for the Microservices (is mounted along the Obelisk Base configuration)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ include "int-sink-service.fullname" . }}-config
+data:
+    BATCHING_FLUSH_INTERVAL_MS: "{{ .Values.config.bufferMaxDelay }}"
+    BATCHING_MAX_BUFFER_SIZE: "{{ .Values.config.bufferMaxSize }}"
+    PULSAR_DLQ_TOPIC: "{{ .Values.config.pulsarDlqTopic}}"
+    PULSAR_ACK_GROUP_TIME_MS: "{{ .Values.config.ackGroupTimeMs }}"
+    RX_BACKPRESSURE_BATCH_BUFFER: "{{ .Values.config.rxBackPressureBatchBuffer }}"

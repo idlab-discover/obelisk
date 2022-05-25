@@ -1,0 +1,29 @@
+type Invite {
+    id: String!
+    # Optional: roles the user will be assigned to when accepting the invite
+    roles: [Role]
+    # Time in milliseconds until the invite will expire
+    expiresInMs: Long!
+    disallowTeams: Boolean!
+}
+
+type InviteMutation {
+    # Accept the invite
+    accept: InviteResponse!
+    # Accept the invite for a team you are managing
+    acceptAsTeam(teamId: String!): InviteResponse! @ restricted(level: [PLATFORM_MANAGER, TEAM_MANAGER])
+    # Revoke the invite. This stops users from using the invite immediately
+    revoke: InviteResponse! @restricted(level: [PLATFORM_MANAGER, DATASET_MANAGER])
+}
+
+type InviteResponse {
+    responseCode: ResponseCode!
+    message: String
+    item: Invite
+}
+
+input InviteInput {
+    roleIds: [String]
+    # Set this property to true to disallow Teams from using the invite link.
+    disallowTeams: Boolean = false
+}

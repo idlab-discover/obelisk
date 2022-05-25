@@ -1,0 +1,17 @@
+@import '~codemirror/lib/codemirror';
+@import '~codemirror/theme/eclipse';
+
+
+@import '/src/common';
+
+.tag {
+    font-weight: 600;
+    padding: 0 5px;
+}
+fa-icon.active {
+    color: #3CD671;
+}
+
+fa-icon.inactive {
+    color: theme-color-level("secondary", -8);
+}

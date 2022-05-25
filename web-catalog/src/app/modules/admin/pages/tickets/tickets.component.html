@@ -1,0 +1,92 @@
+<div class="container-xl">
+    <div class="row pt-3">
+        <div class="col-auto">
+            <h5>All Tickets <help>All support tickets are listed here</help>
+            </h5>
+        </div>
+        </div>
+        <div class="row pt-1">
+        <div class="col">
+            <form class="form-inline filter-form" [formGroup]="filterForm">
+                
+                <label class="sr-only" for="text">Summary</label>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Filter</div>
+                    </div>
+                    <input type="text" class="form-control" id="text" placeholder="summary"
+                    formControlName="containsText">
+                </div>
+
+                <label class="sr-only" for="text">Status</label>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend"><span class="input-group-text">Status</span></div>
+                    <ng-select class="myControl-sm controlFont" placeholder="(all)" formControlName="status">
+                        <ng-option *ngFor="let state of states" [value]="state">
+                            <issue-state [state]="state"></issue-state>
+                        </ng-option>
+                    </ng-select>
+                </div>
+
+                <label class="sr-only" for="sort">Sort</label>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Sort</div>
+                    </div>
+                    <select class="form-control" id="sort" formControlName="sort">
+                        <option *ngFor="let s of sortOptions" [value]="s.value" [innerHTML]="s.label"></option>
+                    </select>
+                </div>
+
+                <div class="form-check ml-2">
+                    <input class="form-check-input" type="checkbox" id="inlineFormCheck" formControlName="hideClosed">
+                    <label class="form-check-label" for="inlineFormCheck">
+                        Open only <help class="ml-1">Only show open tickets</help>
+                    </label>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="33" minBufferPx="200" maxBufferPx="800" style="height: 500px">
+                <table class="table table-striped table-hover table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>#</th>
+                            <th>reporter</th>
+                            <th>summary</th>
+                            <th>status</th>
+                            <th>created</th>
+                            <th>updated</th>
+                            <th>assignee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [hidden]="!(ticketSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!ticketSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No issues found...</em></td>
+                        </tr>
+                        <tr [hidden]="ticketSource?.isCurrentlyEmpty()" class="pointer"
+                            *cdkVirtualFor="let issue of ticketSource" [routerLink]="issue?._id">
+                            <td>{{issue?._id}}</td>
+                            <td><user-tag [user]="issue?.reporter" [size]="20"></user-tag></td>
+                            <td>{{issue?.summary}}</td>
+                            <td><issue-state [state]=issue?.state></issue-state></td>
+                            <td><small>{{issue?.createdAt | ago}}</small></td>
+                            <td><small>{{(issue?.modifiedAt | ago) || '-'}}</small></td>
+                            <td><user-tag [user]="issue?.assignee" [size]="20"></user-tag></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

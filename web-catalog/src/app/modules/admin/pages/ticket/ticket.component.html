@@ -1,0 +1,75 @@
+<div class="container-xl">
+    <div class="row pt-3">
+        <div class="col baseline">
+            <h5>Ticket #{{ticket?._id}}</h5>
+            <button class="btn btn-xs btn-outline-secondary xxs" (click)="onAssign()">{{assignTxt}}</button>
+            <div class="updated" *ngIf="comments?.length > 0">
+                <small>(updated {{comments[comments?.length-1]?.createdAt |ago}})</small>
+            </div>
+            <div>
+                <issue-state [state]="ticket?.state" [class.pointer]="!ticketIsOpen()" (click)="openIssue()"
+                    ngbTooltip="click to reopen" container="body" [disableTooltip]="ticketIsOpen()"></issue-state>
+            </div>
+        </div>
+    </div>
+    <div class="row pt-2">
+        <div class="col ticket-components  pb-2 mb-5">
+            <div class="ticket">
+                <ticket-header [ticket]="ticket" [personal]="false" (resolved)="onResolve($event)" (updated)="onIssueUpdated($event)"
+                    (removed)="onRemoveIssue($event)"></ticket-header>
+            </div>
+            <div class="line"></div>
+            <div class="comments">
+                <ticket-comment *ngFor="let comment of comments" [comment]="comment" [ticket]="ticket"
+                    (removed)="onRemove($event)" (updated)="onCommentUpdated($event)" [personal]="false"></ticket-comment>
+            </div>
+            <div class="answer pb-2 mb-5" *ngIf="ticketNotClosed()">
+                <div class="headline">
+                    <user-tag [user]="me" size="20"></user-tag>
+                </div>
+                <div class="content">
+                    <form class="form" [formGroup]="answerForm">
+                        
+                        <div class="row pt-1">
+                            <div class="col-lg-8">
+
+                                <div class="custom-control custom-checkbox pt-1">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1"
+                                        formControlName="internal">
+                                    <label class="custom-control-label" for="customCheck1">Internal <help>Reply is only
+                                            viewable by admins</help></label>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="input-group input-group-sm" *ngIf="stateSelectable">
+                                    <div class="input-group-prepend"><span class="input-group-text">State</span></div>
+                                    <ng-select class="myControl-sm" placeholder="Pick a new state"
+                                        formControlName="changeState" [readonly]="!stateSelectable">
+                                        <ng-option *ngFor="let state of getStates(ticket?.state)" [value]="state">
+                                            <issue-state [state]="state"></issue-state>
+                                        </ng-option>
+                                    </ng-select>
+                                </div>
+                                <div class="text-right text-muted" *ngIf="!stateSelectable">
+                                    <em>No state change on internal replies</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col">
+                                <textarea class="form-control form-control-sm" formControlName="comment" rows="4"
+                                    placeholder="Type your reply here..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="btns">
+                    <button class="btn btn-xs btn-outline-secondary" (click)="reset()">Reset</button>
+                    <span class="text-muted"><small><em>Markdown support enabled</em></small></span>
+                    <button class="btn btn-xs btn-secondary" (click)="preview()" [disabled]="!isAnswerFormValid()">Preview</button>
+                    <button class="btn btn-xs btn-primary" (click)="reply()" [disabled]="!isAnswerFormValid()">Reply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

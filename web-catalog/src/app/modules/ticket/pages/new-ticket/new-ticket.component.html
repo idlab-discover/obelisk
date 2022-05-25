@@ -1,0 +1,39 @@
+<div class="container-fluid full">
+    <div class="row">
+        <div class="col">
+            <h6><div class="d-inline-block pointer mr-1" (click)="isLarge() ? minimizeTicketFrame() : maximizeTicketFrame()"><fa-icon icon="expand-alt" flip="horizontal" [ngbTooltip]="isLarge() ? 'minimize' : 'expand'"></fa-icon></div> New ticket</h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form class="form myForm" [formGroup]="ticketForm" (submit)="submitTicket()">
+                <div class="form-row">
+                    <div class="form-group col">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    Summary * <help class="ml-1">A one sentence description of the issue</help>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" formControlName="summary">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <textarea class="form-control form-control-sm" placeholder="Describe your issue..." formControlName="description"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col btns">
+                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="reset()">Reset</button>
+                        <span class="text-muted"><small><em>Markdown support enabled</em></small></span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="preview()" [disabled]="ticketForm.invalid">Preview</button>
+                        <button type="submit" class="btn btn-sm btn-primary" [disabled]="ticketForm.invalid">Create</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

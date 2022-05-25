@@ -1,0 +1,71 @@
+<div class="container-xl full">
+    <div class="row pt-3 d-none d-sm-block">
+        <app-id class="float-right" [id]="team?.id"></app-id>
+        <div class="col-md-8 col-lg-6 tiles">
+            <tile class="shadow mr-2 pointer" [nr]="tiles?.members" caption="members" routerLink="../members"></tile>
+            <tile class="shadow mr-2 pointer" [nr]="tiles?.clients" caption="clients" routerLink="../clients"></tile>
+            <tile class="shadow mr-2 pointer" [nr]="tiles?.datasets" caption="datasets" routerLink="../ds"></tile>
+            <tile class="shadow mr-2 pointer" [nr]="tiles?.streams" caption="streams" routerLink="../streams"></tile>
+            <tile class="shadow mr-2 pointer" [nr]="tiles?.exports" caption="exports" routerLink="../exports"></tile>
+        </div>
+    </div>
+    <div class="row pt-3" *ngIf="team?.description as desc">
+        <div class="col">
+            <div class="text-muted">{{desc}}</div>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col">
+            <h6>Welcome to the team!</h6>
+            You've just gained access to the datasets that your team is a member of. You can now create <a [routerLink]="['../clients']"> team clients</a> to share with other members.
+            <br>Members from this team will also benefit from the Usage Plan assigned to this team. 
+        </div>
+    </div>
+
+    <div class="row pt-3 d-none">
+        <div class="col">
+            <h5>Team accessible datasets <help>This is a list of all datasets that team members have access to, through this Team's memberships</help></h5>
+        </div>
+    </div>
+
+    <div class="row pt-1 d-none">
+        <div class="col">
+            <cdk-virtual-scroll-viewport itemSize="36" minBufferPx="200" maxBufferPx="800" style="height: 300px" class="shadow-sm">
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="thumb"></th>
+                            <th width="200">name</th>
+                            <th>description</th>
+                            <th width="80" class="text-center">metrics</th>
+                            <th width="80" class="text-center">events</th>
+                            <th width="160" class="text-center">updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <tr [hidden]="!(datasetSource?.loading$ | async)">
+                            <td colspanner>
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-grow spinner-grow-sm mr-2 bg-secondary" role="status" [style.borderRadius]="'4px'"></div>
+                                    <span class="text-secondary"><em>Loading...</em></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [hidden]="!datasetSource?.isCurrentlyEmpty()">
+                            <td colspanner><em>No datasets found...</em></td>
+                        </tr>
+                        <tr [hidden]="datasetSource?.isCurrentlyEmpty()" *cdkVirtualFor="let ds of datasetSource" [routerLink]="'/ds/'+ds.id" class="pointer">
+                            <td class="thumb"><div class="img" [style.background-image]="ds.id | resource:'thumbnail':true | async"></div></td>
+                            <td>{{ds.name}}</td>
+                            <td class="trunc"><span>{{ds.description}}</span></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.nrOfMetrics | nr) || '-'}}</small></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.nrOfEvents | nr) || '-'}}</small></td>
+                            <td class="text-center"><small>{{(ds.metaStats?.lastUpdate | ago) || '-'}}</small></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>
