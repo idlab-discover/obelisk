@@ -15,7 +15,7 @@ oblxConfig:
   clientId: 0
 
 image:
-  repository: gitlab.ilabt.imec.be:4567/ibcndevs/obelisk/obelisk
+  repository: gitlab.ilabt.imec.be:4567/obelisk/packages
   name: mkdocs
   pullPolicy: IfNotPresent
 
