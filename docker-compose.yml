@@ -49,11 +49,11 @@ services:
       - "9081:81"
       - "9080:80"
   web-apiconsole:
-    image: 'gitlab.ilabt.imec.be:4567/ibcndevs/obelisk/obelisk/web-apiconsole:latest'
+    image: 'gitlab.ilabt.imec.be:4567/obelisk/packages/web-apiconsole:latest'
     ports:
       - 4200:80
   web-catalog:
-    image: 'gitlab.ilabt.imec.be:4567/ibcndevs/obelisk/obelisk/web-catalog:latest'
+    image: 'gitlab.ilabt.imec.be:4567/obelisk/packages/web-catalog:latest'
     ports:
       - 8000:80
   mkdocs:
