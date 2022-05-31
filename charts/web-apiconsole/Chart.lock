@@ -1,6 +1,6 @@
 dependencies:
 - name: oblx-service-template
   repository: file://../../charts/oblx-service-template
-  version: 22.05.1
-digest: sha256:31d110739546429a9f7cf1170bfcfa83bd8c969b2a18789962c1caefaf64c884
-generated: "2022-05-31T14:00:05.856217+02:00"
+  version: 22.05.2
+digest: sha256:f860db5b8c90d257cd0406a568f318b6d1e2a1daf9bfedee4c73654905ca2172
+generated: "2022-05-31T16:26:37.5798374+02:00"
