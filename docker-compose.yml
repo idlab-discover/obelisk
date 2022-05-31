@@ -13,7 +13,7 @@ services:
     volumes:
       - 'mongodb_data:/data/db'
   clickhouse:
-    image: clickhouse/clickhouse-server:22.3
+    image: clickhouse/clickhouse-server:22.5
     ports:
       - 8123:8123
       - 9000:9000
@@ -62,7 +62,7 @@ services:
       - 8888:8000
     volumes:
       - type: bind
-        source: ./.docs
+        source: ./documentation
         target: /docs
   prometheus:
     image: prom/prometheus:latest
