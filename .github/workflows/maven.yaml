@@ -1,0 +1,29 @@
+name: Maven workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  maven-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: Cache local Maven repository
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Setup the docker-compose test environment
+      run: docker-compose up -d
+    - name: Check the test environment
+      run: docker ps -a
+    - name: Compile and run tests
+      run: mvn compile
