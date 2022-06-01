@@ -30,13 +30,17 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.vertx.reactivex.ext.web.Router
 import io.vertx.reactivex.ext.web.handler.BodyHandler
 import io.vertx.reactivex.ext.web.handler.graphql.GraphQLHandler
-import java.nio.file.Files
-import java.nio.file.Path
+import java.io.IOException
+import java.net.URI
+import java.nio.file.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.io.path.inputStream
+import kotlin.io.path.name
+
 
 const val CATALOG_ENDPOINT = "/catalog"
-const val SDL_SCAN_RESOURCE_FOLDER = "schemas"
+const val SDL_SCAN_RESOURCE_FOLDER = "/schemas"
 const val GQL_TYPES_PACKAGE = "idlab.obelisk.services.pub.catalog.types"
 
 fun main(args: Array<String>) {
@@ -94,12 +98,15 @@ class CatalogService @Inject constructor(
         val schemaParser = SchemaParser()
         val typeRegistry = TypeDefinitionRegistry()
 
-        val parentPath =
-            Path.of(Thread.currentThread().contextClassLoader?.getResource(SDL_SCAN_RESOURCE_FOLDER)?.toURI())
+        val parentPathUri = this::class.java.getResource(SDL_SCAN_RESOURCE_FOLDER)!!.toURI()
+        if (parentPathUri.scheme.startsWith("jar")) {
+            initFileSystem(parentPathUri)
+        }
+        val parentPath = Path.of(parentPathUri)
 
         listGraphqlFiles(parentPath).forEach {
             logger.info { "Loading graphql schema SDL: ${parentPath.relativize(it)}" }
-            typeRegistry.merge(schemaParser.parse(it.toFile()))
+            typeRegistry.merge(schemaParser.parse(it.inputStream()))
         }
         return SchemaGenerator().makeExecutableSchema(typeRegistry, runtimeWiring)
     }
@@ -113,7 +120,7 @@ class CatalogService @Inject constructor(
                 stream.forEach {
                     if (Files.isDirectory(it)) {
                         stack.add(it)
-                    } else if (it.toFile().name.endsWith(".graphql")) {
+                    } else if (it.name.endsWith(".graphql")) {
                         files.add(it)
                     }
                 }
@@ -143,5 +150,15 @@ class CatalogService @Inject constructor(
             .directive(FilterDirective.ENABLE_FILTER, FilterDirective())
             .type("OriginProducer") { it.typeResolver(::originProducerResolver) }
             .build()
+    }
+}
+
+private fun initFileSystem(uri: URI): FileSystem {
+    return try {
+        FileSystems.getFileSystem(uri)
+    } catch (e: FileSystemNotFoundException) {
+        val env: MutableMap<String, String> = HashMap()
+        env["create"] = "true"
+        FileSystems.newFileSystem(uri, env)
     }
 }
