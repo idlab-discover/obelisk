@@ -175,7 +175,7 @@ class HFStreamTest {
             )
     }
 
-    @io.vertx.junit5.Timeout(1, timeUnit = TimeUnit.MINUTES)
+    @io.vertx.junit5.Timeout(2, timeUnit = TimeUnit.MINUTES)
     @RepeatedTest(1)
     fun sendThenReceiveSSE(context: VertxTestContext) {
         val start = System.currentTimeMillis()
@@ -205,7 +205,7 @@ class HFStreamTest {
     }
 
     @RepeatedTest(1)
-    @io.vertx.junit5.Timeout(1, timeUnit = TimeUnit.MINUTES)
+    @io.vertx.junit5.Timeout(2, timeUnit = TimeUnit.MINUTES)
     fun startListeningThenSendSSE(context: VertxTestContext) {
         val start = System.currentTimeMillis()
         val runId = UUID.randomUUID().toString()
