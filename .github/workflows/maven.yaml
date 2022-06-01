@@ -17,15 +17,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-    - name: Cache local Maven repository
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.m2/repository
-          !~/.m2/repository/idlab/obelisk
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+        cache: 'maven'
     - name: Compile
       run: mvn -B -ntp clean compile -DskipTests
     - uses: satackey/action-docker-layer-caching@v0.0.11
