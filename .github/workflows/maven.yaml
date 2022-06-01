@@ -9,6 +9,8 @@ on:
 jobs:
   maven-build:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-java@v3
@@ -43,4 +45,5 @@ jobs:
       run: mvn test -B -ntp --fail-at-end
     - name: Surefire Report
       if: ${{ always() }}
+      continue-on-error: true
       uses: ScaCap/action-surefire-report@v1
