@@ -25,5 +25,5 @@ appVersion: "22.05.2"
 
 dependencies:
   - name: oblx-service-template
-    repository: file://../../charts/oblx-service-template
+    repository: file://../oblx-service-template
     version: ~22.05.2
