@@ -1,9 +1,13 @@
 name: Maven workflow
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+      - next
+  push:
+    branches:
+      - '**'
 
 jobs:
   maven-build:
@@ -17,13 +21,19 @@ jobs:
     - name: Cache local Maven repository
       uses: actions/cache@v3
       with:
-        path: ~/.m2/repository
+        path: |
+          ~/.m2/repository
+          !~/.m2/repository/idlab/obelisk
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
+    - name: Compile
+      run: mvn -B -ntp clean compile -DskipTests
     - name: Setup the docker-compose test environment
       run: docker-compose up -d
     - name: Check the test environment
       run: docker ps -a
-    - name: Compile and run tests
-      run: mvn compile
+    - name: Run test
+      run: mvn test -B -ntp --fail-at-end
+    - name: Surefire Report
+      uses: ScaCap/action-surefire-report@v1.0.5
