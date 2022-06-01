@@ -26,6 +26,10 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Compile
       run: mvn -B -ntp clean compile -DskipTests
+    - uses: isbang/compose-action@v1.0.0
+      with:
+        compose-file: './.test/docker-compose.yml'
+        down-flags: '--volumes'
     - name: Setup the docker-compose test environment
       run: docker-compose -f .test/docker-compose.yml up -d
     - name: Check the test environment
