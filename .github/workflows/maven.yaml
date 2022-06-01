@@ -27,7 +27,7 @@ jobs:
     - name: Compile
       run: mvn -B -ntp clean compile -DskipTests
     - name: Setup the docker-compose test environment
-      run: docker-compose up -d
+      run: docker-compose -f .test/docker-compose.yml up -d
     - name: Check the test environment
       run: docker ps -a
     - name: Run test
