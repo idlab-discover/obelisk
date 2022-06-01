@@ -6,10 +6,7 @@ import idlab.obelisk.definitions.EventField
 import idlab.obelisk.definitions.catalog.DataStream
 import idlab.obelisk.definitions.data.MetricEvent
 import idlab.obelisk.definitions.framework.OblxConfig
-import idlab.obelisk.pulsar.utils.rxAcknowledgeCumulative
-import idlab.obelisk.pulsar.utils.rxSeekToLatest
-import idlab.obelisk.pulsar.utils.rxSubscribe
-import idlab.obelisk.pulsar.utils.toFlowable
+import idlab.obelisk.pulsar.utils.*
 import idlab.obelisk.utils.service.instrumentation.IdToNameMap
 import idlab.obelisk.utils.service.instrumentation.TagTemplate
 import idlab.obelisk.utils.service.reactive.flatMap
@@ -59,7 +56,7 @@ class AltStreamingSession(
                 pulsarClient.newConsumer(Schema.JSON(MetricEvent::class.java))
                     .subscriptionName("${SUBSCRIBER_PREFIX}_${metadata.id}")
                     .subscriptionType(SubscriptionType.Failover)
-                    .subscriptionInitialPosition(SubscriptionInitialPosition.Latest)
+                    .subscriptionInitialPosition(SubscriptionInitialPosition.Earliest)
                     .topics(metadata.dataRange.datasets.map { config.pulsarDatasetTopic(it) })
                     .rxSubscribe()
                     .flatMapCompletable { consumer ->
