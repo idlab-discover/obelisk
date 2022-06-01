@@ -26,12 +26,17 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Compile
       run: mvn -B -ntp clean compile -DskipTests
+    - uses: satackey/action-docker-layer-caching@v0.0.11
+      # Ignore the failure of a step and avoid terminating the job.
+      continue-on-error: true
+      with:
+        key: obelisk-docker-cache-{hash}
+        restore-keys: |
+          obelisk-docker-cache-
     - uses: isbang/compose-action@v1.0.0
       with:
         compose-file: './.test/docker-compose.yml'
         down-flags: '--volumes'
-    - name: Setup the docker-compose test environment
-      run: docker-compose -f .test/docker-compose.yml up -d
     - name: Check the test environment
       run: docker ps -a
     - name: Run test
