@@ -175,16 +175,22 @@ class HFStreamTest {
             )
     }
 
-    @io.vertx.junit5.Timeout(2, timeUnit = TimeUnit.MINUTES)
+    @BeforeEach()
+    fun doBefore(context: VertxTestContext) {
+        println("Closing streams!")
+        client.closeStream(STREAM_ID).subscribeBy(
+            onComplete = context::completeNow
+        )
+    }
+
+    @io.vertx.junit5.Timeout(1, timeUnit = TimeUnit.MINUTES)
     @RepeatedTest(1)
     fun sendThenReceiveSSE(context: VertxTestContext) {
         val start = System.currentTimeMillis()
         val runId = UUID.randomUUID().toString()
 
-        Completable.concatArray(
-            client.closeStream(STREAM_ID),
-            eventProducer("sse1", runId = runId)
-        )
+
+        eventProducer("sse1", runId = runId)
             .flatMap {
                 client.openStream(STREAM_ID, true)
                     .filter { it.source == runId }
@@ -205,25 +211,24 @@ class HFStreamTest {
     }
 
     @RepeatedTest(1)
-    @io.vertx.junit5.Timeout(2, timeUnit = TimeUnit.MINUTES)
+    @io.vertx.junit5.Timeout(1, timeUnit = TimeUnit.MINUTES)
     fun startListeningThenSendSSE(context: VertxTestContext) {
         val start = System.currentTimeMillis()
         val runId = UUID.randomUUID().toString()
 
-        client.closeStream(STREAM_ID).flatMap {
-            Completable.mergeArray(
-                // Only start sending after 5 seconds (when the stream is already started)
-                eventProducer("sse2", runId = runId).delaySubscription(5, TimeUnit.SECONDS),
-                client.openStream(STREAM_ID)
-                    .filter { it.source == runId }
-                    .take(EVENTS_TO_STREAM)
-                    .buffer(5, TimeUnit.SECONDS, REPORT_BATCH_SIZE)
-                    .doOnNext { printReport(it, "sse2") }
-                    .ignoreElements()
-                    .doOnComplete { timeReport(EVENTS_TO_STREAM * 2, start, "sse2") }
-                    .flatMap { client.closeStream(STREAM_ID) }
-            )
-        }
+
+        Completable.mergeArray(
+            // Only start sending after 5 seconds (when the stream is already started)
+            eventProducer("sse2", runId = runId).delaySubscription(5, TimeUnit.SECONDS),
+            client.openStream(STREAM_ID)
+                .filter { it.source == runId }
+                .take(EVENTS_TO_STREAM)
+                .buffer(5, TimeUnit.SECONDS, REPORT_BATCH_SIZE)
+                .doOnNext { printReport(it, "sse2") }
+                .ignoreElements()
+                .doOnComplete { timeReport(EVENTS_TO_STREAM * 2, start, "sse2") }
+                .flatMap { client.closeStream(STREAM_ID) }
+        )
             .subscribeBy(
                 onComplete = {
                     println("Received $EVENTS_TO_STREAM via SSE.")
