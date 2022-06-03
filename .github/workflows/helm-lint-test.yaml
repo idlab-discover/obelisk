@@ -1,6 +1,12 @@
 name: Lint and Test Charts
 
-on: pull_request
+on:
+  pull_request:
+    branches:
+      - main
+      - next
+    paths:
+      - 'charts/**'
 
 jobs:
   lint-test:
