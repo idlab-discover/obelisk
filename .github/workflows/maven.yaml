@@ -5,6 +5,12 @@ on:
     branches:
       - main
       - next
+    paths:
+     - '**/pom.xml'
+     - '**/src/main/kotlin/**'
+     - '**/test/kotlin/**'
+     - '**/src/main/java/**'
+     - '**/test/java/**'
 
 jobs:
   maven-build:
