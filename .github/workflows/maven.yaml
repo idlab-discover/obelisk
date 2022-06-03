@@ -20,11 +20,8 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
         cache: 'maven'
-    - name: Get number of CPU cores
-      uses: SimenB/github-actions-cpu-cores@v1
-      id: cpu-cores
     - name: Compile
-      run: mvn -B -ntp clean compile -DskipTests --threads=${{ steps.cpu-cores.outputs.count }}
+      run: mvn -B -ntp clean compile -DskipTests
     - uses: satackey/action-docker-layer-caching@v0.0.11
       # Ignore the failure of a step and avoid terminating the job.
       continue-on-error: true
