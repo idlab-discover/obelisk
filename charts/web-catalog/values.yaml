@@ -13,7 +13,7 @@ config:
   oblxApiPrefix: /api/v3
   oblxAuthEndpoint: /auth
   clientId: 0
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 basePath: /catalog
 
 disableDefaultProbes: true

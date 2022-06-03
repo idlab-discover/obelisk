@@ -77,3 +77,12 @@ readinessProbe:
     port: http
 {{- end }}
 {{- end }}
+
+
+{{- define "oblx.commons" -}}
+  {{- if .Values.commonsReleaseName }}
+    {{- .Values.commonsReleaseName }}
+  {{- else }}
+    {{- "oblx-commons" }}
+  {{- end }}
+{{- end }}

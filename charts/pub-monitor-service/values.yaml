@@ -15,7 +15,7 @@ config:
   ingestCheckInitialDelayMs: 500
   ingestCheckMaxRetries: 3
 
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 basePath: /api/v3/monitor
 
 serviceAccount:

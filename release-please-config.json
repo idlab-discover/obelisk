@@ -1,0 +1,16 @@
+{
+  "packages": {
+    "obelisk-backend": {
+      "releaseType": "maven",
+      "draft": false,
+      "prerelease": false,
+      "bumpMinorPreMajor": false,
+      "bumpPatchForMinorPreMajor": false,
+      "changelogPath": "CHANGELOG.md",
+      "versioning": "default"
+    },
+    "obelisk-frontend": {
+
+    }
+  }
+}

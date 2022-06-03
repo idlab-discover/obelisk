@@ -8,7 +8,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 basePath: /api/v3/ext/ngsi
 
 serviceAccount:

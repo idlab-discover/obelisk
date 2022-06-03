@@ -4,7 +4,7 @@ image:
   name: int-sink-service
   repository: gitlab.ilabt.imec.be:4567/obelisk/packages
 
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 
 basePath: /api/v3/auth
 

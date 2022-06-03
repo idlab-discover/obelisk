@@ -12,7 +12,7 @@ config:
     name: "My Company"
     homepage: https://mycompany.com
 
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 basePath: /api/v3/catalog/dcat
 
 serviceAccount:

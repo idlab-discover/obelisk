@@ -25,48 +25,45 @@ appVersion: "22.05.2"
 
 dependencies:
   - name: commons
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/commons
     version: ~22.05.2
   - name: int-dataset-streamer
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/int-dataset-streamer
     version: ~22.05.2
   - name: int-sink-service
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/int-sink-service
     version: ~22.05.2
   - name: int-stats-collector
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/int-stats-collector
     version: ~22.05.2
   - name: pub-auth-service
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/pub-auth-service
     version: ~22.05.2
   - name: pub-catalog-service
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/pub-catalog-service
     version: ~22.05.2
   - name: pub-export-service
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/pub-export-service
     version: ~22.05.2
   - name: pub-ingest-service
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/pub-ingest-service
     version: ~22.05.2
   - name: pub-issue-service
     condition: pub-issue-service.enabled
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/pub-issue-service
     version: ~22.05.2
   - name: pub-monitor-service
-    repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
-  - name: pub-ngsi-service
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/pub-monitor-service
     version: ~22.05.2
   - name: pub-query-service
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/pub-query-service
     version: ~22.05.2
   - name: pub-streaming-service
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/pub-streaming-service
     version: ~22.05.2
   - name: web-apiconsole
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/web-apiconsole
     version: ~22.05.2
   - name: web-catalog
-    repository: https://idlab-discover.github.io/obelisk
+    repository: file://../../charts/web-catalog
     version: ~22.05.2

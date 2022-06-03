@@ -9,7 +9,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 config: {}
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 basePath: ""
 
 persistence:

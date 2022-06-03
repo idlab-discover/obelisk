@@ -12,7 +12,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 config:
   collectionPeriodMs: 900000
 

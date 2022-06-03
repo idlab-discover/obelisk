@@ -10,7 +10,7 @@ config:
   allowUserCreatedDatasets: true
   allowUserCreatedTeams: true
 
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 basePath: /api/v3/catalog
 
 persistence:

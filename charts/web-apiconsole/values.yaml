@@ -14,7 +14,7 @@ config:
   oblxAuthEndpoint: /auth
   clientId: 0
 
-oblxCommonsChartName: ""
+commonsReleaseName: ""
 basePath: /apiconsole
 
 disableDefaultProbes: true
