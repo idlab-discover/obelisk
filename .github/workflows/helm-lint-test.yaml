@@ -37,6 +37,7 @@ jobs:
             echo "::set-output name=changed::true"
           fi
       - name: Run chart-testing (lint)
+        if: steps.list-changed.outputs.changed == 'true'
         run: ct lint --target-branch main
 
       - name: Create kind cluster
@@ -44,4 +45,5 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
+        if: steps.list-changed.outputs.changed == 'true'
         run: ct install --helm-extra-set-args "--set=oblxCommonsChartName=oblx-commons" --upgrade --target-branch main
