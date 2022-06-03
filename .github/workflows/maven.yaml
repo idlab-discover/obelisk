@@ -12,9 +12,9 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
       with:
-        token: ${{ github.token }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
