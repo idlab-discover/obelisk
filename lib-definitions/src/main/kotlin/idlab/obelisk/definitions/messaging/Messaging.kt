@@ -17,7 +17,7 @@ data class Message<T>(
  * Defines MessageId
  * The actual representation of this id is determined by the underlying implementation.
  */
-interface MessageId
+interface MessageId : Comparable<MessageId>
 
 /**
  * Defines a generic message broker component, used by Obelisk for various messaging purposes (pub-sub, queueing, etc).
