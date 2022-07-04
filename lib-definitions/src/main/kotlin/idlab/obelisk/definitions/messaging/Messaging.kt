@@ -40,7 +40,7 @@ interface MessageBroker {
     ): MessageProducer<T>
 
     /**
-     * Similar to 'createProducer', but the underlying should try to re-use (cached) producer instances
+     * Similar to 'createProducer', but the underlying implementation should try to re-use (cached) producer instances
      * that may already have been created. This is useful for components that need to send to lots of
      * different topics (e.g. dataset-specific topics are not bounded).
      *
@@ -74,7 +74,7 @@ interface MessageBroker {
     /**
      * Create a new Obelisk-specific message consumer that subscribes to multiple topics.
      *
-     * @param topicName The name of the topic to subscribe to.
+     * @param topicNames The names of the topic to subscribe to.
      * @param subscriptionName The name for this subscription.
      * @param contentType The type of data that is received.
      * @param mode The Obelisk messaging mode to be used.
@@ -82,7 +82,7 @@ interface MessageBroker {
     suspend fun <T : Any> createConsumer(
         topicNames: List<String>,
         subscriptionName: String,
-        messageContentType: KClass<T>,
+        contentType: KClass<T>,
         mode: MessagingMode = MessagingMode.SIGNALING
     ): MessageConsumer<T>
 
