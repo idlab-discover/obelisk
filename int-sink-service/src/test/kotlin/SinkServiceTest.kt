@@ -6,25 +6,24 @@ import idlab.obelisk.definitions.data.DataStore
 import idlab.obelisk.definitions.data.EventsQuery
 import idlab.obelisk.definitions.data.MetricEvent
 import idlab.obelisk.definitions.framework.OblxConfig
+import idlab.obelisk.definitions.messaging.MessageBroker
+import idlab.obelisk.definitions.messaging.MessageProducer
 import idlab.obelisk.plugins.datastore.clickhouse.ClickhouseDataStoreModule
-import idlab.obelisk.pulsar.utils.PulsarModule
-import idlab.obelisk.pulsar.utils.rxSend
+import idlab.obelisk.plugins.messagebroker.pulsar.PulsarMessageBrokerModule
 import idlab.obelisk.service.internal.sink.SinkService
 import idlab.obelisk.utils.service.OblxBaseModule
 import idlab.obelisk.utils.service.OblxLauncher
 import idlab.obelisk.utils.service.reactive.flatMap
 import idlab.obelisk.utils.service.reactive.retryWithExponentialBackoff
 import io.reactivex.Completable
-import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toFlowable
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.Timeout
 import io.vertx.junit5.VertxExtension
-import io.vertx.junit5.VertxTestContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.rx2.rxCompletable
 import mu.KotlinLogging
-import org.apache.pulsar.client.api.Producer
-import org.apache.pulsar.client.api.PulsarClient
-import org.apache.pulsar.client.api.Schema
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -36,7 +35,7 @@ import kotlin.random.Random
 
 private const val datasetName = "test-ingest-sink-ds"
 private val metricName = MetricName("test-doubles::number")
-private val nrOfTestEvents = 5000
+private const val nrOfTestEvents = 5000
 
 @ExtendWith(VertxExtension::class)
 class SinkServiceTest {
@@ -45,58 +44,51 @@ class SinkServiceTest {
 
         private val logger = KotlinLogging.logger { }
         private lateinit var config: OblxConfig
-        private lateinit var eventProducer: Producer<MetricEvent>
+        private lateinit var eventProducer: MessageProducer<MetricEvent>
         private lateinit var datastore: DataStore
 
         @JvmStatic
         @BeforeAll
-        fun init(context: VertxTestContext) {
+        fun init() = runBlocking {
             val launcher =
-                OblxLauncher.with(OblxBaseModule(), ClickhouseDataStoreModule(), PulsarModule(initLocalPulsar = true))
+                OblxLauncher.with(OblxBaseModule(), ClickhouseDataStoreModule(), PulsarMessageBrokerModule(initLocalPulsar = true))
             config = launcher.getInstance(OblxConfig::class.java)
-            val pulsarClient = launcher.getInstance(PulsarClient::class.java)
+            val messageBroker = launcher.getInstance(MessageBroker::class.java)
             datastore = launcher.getInstance(DataStore::class.java)
 
-            eventProducer = pulsarClient.newProducer(Schema.JSON(MetricEvent::class.java))
-                .producerName("sinkservice-test-producer")
-                .topic(config.pulsarMetricEventsTopic)
-                .blockIfQueueFull(true)
-                .create()
+            eventProducer = messageBroker.createProducer(
+                topicName = config.pulsarMetricEventsTopic,
+                senderName = "sinkservice-test-producer",
+                contentType = MetricEvent::class
+            )
 
-            launcher.rxBootstrap(SinkService::class.java)
-                .subscribeBy(
-                    onComplete = context::completeNow,
-                    onError = context::failNow
-                )
+            launcher.rxBootstrap(SinkService::class.java).await()
         }
 
         @JvmStatic
         @AfterAll
-        fun cleanup(context: VertxTestContext) {
+        fun cleanup() = runBlocking {
             datastore.delete(
                 EventsQuery(
                     dataRange = DataRange.fromDatasetId(datasetName)
                 )
-            )
-                .subscribeBy(
-                    onComplete = context::completeNow,
-                    onError = context::failNow
-                )
+            ).await()
         }
 
     }
 
     @Test
     @Timeout(value = 60, timeUnit = TimeUnit.SECONDS)
-    fun testNormalOperation(context: VertxTestContext) {
+    fun testNormalOperation() = runBlocking {
         val seriesId = UUID.randomUUID().toString()
         // Generate events
         val (events, _) = generateEvents(seriesId, nrOfTestEvents)
         // Post to metric_events topic (spread out over time in order to test sink buffering)
         events.toFlowable()
             .flatMapCompletable({ event ->
-                eventProducer.rxSend(event).ignoreElement()
-                //.delay(Random.nextLong(50, 250), TimeUnit.MICROSECONDS) // Add small random delay
+                rxCompletable {
+                    eventProducer.send(event)
+                }
             }, false, 2)
             .delay(2, TimeUnit.SECONDS)
             .flatMap {
@@ -116,27 +108,22 @@ class SinkServiceTest {
                         }
                     }
                     .retryWithExponentialBackoff(1000, 5, "All events not yet accounted for, retrying...")
-            }
-            .subscribeBy(
-                onComplete = {
-                    logger.info { "All events accounted for!" }
-                    context.completeNow()
-                },
-                onError = context::failNow
-            )
+            }.await()
+        logger.info { "All events accounted for!" }
     }
 
     @Test
     @Timeout(value = 60, timeUnit = TimeUnit.SECONDS)
-    fun testFlowIncludesInvalidEvents(context: VertxTestContext) {
+    fun testFlowIncludesInvalidEvents() = runBlocking {
         val seriesId = UUID.randomUUID().toString()
         // Generate events
         val (events, errorCount) = generateEvents(seriesId, nrOfTestEvents, 0.01)
         // Post to metric_events topic (spread out over time in order to test sink buffering)
         events.toFlowable()
             .flatMapCompletable({ event ->
-                eventProducer.rxSend(event).ignoreElement()
-                //.delay(Random.nextLong(50, 250), TimeUnit.MICROSECONDS) // Add small random delay
+                rxCompletable {
+                    eventProducer.send(event)
+                }
             }, false, 2)
             .delay(2, TimeUnit.SECONDS)
             .flatMap {
@@ -160,14 +147,8 @@ class SinkServiceTest {
                         }
                     }
                     .retryWithExponentialBackoff(1000, 5, "All valid events not yet accounted for, retrying...")
-            }
-            .subscribeBy(
-                onComplete = {
-                    logger.info { "All valid events accounted for!" }
-                    context.completeNow()
-                },
-                onError = context::failNow
-            )
+            }.await()
+        logger.info { "All valid events accounted for!" }
     }
 
     private fun generateEvents(
