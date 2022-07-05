@@ -88,11 +88,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.pulsar</groupId>
-            <artifactId>pulsar-client-admin</artifactId>
-            <version>${pulsar.version}</version>
-        </dependency>
-        <dependency>
             <groupId>idlab.obelisk</groupId>
             <artifactId>pub-dcat-service</artifactId>
             <version>${project.version}</version>
