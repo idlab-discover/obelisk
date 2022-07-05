@@ -15,10 +15,10 @@ import idlab.obelisk.definitions.framework.OblxConfig
 import idlab.obelisk.definitions.framework.OblxService
 import idlab.obelisk.plugins.accessmanager.basic.BasicAccessManagerModule
 import idlab.obelisk.plugins.datastore.clickhouse.ClickhouseDataStoreModule
+import idlab.obelisk.plugins.messagebroker.pulsar.PulsarMessageBrokerModule
 import idlab.obelisk.plugins.metastore.mongo.MongoDBMetaStoreModule
 import idlab.obelisk.plugins.monitoring.prometheus.PrometheusMonitoringModule
 import idlab.obelisk.plugins.ratelimiter.gubernator.GubernatorRateLimiterModule
-import idlab.obelisk.pulsar.utils.PulsarModule
 import idlab.obelisk.services.pub.catalog.impl.*
 import idlab.obelisk.services.pub.catalog.types.util.GQLType
 import idlab.obelisk.services.pub.catalog.types.util.wiring
@@ -30,7 +30,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.vertx.reactivex.ext.web.Router
 import io.vertx.reactivex.ext.web.handler.BodyHandler
 import io.vertx.reactivex.ext.web.handler.graphql.GraphQLHandler
-import java.io.IOException
 import java.net.URI
 import java.nio.file.*
 import javax.inject.Inject
@@ -50,7 +49,7 @@ fun main(args: Array<String>) {
             ClickhouseDataStoreModule(),
             MongoDBMetaStoreModule(),
             BasicAccessManagerModule(),
-            PulsarModule(),
+            PulsarMessageBrokerModule(),
             GubernatorRateLimiterModule(),
             PrometheusMonitoringModule()
         )

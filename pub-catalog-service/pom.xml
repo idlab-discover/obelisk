@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-pulsar-utils</artifactId>
+            <artifactId>plugin-messagebroker-pulsar</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

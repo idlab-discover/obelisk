@@ -8,6 +8,7 @@ import idlab.obelisk.definitions.catalog.codegen.ClientField
 import idlab.obelisk.definitions.catalog.codegen.TeamNullableField
 import idlab.obelisk.definitions.catalog.codegen.TeamUpdate
 import idlab.obelisk.definitions.data.DataStore
+import idlab.obelisk.definitions.messaging.MessageBroker
 import idlab.obelisk.services.pub.catalog.impl.*
 import idlab.obelisk.services.pub.catalog.types.util.*
 import idlab.obelisk.services.pub.catalog.types.util.getTeamInvites
@@ -26,8 +27,8 @@ class GQLTeamMutation @Inject constructor(
     accessManager: AccessManager,
     private val metaStore: MetaStore,
     private val dataStore: DataStore,
-    private val pulsarConnections: PulsarConnections,
-    private val redis: RedissonClient
+    private val redis: RedissonClient,
+    private val messageBroker: MessageBroker
 ) :
     Operations(accessManager) {
 
@@ -146,7 +147,7 @@ class GQLTeamMutation @Inject constructor(
     fun createStream(env: DataFetchingEnvironment): CompletionStage<Response<DataStream>> {
         return withAccess(env) { token ->
             val input = env.parseInput(CreateStreamInput::class.java)
-            createDataStream(metaStore, pulsarConnections, token, input, env.getSource<Team>().id)
+            createDataStream(metaStore, token, input, env.getSource<Team>().id)
                 .map { Response(item = it) }
                 .onErrorReturn { errorResponse(env, it) }
         }
@@ -158,7 +159,7 @@ class GQLTeamMutation @Inject constructor(
             createDataExport(
                 dataStore,
                 metaStore,
-                pulsarConnections,
+                messageBroker,
                 token,
                 env.parseInput(CreateExportInput::class.java),
                 env.getSource<Team>().id
