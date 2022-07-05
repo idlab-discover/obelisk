@@ -163,11 +163,7 @@ class PulsarMessageConsumer<T>(
     }
 
     override suspend fun seekToLatest() {
-        seek(getLastMessageId())
-    }
-
-    private suspend fun getLastMessageId(): MessageId {
-        return PulsarMessageId(consumer.lastMessageIdAsync.await())
+        consumer.seekAsync(org.apache.pulsar.client.api.MessageId.latest).await()
     }
 
     override fun close() {
