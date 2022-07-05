@@ -38,7 +38,7 @@ import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.rx2.rxCompletable
 import mu.KotlinLogging
 import net.lingala.zip4j.ZipFile
-import org.apache.pulsar.shade.org.apache.commons.lang.StringEscapeUtils
+import org.apache.commons.lang.StringEscapeUtils
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
