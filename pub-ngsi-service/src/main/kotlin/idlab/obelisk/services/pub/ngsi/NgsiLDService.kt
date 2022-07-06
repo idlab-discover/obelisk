@@ -20,9 +20,9 @@ import javax.inject.Singleton
 
 @Singleton
 class NgsiLDService @Inject constructor(
-    val config: OblxConfig,
+    private val config: OblxConfig,
     val vertx: Vertx,
-    val router: Router,
+    private val router: Router,
     private val contextInformation: ContextInformation,
     private val temporalEvolution: TemporalEvolution,
     private val batchOperations: BatchOperations,
