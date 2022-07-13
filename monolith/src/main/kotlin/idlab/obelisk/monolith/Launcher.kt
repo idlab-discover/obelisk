@@ -2,6 +2,7 @@ package idlab.obelisk.monolith
 
 import idlab.obelisk.plugins.accessmanager.basic.BasicAccessManagerModule
 import idlab.obelisk.plugins.datastore.clickhouse.ClickhouseDataStoreModule
+import idlab.obelisk.plugins.messagebroker.pulsar.PulsarMessageBrokerModule
 import idlab.obelisk.plugins.metastore.mongo.MongoDBMetaStoreModule
 import idlab.obelisk.plugins.monitoring.prometheus.PrometheusMonitoringModule
 import idlab.obelisk.plugins.ratelimiter.gubernator.GubernatorRateLimiterModule
@@ -53,7 +54,7 @@ fun main(args: Array<String>) {
         OblxBaseModule(),
         AuthServiceModule(),
         BasicAccessManagerModule(),
-        PulsarModule(initLocalPulsar = true),
+        PulsarMessageBrokerModule(initLocalPulsar = true),
         ClickhouseDataStoreModule(),
         MongoDBMetaStoreModule(),
         NgsiModule(),
