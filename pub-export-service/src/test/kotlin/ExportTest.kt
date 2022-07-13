@@ -37,7 +37,7 @@ import kotlinx.coroutines.rx2.awaitSingleOrNull
 import mu.KotlinLogging
 import net.lingala.zip4j.ZipFile
 import org.apache.commons.csv.CSVFormat
-import org.apache.pulsar.shade.org.apache.commons.lang.StringEscapeUtils
+import org.apache.commons.lang.StringEscapeUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
