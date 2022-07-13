@@ -6,12 +6,10 @@ import idlab.obelisk.definitions.framework.OblxConfig
 import idlab.obelisk.definitions.messaging.*
 import idlab.obelisk.definitions.messaging.Message
 import idlab.obelisk.definitions.messaging.MessageId
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.future.await
-import kotlinx.coroutines.runBlocking
 import org.apache.pulsar.client.api.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -110,7 +108,8 @@ class PulsarMessageBroker @Inject constructor(private val config: OblxConfig, pr
             .subscribeAsync()
             .await()
 
-        return PulsarMessageConsumer(consumer)
+        // When in signaling mode, auto-ack messages (this reduces complexity in the client).
+        return PulsarMessageConsumer(consumer, mode == MessagingMode.SIGNALING)
     }
 
 }
@@ -119,8 +118,8 @@ class PulsarMessageProducer<T>(
     private val producer: Producer<T>
 ) : MessageProducer<T> {
 
-    override suspend fun send(content: T): MessageId {
-        return PulsarMessageId(producer.sendAsync(content).await())
+    override suspend fun send(content: T): MessageId = withContext(Dispatchers.IO) {
+        PulsarMessageId(producer.send(content))
     }
 
     override fun close() {
@@ -131,13 +130,19 @@ class PulsarMessageProducer<T>(
 
 class PulsarMessageConsumer<T>(
     private val consumer: Consumer<T>,
+    private val autoAck: Boolean = false,
     private var closed: Boolean = false
 ) : MessageConsumer<T> {
     override suspend fun receive(): Flow<Message<T>> = flow {
         while (!closed) {
             consumer.batchReceiveAsync().await()
                 .map { Message(it.value, PulsarMessageId(it.messageId)) }
-                .forEach { emit(it) }
+                .forEach {
+                    if(autoAck) {
+                        acknowledge(it.messageId)
+                    }
+                    emit(it)
+                }
         }
     }
 
@@ -172,7 +177,13 @@ class PulsarMessageConsumer<T>(
 
 }
 
-data class PulsarMessageId(val wrappedMessageId: org.apache.pulsar.client.api.MessageId) : MessageId
+data class PulsarMessageId(val wrappedMessageId: org.apache.pulsar.client.api.MessageId) : MessageId {
+    override fun compareTo(other: MessageId): Int {
+        other as PulsarMessageId
+        return wrappedMessageId.compareTo(other.wrappedMessageId)
+    }
+}
+
 private data class CacheKey(
     val topicName: String,
     val contentType: KClass<*>,
