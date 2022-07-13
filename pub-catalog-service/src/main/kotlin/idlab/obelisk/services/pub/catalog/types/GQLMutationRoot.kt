@@ -1,38 +1,23 @@
 package idlab.obelisk.services.pub.catalog.types
 
 import graphql.schema.DataFetchingEnvironment
-import idlab.obelisk.definitions.Eq
-import idlab.obelisk.definitions.EventField
-import idlab.obelisk.definitions.TimestampPrecision
 import idlab.obelisk.definitions.catalog.*
-import idlab.obelisk.definitions.catalog.codegen.DataExportField
-import idlab.obelisk.definitions.catalog.codegen.DataStreamField
 import idlab.obelisk.definitions.catalog.codegen.UserUpdate
-import idlab.obelisk.definitions.control.ControlChannels
-import idlab.obelisk.definitions.control.ExportEvent
 import idlab.obelisk.definitions.data.DataStore
-import idlab.obelisk.definitions.data.StatsField
-import idlab.obelisk.definitions.data.StatsQuery
 import idlab.obelisk.definitions.framework.OblxConfig
-import idlab.obelisk.pulsar.utils.rxSend
+import idlab.obelisk.definitions.messaging.MessageBroker
 import idlab.obelisk.services.pub.catalog.impl.*
 import idlab.obelisk.services.pub.catalog.types.util.GQLFetcher
 import idlab.obelisk.services.pub.catalog.types.util.GQLType
 import idlab.obelisk.services.pub.catalog.types.util.Operations
-import idlab.obelisk.services.pub.catalog.types.util.PulsarConnections
 import idlab.obelisk.utils.service.http.AuthorizationException
 import idlab.obelisk.utils.service.reactive.flatMap
 import idlab.obelisk.utils.service.reactive.flatMapSingle
-import idlab.obelisk.utils.service.utils.applyToken
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.vertx.reactivex.core.Vertx
-import org.apache.pulsar.client.api.PulsarClient
-import org.apache.pulsar.client.api.Schema
 import java.util.concurrent.CompletionStage
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.min
 
 internal const val ENV_ALLOW_USER_CREATED_DATASETS = "ALLOW_USER_CREATED_DATASETS"
 internal const val ENV_ALLOW_USER_CREATED_TEAMS = "ALLOW_USER_CREATED_TEAMS"
@@ -46,7 +31,7 @@ class GQLMutationRoot @Inject constructor(
     private val dataStore: DataStore,
     accessManager: AccessManager,
     oblxConfig: OblxConfig,
-    private val pulsarConnections: PulsarConnections
+    private val messageBroker: MessageBroker
 ) : Operations(accessManager) {
 
     private val allowUserCreatedDatasets =
@@ -156,7 +141,7 @@ class GQLMutationRoot @Inject constructor(
     fun createStream(env: DataFetchingEnvironment): CompletionStage<Response<DataStream>> {
         return withAccess(env) { token ->
             val input = env.parseInput(CreateStreamInput::class.java)
-            createDataStream(metaStore, pulsarConnections, token, input)
+            createDataStream(metaStore, token, input)
                 .map { Response(item = it) }
                 .onErrorReturn { errorResponse(env, it) }
         }
@@ -168,7 +153,7 @@ class GQLMutationRoot @Inject constructor(
             createDataExport(
                 dataStore,
                 metaStore,
-                pulsarConnections,
+                messageBroker,
                 token,
                 env.parseInput(CreateExportInput::class.java)
             )
