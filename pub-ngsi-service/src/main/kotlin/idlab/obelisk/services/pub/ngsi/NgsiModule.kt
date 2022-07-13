@@ -3,6 +3,7 @@ package idlab.obelisk.services.pub.ngsi
 import idlab.obelisk.definitions.data.DataStore
 import idlab.obelisk.definitions.framework.OblxConfig
 import idlab.obelisk.definitions.framework.OblxModule
+import idlab.obelisk.definitions.messaging.MessageBroker
 import idlab.obelisk.definitions.ratelimiting.RateLimiter
 import idlab.obelisk.services.pub.ngsi.impl.state.EntityContext
 import idlab.obelisk.services.pub.ngsi.impl.state.NgsiStore
@@ -28,10 +29,10 @@ class NgsiModule : OblxModule {
         config: OblxConfig,
         entityContext: EntityContext,
         dataStore: DataStore,
-        pulsarClient: PulsarClient,
+        messageBroker: MessageBroker,
         rateLimiter: RateLimiter
     ): NgsiStore {
-        return NgsiStoreImpl(vertx, config, entityContext, dataStore, rateLimiter, pulsarClient)
+        return NgsiStoreImpl(config, entityContext, dataStore, rateLimiter, messageBroker)
     }
 
 }

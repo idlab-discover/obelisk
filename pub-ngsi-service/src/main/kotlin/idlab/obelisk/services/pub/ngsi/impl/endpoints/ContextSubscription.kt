@@ -12,7 +12,8 @@ import idlab.obelisk.definitions.control.ControlChannels
 import idlab.obelisk.definitions.control.DataStreamEvent
 import idlab.obelisk.definitions.control.DataStreamEventType
 import idlab.obelisk.definitions.framework.OblxConfig
-import idlab.obelisk.pulsar.utils.rxSend
+import idlab.obelisk.definitions.messaging.MessageBroker
+import idlab.obelisk.definitions.messaging.ProducerMode
 import idlab.obelisk.services.pub.ngsi.Constants
 import idlab.obelisk.services.pub.ngsi.impl.model.Notification
 import idlab.obelisk.services.pub.ngsi.impl.model.Subscription
@@ -25,10 +26,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.zipWith
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
-import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.ext.web.RoutingContext
-import org.apache.pulsar.client.api.PulsarClient
-import org.apache.pulsar.client.api.Schema
+import kotlinx.coroutines.rx2.rxCompletable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,20 +35,12 @@ const val SENSIBLE_NOTIFICATION_LIMIT = 5000
 
 @Singleton
 class ContextSubscription @Inject constructor(
-    private val vertx: Vertx,
     private val accessManager: AccessManager,
     private val metaStore: MetaStore,
-    pulsarClient: PulsarClient,
+    private val messageBroker: MessageBroker,
     private val ngsiStore: NgsiStore,
-    config: OblxConfig
+    private val config: OblxConfig
 ) : AbstractEndpointsHandler() {
-
-    private val dataStreamChanges = pulsarClient.newProducer(Schema.JSON(DataStreamEvent::class.java))
-        .producerName("${config.hostname()}_ngsi").topic(ControlChannels.DATA_STREAM_EVENTS_TOPIC)
-        .blockIfQueueFull(true).create()
-    private val notificationProducer =
-        pulsarClient.newProducer(Schema.JSON(Notification::class.java)).producerName("${config.hostname()}_api")
-            .topic(Constants.PULSAR_NOTIFICATION_TOPIC).blockIfQueueFull(true).create()
 
     fun postSubscription(ctx: RoutingContext) {
         val datasetId = ctx.pathParam(PATH_PARAM_DATASET_ID)
@@ -60,8 +51,15 @@ class ContextSubscription @Inject constructor(
                 val oblxStream = subscription.getDataStream(datasetId, token, JsonLdUtils.getLDContext(ctx))
                 metaStore.createDataStream(oblxStream)
                     .flatMapCompletable {
-                        // Notify the creation of the new Datastream (triggers the subscription matching process)
-                        dataStreamChanges.rxSend(DataStreamEvent(DataStreamEventType.INIT, it)).ignoreElement()
+                        rxCompletable {
+                            // Notify the creation of the new Datastream (triggers the subscription matching process)
+                            val dataStreamChanges = messageBroker.getProducer(
+                                topicName = ControlChannels.DATA_STREAM_EVENTS_TOPIC,
+                                senderName = "${config.hostname()}_ngsi",
+                                contentType = DataStreamEvent::class
+                            )
+                            dataStreamChanges.send(DataStreamEvent(DataStreamEventType.INIT, it))
+                        }
                     }
                     .flatMap {
                         val rc = ReadContext(token, ctx)
@@ -76,7 +74,17 @@ class ContextSubscription @Inject constructor(
                                     endpoint = subscription.notification.endpoint
                                 )
                             }
-                            .flatMapCompletable { notificationProducer.rxSend(it).ignoreElement() }
+                            .flatMapCompletable {
+                                rxCompletable {
+                                    val notificationProducer = messageBroker.getProducer(
+                                        topicName = Constants.PULSAR_NOTIFICATION_TOPIC,
+                                        senderName = "${config.hostname()}_api",
+                                        contentType = Notification::class,
+                                        mode = ProducerMode.HIGH_THROUGHPUT
+                                    )
+                                    notificationProducer.send(it)
+                                }
+                            }
                     }
                     .toSingleDefault(subscription.id)
             }
