@@ -10,6 +10,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.future.await
+import mu.KotlinLogging
 import org.apache.pulsar.client.api.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -133,12 +134,14 @@ class PulsarMessageConsumer<T>(
     private val autoAck: Boolean = false,
     private var closed: Boolean = false
 ) : MessageConsumer<T> {
+    val logger = KotlinLogging.logger { }
+
     override suspend fun receive(): Flow<Message<T>> = flow {
         while (!closed) {
             consumer.batchReceiveAsync().await()
                 .map { Message(it.value, PulsarMessageId(it.messageId)) }
                 .forEach {
-                    if(autoAck) {
+                    if (autoAck) {
                         acknowledge(it.messageId)
                     }
                     emit(it)
@@ -147,14 +150,23 @@ class PulsarMessageConsumer<T>(
     }
 
     override suspend fun acknowledge(messageId: MessageId) {
+        if (autoAck) {
+            logger.warn { "Attempting to acknowledge message for consumer that has auto-ack enabled (${consumer.consumerName} on topic ${consumer.topic})" }
+        }
         consumer.acknowledgeAsync((messageId as PulsarMessageId).wrappedMessageId).await()
     }
 
     override suspend fun acknowledge(messageIds: Collection<MessageId>) {
+        if (autoAck) {
+            logger.warn { "Attempting to acknowledge message for consumer that has auto-ack enabled (${consumer.consumerName} on topic ${consumer.topic})" }
+        }
         consumer.acknowledgeAsync(messageIds.map { (it as PulsarMessageId).wrappedMessageId }).await()
     }
 
     override suspend fun acknowledgeCumulative(messageId: MessageId) {
+        if (autoAck) {
+            logger.warn { "Attempting to acknowledge message for consumer that has auto-ack enabled (${consumer.consumerName} on topic ${consumer.topic})" }
+        }
         consumer.acknowledgeCumulativeAsync((messageId as PulsarMessageId).wrappedMessageId)
     }
 
@@ -177,6 +189,10 @@ data class PulsarMessageId(val wrappedMessageId: org.apache.pulsar.client.api.Me
     override fun compareTo(other: MessageId): Int {
         other as PulsarMessageId
         return wrappedMessageId.compareTo(other.wrappedMessageId)
+    }
+
+    override fun toString(): String {
+        return wrappedMessageId.toString()
     }
 }
 
