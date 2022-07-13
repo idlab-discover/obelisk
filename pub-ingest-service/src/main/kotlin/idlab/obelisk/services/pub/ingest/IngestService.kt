@@ -6,14 +6,14 @@ import idlab.obelisk.definitions.data.MetricEvent
 import idlab.obelisk.definitions.data.Producer
 import idlab.obelisk.definitions.framework.OblxConfig
 import idlab.obelisk.definitions.framework.OblxService
+import idlab.obelisk.definitions.messaging.MessageBroker
+import idlab.obelisk.definitions.messaging.MessageProducer
+import idlab.obelisk.definitions.messaging.ProducerMode
 import idlab.obelisk.definitions.ratelimiting.RateLimiter
 import idlab.obelisk.plugins.accessmanager.basic.BasicAccessManagerModule
+import idlab.obelisk.plugins.messagebroker.pulsar.PulsarMessageBrokerModule
 import idlab.obelisk.plugins.metastore.mongo.MongoDBMetaStoreModule
 import idlab.obelisk.plugins.ratelimiter.gubernator.GubernatorRateLimiterModule
-import idlab.obelisk.pulsar.utils.PulsarModule
-import idlab.obelisk.pulsar.utils.RxPulsarProducerCache
-import idlab.obelisk.pulsar.utils.configureForHighThroughput
-import idlab.obelisk.pulsar.utils.rxSend
 import idlab.obelisk.utils.service.OblxBaseModule
 import idlab.obelisk.utils.service.OblxLauncher
 import idlab.obelisk.utils.service.http.AuthorizationException
@@ -22,7 +22,6 @@ import idlab.obelisk.utils.service.http.writeHttpError
 import idlab.obelisk.utils.service.instrumentation.IdToNameMap
 import idlab.obelisk.utils.service.instrumentation.TagTemplate
 import idlab.obelisk.utils.service.instrumentation.TargetType
-import idlab.obelisk.utils.service.reactive.flatMap
 import io.micrometer.core.instrument.Counter
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -33,7 +32,7 @@ import io.vertx.micrometer.backends.BackendRegistries
 import io.vertx.reactivex.ext.web.Router
 import io.vertx.reactivex.ext.web.RoutingContext
 import io.vertx.reactivex.ext.web.handler.BodyHandler
-import org.apache.pulsar.client.api.PulsarClient
+import kotlinx.coroutines.rx2.rxCompletable
 import org.apache.pulsar.client.api.Schema
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -55,7 +54,7 @@ fun main(args: Array<String>) {
     OblxLauncher.with(
         OblxBaseModule(),
         BasicAccessManagerModule(),
-        PulsarModule(),
+        PulsarMessageBrokerModule(),
         MongoDBMetaStoreModule(),
         GubernatorRateLimiterModule()
     ).bootstrap(IngestService::class.java)
@@ -66,7 +65,7 @@ class IngestService @Inject constructor(
     private val config: OblxConfig,
     private val router: Router,
     private val accessManager: AccessManager,
-    private val pulsarClient: PulsarClient,
+    private val messageBroker: MessageBroker,
     private val rateLimiter: RateLimiter,
     private val metaStore: MetaStore
 ) : OblxService {
@@ -80,12 +79,8 @@ class IngestService @Inject constructor(
 
     private val datasetIdToNameMap = IdToNameMap(metaStore, TargetType.DATASET)
 
-    override fun start(): Completable {
+    override fun start(): Completable = rxCompletable {
         val basePath = config.getString(OblxConfig.HTTP_BASE_PATH_PROP, HTTP_BASE_PATH)
-        val producerCache =
-            RxPulsarProducerCache<MetricEvent>(
-                pulsarClient
-            ) { it.configureForHighThroughput() }
 
         router.route("$basePath/:datasetId").handler(BodyHandler.create())
         router.post("$basePath/:datasetId").handler { ctx ->
@@ -118,8 +113,12 @@ class IngestService @Inject constructor(
                                     )
                                 }
                                 .flatMapCompletable {
-                                    producerCache.rxGet(schema, targetTopic).flatMapCompletable { producer ->
-                                        producer.rxSend(it).doOnError { ingestSendFailures.increment() }.ignoreElement()
+                                    rxCompletable {
+                                        try {
+                                            loadProducer(targetTopic).send(it)
+                                        } catch (err: Throwable) {
+                                            ingestSendFailures.increment()
+                                        }
                                     }
                                 }
                         }
@@ -142,8 +141,9 @@ class IngestService @Inject constructor(
                     onError = writeHttpError(ctx)
                 )
         }
-        return datasetIdToNameMap.init()
-            .flatMap { producerCache.rxGet(schema, config.pulsarMetricEventsTopic).map { it.topic }.ignoreElement() }
+
+        // Preload main producer!
+        loadProducer(config.pulsarMetricEventsTopic)
     }
 
     private fun getValidatedToken(datasetId: String, ctx: RoutingContext): Single<Token> {
@@ -186,6 +186,14 @@ class IngestService @Inject constructor(
         }
 
         return result.filterNot { it.value == 0 }
+    }
+
+    private suspend fun loadProducer(targetTopic: String): MessageProducer<MetricEvent> {
+        return messageBroker.getProducer(
+            topicName = targetTopic,
+            contentType = MetricEvent::class,
+            mode = ProducerMode.HIGH_THROUGHPUT
+        )
     }
 }
 
