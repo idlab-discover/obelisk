@@ -17,7 +17,6 @@
         <module>lib-definitions</module>
         <module>lib-mongo-utils</module>
         <module>lib-oblx-client</module>
-        <module>lib-pulsar-utils</module>
         <module>lib-service-utils</module>
         <module>lib-test-utils</module>
         <module>monolith</module>
