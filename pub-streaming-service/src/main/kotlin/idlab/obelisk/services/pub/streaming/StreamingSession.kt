@@ -1,154 +1,120 @@
 package idlab.obelisk.services.pub.streaming
 
+import com.github.davidmoten.rx2.RetryWhen
 import idlab.obelisk.definitions.EventField
 import idlab.obelisk.definitions.catalog.DataStream
-import idlab.obelisk.definitions.catalog.MetaStore
-import idlab.obelisk.definitions.catalog.codegen.DataStreamUpdate
-import idlab.obelisk.definitions.control.ControlChannels
-import idlab.obelisk.definitions.control.DataStreamEvent
-import idlab.obelisk.definitions.control.DataStreamEventType
 import idlab.obelisk.definitions.data.MetricEvent
 import idlab.obelisk.definitions.framework.OblxConfig
-import idlab.obelisk.pulsar.utils.rxAcknowledgeCumulative
-import idlab.obelisk.pulsar.utils.rxClose
-import idlab.obelisk.pulsar.utils.rxSubscribe
-import idlab.obelisk.pulsar.utils.toFlowable
-import idlab.obelisk.utils.service.http.HttpError
+import idlab.obelisk.definitions.messaging.MessageBroker
+import idlab.obelisk.definitions.messaging.MessageConsumer
+import idlab.obelisk.definitions.messaging.MessagingMode
 import idlab.obelisk.utils.service.instrumentation.IdToNameMap
 import idlab.obelisk.utils.service.instrumentation.TagTemplate
 import idlab.obelisk.utils.service.reactive.flatMap
+import idlab.obelisk.utils.service.streaming.StreamingSessions
 import idlab.obelisk.utils.service.utils.matches
-import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
-import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
-import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.ext.web.RoutingContext
+import kotlinx.coroutines.rx2.asFlowable
+import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.rx2.rxCompletable
 import mu.KotlinLogging
-import org.apache.pulsar.client.api.*
+import org.redisson.api.RedissonClient
 import java.nio.channels.ClosedChannelException
-import java.util.concurrent.CompletionException
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
-const val SUBSCRIBER_PREFIX = "sse_fo"
-const val HEARTBEAT_PERIOD_SECONDS = 5L
-
-enum class SessionState {
-    INIT, STREAMING, TERMINATE_REQUESTED, TERMINATED_FROM_API, TERMINATED_BY_CLIENT
-}
-
+private const val SUBSCRIBER_PREFIX = "sse"
+private const val HEARTBEAT_PERIOD_SECONDS = 5L
+private const val RECEIVE_BACKLOG_QUERY_PARAM = "receiveBacklog"
+private const val COMMIT_PERIOD_MS = 2000L
 private val datasetIdAndNameTag = TagTemplate("datasetId", "datasetName")
 
 class StreamingSession(
-    private val vertx: Vertx,
-    private val pulsarClient: PulsarClient,
-    private val metaStore: MetaStore,
+    private val messageBroker: MessageBroker,
     private val metadata: DataStream,
     private val routingContext: RoutingContext,
     private val config: OblxConfig,
-    private val datasetIdToNameMap: IdToNameMap
+    private val datasetIdToNameMap: IdToNameMap,
+    redissonClient: RedissonClient
 ) {
     private val logger = KotlinLogging.logger { }
-    private var state = SessionState.INIT
-    private var activeConsumer: Consumer<MetricEvent>? = null
+    private val streamingSessions = StreamingSessions(redissonClient)
+    private lateinit var sessionId: String
+    private lateinit var activeConsumer: MessageConsumer<MetricEvent>
 
-    fun start() {
-        logger.info { "Opening stream ${metadata.id} for user ${metadata.userId}" }
 
-        // Attach to Vertx eventbus to receive remote stream close events
-        vertx.eventBus().localConsumer<String>(ControlChannels.DATA_STREAM_EVENTS_TOPIC).toFlowable()
-            .map { Json.decodeValue(it.body(), DataStreamEvent::class.java) }
-            .filter { it.streamId == metadata.id }
-            .flatMapCompletable { event ->
-                when (event.type) {
-                    DataStreamEventType.STOP -> endSSE()
-                    else -> Completable.complete() // Nothing to do
-                }
+    suspend fun start() {
+        prepareHttpResponse()
+        sendPreamble()
+
+        // Start session with StreamingSessions (for book-keeping)
+        sessionId = streamingSessions.start(metadata.id!!).await()
+        logger.info { "[$sessionId] Opening new session on stream ${metadata.id} for user ${metadata.userId}" }
+
+        // Setup messaging consumer
+        activeConsumer = messageBroker.createConsumer(
+            topicNames = metadata.dataRange.datasets.map { config.pulsarDatasetTopic(it) },
+            subscriptionName = "${SUBSCRIBER_PREFIX}_${metadata.id}",
+            contentType = MetricEvent::class,
+            mode = MessagingMode.STREAMING
+        )
+
+        if (!receiveBacklog()) {
+            activeConsumer.seekToLatest()
+        }
+
+        (try {
+            StreamingService.sseActiveStreamsGlobal.incrementAndGet()
+            metadata.dataRange.datasets.forEach {
+                StreamingService.sseActiveStreamsPerDataset.streamStarted(
+                    it,
+                    datasetIdToNameMap
+                )
             }
-            .subscribeBy(onError = { logger.warn(it) { "Error while receiving stream control events from local eventbus!" } })
 
-        pulsarClient.newConsumer(Schema.JSON(MetricEvent::class.java))
-            .subscriptionName("${SUBSCRIBER_PREFIX}_${metadata.id}")
-            .subscriptionType(SubscriptionType.Exclusive)
-            .subscriptionInitialPosition(SubscriptionInitialPosition.Latest)
-            .topics(metadata.dataRange.datasets.map { config.pulsarDatasetTopic(it) })
-            .acknowledgmentGroupTime(500, TimeUnit.MILLISECONDS)
-            .rxSubscribe()
-            .flatMapCompletable { consumer ->
+            Completable.mergeArray(heartBeatWriter(), eventWriter(sessionId))
+        } catch (t: Throwable) {
+            Completable.error(t)
+        })
+            .doFinally {
+                trySignalEndOfSession()
                 try {
-                    activeConsumer = consumer
-                    prepareHttpResponse()
-                    sendPreamble()
-                    state = SessionState.STREAMING
-                    StreamingService.sseActiveStreamsGlobal.incrementAndGet()
-                    metadata.dataRange.datasets.forEach {
-                        StreamingService.sseActiveStreamsPerDataset.streamStarted(
-                            it,
-                            datasetIdToNameMap
-                        )
-                    }
-
-                    metaStore.updateDataStream(metadata.id!!, DataStreamUpdate(clientConnected = true))
-                        .flatMap { Completable.mergeArray(heartBeatWriter(), eventWriter()) }
+                    activeConsumer.close()
                 } catch (t: Throwable) {
-                    Completable.error(t)
+                    logger.warn { "[$sessionId] Error while trying to close Pulsar consumer for stream ${metadata.id}" }
                 }
-            }
-            .onErrorResumeNext {
-                if (it is IllegalStateException || it is ClosedChannelException) {
-                    state =
-                        if (state == SessionState.TERMINATE_REQUESTED) SessionState.TERMINATED_FROM_API else SessionState.TERMINATED_BY_CLIENT
-                    Completable.complete()
-                } else if (it is PulsarClientException.ConsumerBusyException || (it is CompletionException && it.cause is PulsarClientException.ConsumerBusyException) || (it is ExecutionException && it.cause is PulsarClientException.ConsumerBusyException)) {
-                    logger.info { "Stream ${metadata.id} aborted (already being used elsewhere!)" }
-                    Completable.error(HttpError(409, "This stream is busy (another instance is already connected!)"))
-                } else {
-                    // An unexpected error occurred, propagate downstream
-                    Completable.error(it)
-                }
-            }
-            .flatMap {
+
                 StreamingService.sseActiveStreamsGlobal.decrementAndGet()
                 metadata.dataRange.datasets.forEach { StreamingService.sseActiveStreamsPerDataset.streamStopped(it) }
-
-                metaStore.updateDataStream(metadata.id!!, DataStreamUpdate(clientConnected = false))
-                    .flatMap {
-                        // When this point is reach, try to close the Pulsar consumer (cleanup)
-                        activeConsumer?.rxClose()
-                            ?.doOnComplete {
-                                logger.info { "Stream ${metadata.id} closed on server!" }
-                                activeConsumer = null
-                            }
-                            ?.onErrorComplete {
-                                logger.warn { "Error while closing consumer for ${metadata.id}" }
-                                true
-                            }
-                            ?: Completable.complete()
-                    }
-            }
-            .doFinally {
-                // Safety routine: if activeConsumer is not null => try closing it a final time
-                try {
-                    activeConsumer?.close()
-                } catch (t: Throwable) {
-                    logger.warn { "Error while trying to close consumer a final time for ${metadata.id}" }
-                }
             }
             .subscribeBy(
-                onComplete = {
-                    when (state) {
-                        SessionState.TERMINATED_BY_CLIENT -> logger.info { "Stream ${metadata.id} was closed by client." }
-                        SessionState.TERMINATED_FROM_API -> logger.info { "Stream ${metadata.id} was closed from API." }
-                        else -> logger.warn { "Unexpected end condition for stream ${metadata.id}... (state: $state)" }
+                onComplete = { logger.warn { "[$sessionId] Unexpected end condition for stream ${metadata.id}..." } },
+                onError = { err ->
+                    when (err) {
+                        is IllegalStateException, is ClosedChannelException -> {
+                            logger.info { "[$sessionId] Stream ${metadata.id} was closed by client." }
+                        }
+                        is SessionClosedByFramework -> {
+                            trySendErrorToClient(
+                                err,
+                                "The stream was closed using the API or has been replaced with a new session."
+                            )
+                            logger.info { "[$sessionId] Stream ${metadata.id} was closed from API or has been replaced with a new session..." }
+                        }
+                        else -> {
+                            trySendErrorToClient(err)
+                            logger.warn(err) { "[$sessionId] An unexpected error has occurred while streaming for stream ${metadata.id}!" }
+                        }
                     }
-                },
-                onError = {
-                    tryWriteError(it)
                 }
             )
+    }
+
+    private fun receiveBacklog(): Boolean {
+        return routingContext.request().getParam(RECEIVE_BACKLOG_QUERY_PARAM)?.toBooleanStrictOrNull() ?: false
     }
 
     private fun prepareHttpResponse() {
@@ -162,8 +128,8 @@ class StreamingSession(
         }
     }
 
-    private fun sendPreamble() {
-        routingContext.response().write(":${CharArray(512) { ' ' }}\n\n", "UTF-8")
+    private suspend fun sendPreamble() {
+        routingContext.response().rxWrite(":${CharArray(512) { ' ' }}\n\n", "UTF-8").await()
     }
 
     private fun heartBeatWriter(): Completable {
@@ -173,45 +139,35 @@ class StreamingSession(
             }
     }
 
-    private fun eventWriter(): Completable {
-        return activeConsumer!!.toFlowable(BackpressureStrategy.BUFFER)
-            .filter { it.second.value.let { event -> matchesRange(event) && event.matches(metadata.filter) } }
-            .concatMapCompletable { (consumer, event) ->
+    private suspend fun eventWriter(sessionId: String): Completable {
+        return activeConsumer.receive().asFlowable()
+            .filter { it.content.let { event -> matchesRange(event) && event.matches(metadata.filter) } }
+            .concatMapSingle { event ->
                 StreamingService.microMeterRegistry.counter(
                     "oblx.sse.events.streamed",
                     datasetIdAndNameTag.instantiate(
-                        event.value.dataset!!,
-                        event.value.dataset?.let { datasetIdToNameMap.getName(it) } ?: ""
+                        event.content.dataset!!,
+                        event.content.dataset?.let { datasetIdToNameMap.getName(it) } ?: ""
                     )
                 ).increment()
-                sendData(event.value)
-                    .flatMap {
-                        consumer.rxAcknowledgeCumulative(event)
-                            .doOnError { StreamingService.sseAckFailures.increment() }
-                            .onErrorComplete()
+                sendData(event.content).toSingleDefault(event.messageId)
+            }
+            .sample(COMMIT_PERIOD_MS / 4, TimeUnit.MILLISECONDS)
+            .buffer(COMMIT_PERIOD_MS, TimeUnit.MILLISECONDS)
+            .flatMapCompletable { lastMessageIds ->
+                rxCompletable {
+                    if (lastMessageIds.isNotEmpty()) {
+                        try {
+                            activeConsumer.acknowledgeCumulative(lastMessageIds.last())
+                        } catch (err: Throwable) {
+                            StreamingService.sseAckFailures.increment()
+                        }
                     }
+                    if (!streamingSessions.shouldExist(metadata.id!!, sessionId).await()) {
+                        throw SessionClosedByFramework()
+                    }
+                }
             }
-    }
-
-    private fun endSSE(): Completable {
-        state = SessionState.TERMINATE_REQUESTED
-        return sendComment("Terminating the stream (triggered by remote process).")
-            .flatMap { routingContext.rxEnd() }
-            .onErrorComplete()
-    }
-
-    private fun tryWriteError(err: Throwable) {
-        try {
-            if (state == SessionState.INIT) {
-                (if (err is HttpError) err else HttpError(500, err.message, err)).writeResponse(routingContext)
-            } else {
-                sendComment("An error occurred: ${err.message}")
-                    .flatMap { routingContext.rxEnd() }
-                    .blockingAwait()
-            }
-        } catch (t: Throwable) {
-            // Nothing
-        }
     }
 
     private fun sendComment(comment: String): Completable {
@@ -228,4 +184,31 @@ class StreamingSession(
     private fun matchesRange(event: MetricEvent): Boolean {
         return metadata.dataRange.metrics.any { it == event.metric || (it.isWildcard() && it.type == event.metric?.type) }
     }
+
+    private fun trySendErrorToClient(err: Throwable, msg: String? = null) {
+        try {
+            sendComment("An error occurred: ${msg ?: err.message}")
+                .flatMap { routingContext.rxEnd() }
+                .blockingAwait()
+        } catch (t: Throwable) {
+            // Nothing
+        }
+    }
+
+    private fun trySignalEndOfSession() {
+        try {
+            streamingSessions.stop(metadata.id!!, sessionId)
+                .retryWhen(RetryWhen.exponentialBackoff(100, TimeUnit.MILLISECONDS).maxRetries(15).build())
+                .subscribeBy(
+                    onComplete = {},
+                    onError = { logger.warn(it) { "[$sessionId] Could not notify end of session... (Redis error?)" } }
+                )
+        } catch (t: Throwable) {
+            // Nothing
+        }
+    }
+
+
 }
+
+class SessionClosedByFramework : RuntimeException()
