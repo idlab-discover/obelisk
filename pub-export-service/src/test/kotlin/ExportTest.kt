@@ -9,37 +9,34 @@ import idlab.obelisk.definitions.data.DataStore
 import idlab.obelisk.definitions.data.EventsQuery
 import idlab.obelisk.definitions.data.MetricEvent
 import idlab.obelisk.definitions.framework.OblxConfig
+import idlab.obelisk.definitions.messaging.MessageBroker
+import idlab.obelisk.definitions.messaging.MessageProducer
 import idlab.obelisk.plugins.datastore.clickhouse.ClickhouseDataStoreModule
-import idlab.obelisk.pulsar.utils.PulsarModule
-import idlab.obelisk.pulsar.utils.rxSend
+import idlab.obelisk.plugins.messagebroker.pulsar.PulsarMessageBrokerModule
 import idlab.obelisk.services.pub.export.DEFAULT_EXPORTS_DIR
 import idlab.obelisk.services.pub.export.ExportRunner
 import idlab.obelisk.utils.service.OblxBaseModule
 import idlab.obelisk.utils.service.OblxLauncher
 import idlab.obelisk.utils.service.reactive.flatMap
-import idlab.obelisk.utils.service.reactive.flatMapSingle
 import idlab.obelisk.utils.test.Generator
 import idlab.obelisk.utils.test.MergedData
 import idlab.obelisk.utils.test.rg.Time
 import idlab.obelisk.utils.test.rg.Values
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
 import io.vertx.core.json.JsonObject
 import io.vertx.core.json.jackson.DatabindCodec
 import io.vertx.junit5.Timeout
 import io.vertx.junit5.VertxExtension
-import io.vertx.junit5.VertxTestContext
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
 import io.vertx.reactivex.core.Vertx
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.rx2.awaitSingleOrNull
 import mu.KotlinLogging
 import net.lingala.zip4j.ZipFile
 import org.apache.commons.csv.CSVFormat
-import org.apache.pulsar.client.api.Producer
-import org.apache.pulsar.client.api.PulsarClient
-import org.apache.pulsar.client.api.Schema
 import org.apache.pulsar.shade.org.apache.commons.lang.StringEscapeUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -55,7 +52,7 @@ class ExportTest {
 
     private companion object {
         private lateinit var exportRunner: ExportRunner
-        private lateinit var jobTriggerProducer: Producer<ExportEvent>
+        private lateinit var jobTriggerProducer: MessageProducer<ExportEvent>
         private lateinit var metaStore: MetaStore
 
         const val EVENTS_PER_SERIES = 50000
@@ -80,28 +77,33 @@ class ExportTest {
         @JvmStatic
         @BeforeAll
         @Timeout(value = 10, timeUnit = TimeUnit.MINUTES)
-        fun init(vertx: Vertx, context: VertxTestContext) {
+        fun init(vertx: Vertx) = runBlocking {
             DatabindCodec.mapper().registerKotlinModule()
             DatabindCodec.prettyMapper().registerKotlinModule()
 
             val launcher =
-                OblxLauncher.with(OblxBaseModule(), PulsarModule(), MockMetaStoreModule(), ClickhouseDataStoreModule())
-            val pulsarClient = launcher.getInstance(PulsarClient::class.java)
+                OblxLauncher.with(
+                    OblxBaseModule(),
+                    PulsarMessageBrokerModule(),
+                    MockMetaStoreModule(),
+                    ClickhouseDataStoreModule()
+                )
+            val messageBroker = launcher.getInstance(MessageBroker::class.java)
             metaStore = launcher.getInstance(MetaStore::class.java)
             val dataStore = launcher.getInstance(DataStore::class.java)
             exportRunner = ExportRunner(
-                pulsarClient,
                 metaStore,
                 launcher.getInstance(DataStore::class.java),
+                messageBroker,
                 launcher.getInstance(Vertx::class.java),
                 launcher.getInstance(OblxConfig::class.java)
             )
-            jobTriggerProducer =
-                pulsarClient.newProducer(Schema.JSON(ExportEvent::class.java)).topic(ControlChannels.EXPORT_EVENT_TOPIC)
-                    .blockIfQueueFull(true)
-                    .create()
+            jobTriggerProducer = messageBroker.createProducer(
+                topicName = ControlChannels.EXPORT_EVENT_TOPIC,
+                contentType = ExportEvent::class
+            )
 
-            exportRunner.start()
+            exportRunner.start(jobTriggerProducer)
 
             // Remove all existing exports
             vertx.fileSystem().rxDeleteRecursive(DEFAULT_EXPORTS_DIR, true)
@@ -112,25 +114,24 @@ class ExportTest {
                     data.events().toObservable()
                         .buffer(10000)
                         .concatMapCompletable { dataStore.ingest(it).ignoreElement() }
-                }
-                .subscribeBy(onComplete = context::completeNow, onError = context::failNow)
+                }.await()
         }
     }
 
     @Test
     @Timeout(value = 10, timeUnit = TimeUnit.MINUTES)
-    fun testExportAll(vertx: Vertx, context: VertxTestContext) {
-        exportTestHelper(vertx, context, "test-export-all")
+    fun testExportAll(vertx: Vertx) = runBlocking {
+        exportTestHelper(vertx, "test-export-all")
     }
 
 
     @Test
     @Timeout(value = 10, timeUnit = TimeUnit.MINUTES)
-    fun testExportLimit(vertx: Vertx, context: VertxTestContext) {
-        exportTestHelper(vertx, context, "test-export-limited", 50000)
+    fun testExportLimit(vertx: Vertx) = runBlocking {
+        exportTestHelper(vertx, "test-export-limited", 50000)
     }
 
-    private fun exportTestHelper(vertx: Vertx, context: VertxTestContext, id: String, limit: Int? = null) {
+    private suspend fun exportTestHelper(vertx: Vertx, id: String, limit: Int? = null) {
         // Generate and validate the CSV export
         val exportRequest = DataExport(
             id = id,
@@ -144,60 +145,42 @@ class ExportTest {
             limit = limit
         )
 
-        metaStore
-            .createDataExport(exportRequest)
-            .flatMap { exportId ->
-                jobTriggerProducer.rxSend(ExportEvent(exportId)).map { exportId }
+        val exportId = metaStore.createDataExport(exportRequest).await()
+        jobTriggerProducer.send(ExportEvent(exportId))
+        var export: DataExport
+        do {
+            export = metaStore.getDataExport(exportId).awaitSingleOrNull()!!
+            when (export.status.status) {
+                ExportStatus.QUEUING, ExportStatus.GENERATING -> delay(2000)
+                ExportStatus.CANCELLED, ExportStatus.FAILED -> RuntimeException("Job Failed!!")
+                else -> {}
             }
-            .flatMap { exportId ->
-                metaStore.getDataExport(exportId).toSingle().flatMap { export ->
-                    when (export.status.status) {
-                        ExportStatus.COMPLETED -> Single.just(export)
-                        ExportStatus.QUEUING, ExportStatus.GENERATING -> {
-                            Completable.timer(2, TimeUnit.SECONDS)
-                                .flatMapSingle { Single.error<DataExport>(RetryTrigger()) }
+        } while (export.status.status != ExportStatus.COMPLETED)
+
+        ZipFile("$DEFAULT_EXPORTS_DIR/${export.id}.zip").extractAll("$DEFAULT_EXPORTS_DIR/${export.id}")
+        val events = FileReader("$DEFAULT_EXPORTS_DIR/${export.id}/events.csv").use { csv ->
+            CSVFormat.DEFAULT.parse(csv)
+                .filter { it.size() > 0 }
+                .map { record ->
+                    val metric = MetricName(record[2])
+                    MetricEvent(
+                        timestamp = record[0].toLong(),
+                        dataset = record[1],
+                        metric = metric,
+                        value = when (metric.type) {
+                            MetricType.JSON -> JsonObject(StringEscapeUtils.unescapeCsv(record[3]))
+                            MetricType.NUMBER -> record[3].toDouble()
+                            MetricType.STRING -> record[3]
+                            MetricType.BOOL -> record[3].toBoolean()
+                            MetricType.NUMBER_ARRAY -> record[3]
                         }
-                        else -> Single.error(java.lang.RuntimeException("Job Failed!"))
-                    }
+                    )
                 }
-                    .retry { err -> err is RetryTrigger }
-            }
-            .flatMap { export ->
-                vertx
-                    .rxExecuteBlocking<List<MetricEvent>> { promise ->
-                        try {
-                            ZipFile("$DEFAULT_EXPORTS_DIR/${export.id}.zip").extractAll("$DEFAULT_EXPORTS_DIR/${export.id}")
-                            val events = FileReader("$DEFAULT_EXPORTS_DIR/${export.id}/events.csv").use { csv ->
-                                CSVFormat.DEFAULT.parse(csv)
-                                    .filter { it.size() > 0 }
-                                    .map { record ->
-                                        val metric = MetricName(record[2])
-                                        MetricEvent(
-                                            timestamp = record[0].toLong(),
-                                            dataset = record[1],
-                                            metric = metric,
-                                            value = when (metric.type) {
-                                                MetricType.JSON -> JsonObject(StringEscapeUtils.unescapeCsv(record[3]))
-                                                MetricType.NUMBER -> record[3].toDouble()
-                                                MetricType.STRING -> record[3]
-                                                MetricType.BOOL -> record[3].toBoolean()
-                                                MetricType.NUMBER_ARRAY -> record[3]
-                                            }
-                                        )
-                                    }
-                            }
-                            promise.complete(events)
-                        } catch (t: Throwable) {
-                            promise.fail(t)
-                        }
-                    }
-                    .toSingle()
-            }
-            .subscribeBy(onSuccess = {
-                val expected = limit?.let { l -> data.events().sortedBy { it.timestamp }.take(l) } ?: data.events()
-                    .sortedBy { it.timestamp }
-                context.verify { assertMetricsEquals(expected, it) }.completeNow()
-            }, onError = context::failNow)
+        }
+
+        val expected = limit?.let { l -> data.events().sortedBy { it.timestamp }.take(l) } ?: data.events()
+            .sortedBy { it.timestamp }
+        assertMetricsEquals(expected, events)
     }
 
     private fun assertMetricsEquals(expected: List<MetricEvent>, actual: List<MetricEvent>) {
@@ -218,5 +201,3 @@ class ExportTest {
         Assertions.assertTrue((expected - actual) < 0.00001, msg)
     }
 }
-
-class RetryTrigger() : RuntimeException()
