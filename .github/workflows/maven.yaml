@@ -35,10 +35,7 @@ jobs:
         key: obelisk-docker-cache-{hash}
         restore-keys: |
           obelisk-docker-cache-
-    - uses: isbang/compose-action@v1.1.0
-      with:
-        compose-file: './.test/docker-compose.yml'
-        down-flags: '--volumes'
+    - run: docker-compose -f .test/docker-compose.yml up -d
     - name: Run test
       run: mvn test -B -ntp --fail-at-end
     - name: Surefire Report

@@ -10,15 +10,12 @@ services:
     image: mongo:4.2
     ports:
     - 27017:27017
-    volumes:
-      - 'mongodb_data:/data/db'
   clickhouse:
     image: clickhouse/clickhouse-server:22.5
     ports:
       - 8123:8123
       - 9000:9000
     volumes:
-      - 'clickhouse_data:/var/lib/clickhouse'
       - '../plugin-datastore-clickhouse/initdb:/docker-entrypoint-initdb.d'
       - '../plugin-datastore-clickhouse/ch-server-config/config.xml:/etc/clickhouse-server/config.xml'
     ulimits:
@@ -54,12 +51,3 @@ services:
       - 9090:9090
     volumes:
       - '../prometheus.yml:/etc/prometheus/prometheus.yml'
-
-
-volumes:
-  clickhouse_data:
-    driver: local
-  pulsar-manager_data:
-    driver: local
-  mongodb_data:
-    driver: local
