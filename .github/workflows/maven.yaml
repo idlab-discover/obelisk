@@ -32,9 +32,13 @@ jobs:
       # Ignore the failure of a step and avoid terminating the job.
       continue-on-error: true
       with:
-        key: obelisk-docker-cache-{hash}
+        key: docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
         restore-keys: |
-          obelisk-docker-cache-
+          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
+          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}
+          docker-layer-caching-${{ github.workflow }}
+          docker-layer-caching-
     - run: docker-compose -f .test/docker-compose.yml up -d
     - name: Run test
       run: mvn test -B -ntp --fail-at-end
