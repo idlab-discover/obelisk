@@ -45,7 +45,7 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.version>1.6.21</kotlin.version>
-        <vertx.version>4.2.5</vertx.version>
+        <vertx.version>4.3.2</vertx.version>
         <pulsar.version>2.10.1</pulsar.version>
         <micrometer.version>1.7.1</micrometer.version>
         <logback.level>all</logback.level>
