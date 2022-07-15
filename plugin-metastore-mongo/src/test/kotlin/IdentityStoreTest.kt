@@ -40,7 +40,7 @@ class IdentityStoreTest {
             val config = OblxConfig()
             mongoClient = MongoClient.create(
                 vertx,
-                JsonObject().put("connection_string", config.mongoConnectionUri).put("db_name", config.mongoDbName)
+                JsonObject().put("connection_string", config.mongoConnectionUri).put("db_name", config.mongoDbName + "-testIdentityStore")
             )
             identityStore = MongoDBMetaStore(mongoClient)
 

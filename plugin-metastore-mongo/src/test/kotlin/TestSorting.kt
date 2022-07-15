@@ -28,7 +28,7 @@ class TestSorting {
         val mongoClient = MongoClient.create(
             vertx,
             JsonObject().put("connection_string", config.mongoConnectionUri)
-                .put("db_name", config.mongoDbName + "-test")
+                .put("db_name", config.mongoDbName + "-testSorting")
         )
         val metaStore = MongoDBMetaStore(mongoClient)
 
