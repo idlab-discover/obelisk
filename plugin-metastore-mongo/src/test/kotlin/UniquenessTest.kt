@@ -42,7 +42,7 @@ class UniquenessTest {
             mongoClient = MongoClient.create(
                 vertx,
                 JsonObject().put("connection_string", config.mongoConnectionUri)
-                    .put("db_name", "${config.mongoDbName}-test")
+                    .put("db_name", config.mongoDbName + "-testUniqueness")
             )
             identityStore = MongoDBMetaStore(mongoClient)
             initialize(identityStore as MongoDBMetaStore, mongoClient, config)
