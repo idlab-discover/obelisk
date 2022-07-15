@@ -119,7 +119,7 @@ class CHTest {
         )
         val expectedResults = airqualityData.events()
             .filter { it.dataset == dataset1 && (it.metric == metricNo2 || it.metric == metricCo2) }
-            .sortedWith(Comparator.comparing<MetricEvent, String?> { it?.metric?.getFullyQualifiedId() }
+            .sortedWith(Comparator.comparing<MetricEvent, String?> { it!!.metric!!.getFullyQualifiedId() }
                 .thenBy { it.source }.thenBy { it.timestamp })
         unpage { cursor -> datastore.getEvents(query.copy(cursor = cursor)) }.toList().subscribeBy(
             onSuccess = { context.verify { assertEventsEquals(expectedResults, it) }.completeNow() },
@@ -138,7 +138,7 @@ class CHTest {
         )
         val expectedResults = airqualityData.events()
             .filter { it.dataset == dataset1 && (it.metric == metricNo2 || it.metric == metricCo2) }
-            .sortedWith(Comparator.comparing<MetricEvent, String?> { it?.metric?.getFullyQualifiedId() }
+            .sortedWith(Comparator.comparing<MetricEvent, String?> { it!!.metric!!.getFullyQualifiedId() }
                 .thenBy { it.source }.thenBy { it.timestamp }.reversed())
         unpage { cursor -> datastore.getEvents(query.copy(cursor = cursor)) }.toList().subscribeBy(
             onSuccess = { context.verify { assertEventsEquals(expectedResults, it) }.completeNow() },
@@ -637,7 +637,7 @@ class CHTest {
         println("Last TS: $lastTs")
 
         val eventComparator = Comparator.comparing<MetricEvent, Long?> { it.timestamp }
-            .then(Comparator.comparing<MetricEvent, String?> { it.source })
+            .then(Comparator.comparing<MetricEvent, String?> { it.source!! })
 
         datastore.ingest(data)
             .ignoreElement()

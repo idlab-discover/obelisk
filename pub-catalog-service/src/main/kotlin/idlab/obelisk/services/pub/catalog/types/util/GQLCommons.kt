@@ -7,9 +7,10 @@ import hu.akarnokd.rxjava2.interop.SingleInterop
 import idlab.obelisk.definitions.*
 import idlab.obelisk.definitions.catalog.*
 import idlab.obelisk.definitions.catalog.codegen.*
+import idlab.obelisk.definitions.control.ControlChannels
 import idlab.obelisk.definitions.control.ExportEvent
 import idlab.obelisk.definitions.data.*
-import idlab.obelisk.pulsar.utils.rxSend
+import idlab.obelisk.definitions.messaging.MessageBroker
 import idlab.obelisk.services.pub.catalog.impl.*
 import idlab.obelisk.utils.service.http.AuthorizationException
 import idlab.obelisk.utils.service.http.UnauthorizedException
@@ -22,6 +23,7 @@ import io.reactivex.exceptions.CompositeException
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.impl.RoutingContextImpl
 import io.vertx.reactivex.ext.web.RoutingContext
+import kotlinx.coroutines.rx2.rxSingle
 import org.redisson.api.RMapCacheRx
 import org.redisson.api.RedissonClient
 import java.util.concurrent.CompletableFuture
@@ -349,7 +351,7 @@ abstract class Operations(protected val accessManager: AccessManager) {
     protected fun createDataExport(
         dataStore: DataStore,
         metaStore: MetaStore,
-        pulsarConnections: PulsarConnections,
+        messageBroker: MessageBroker,
         token: Token,
         input: CreateExportInput,
         teamId: String? = null
@@ -395,8 +397,11 @@ abstract class Operations(protected val accessManager: AccessManager) {
                             metaStore.createDataExport(export)
                         }
                         .flatMap { exportId ->
-                            // Send event to trigger the export process
-                            pulsarConnections.exportTriggerProducer.rxSend(ExportEvent(exportId)).map { exportId }
+                            rxSingle {
+                                // Send event to trigger the export process
+                                messageBroker.getProducer(ControlChannels.EXPORT_EVENT_TOPIC, ExportEvent::class)
+                                exportId
+                            }
                         }
                         .flatMapMaybe(metaStore::getDataExport)
                         .toSingle()
@@ -408,7 +413,6 @@ abstract class Operations(protected val accessManager: AccessManager) {
 
     protected fun createDataStream(
         metaStore: MetaStore,
-        pulsarConnections: PulsarConnections,
         token: Token,
         input: CreateStreamInput,
         teamId: String? = null

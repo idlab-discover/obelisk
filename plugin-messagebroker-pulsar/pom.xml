@@ -9,17 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>lib-pulsar-utils</artifactId>
+    <artifactId>plugin-messagebroker-pulsar</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-service-utils</artifactId>
+            <artifactId>lib-definitions</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-rx-java2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.pulsar</groupId>
@@ -32,16 +28,9 @@
             <version>${pulsar.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.akarnokd</groupId>
-            <artifactId>rxjava2-jdk8-interop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.davidmoten</groupId>
-            <artifactId>rxjava2-extras</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
         </dependency>
     </dependencies>
+
 </project>

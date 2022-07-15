@@ -1,16 +1,16 @@
 package idlab.obelisk.services.pub.ngsi.impl.state
 
 import com.github.davidmoten.rx2.flowable.Transformers
-import com.github.jsonldjava.utils.JsonUtils
 import idlab.obelisk.definitions.*
 import idlab.obelisk.definitions.catalog.Token
 import idlab.obelisk.definitions.catalog.UsageLimitId
 import idlab.obelisk.definitions.data.*
 import idlab.obelisk.definitions.framework.OblxConfig
+import idlab.obelisk.definitions.messaging.MessageBroker
+import idlab.obelisk.definitions.messaging.MessageProducer
+import idlab.obelisk.definitions.messaging.ProducerMode
 import idlab.obelisk.definitions.ratelimiting.RateLimiter
 import idlab.obelisk.plugins.datastore.clickhouse.impl.utils.OptimizedCursor
-import idlab.obelisk.pulsar.utils.configureForHighThroughput
-import idlab.obelisk.pulsar.utils.rxSend
 import idlab.obelisk.services.pub.ngsi.Constants
 import idlab.obelisk.services.pub.ngsi.impl.model.Attribute
 import idlab.obelisk.services.pub.ngsi.impl.model.EntityType
@@ -29,25 +29,19 @@ import io.reactivex.Single
 import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.rxkotlin.zipWith
 import io.vertx.core.json.JsonObject
-import io.vertx.reactivex.core.Vertx
+import kotlinx.coroutines.rx2.rxCompletable
 import mu.KotlinLogging
-import org.apache.pulsar.client.api.PulsarClient
-import org.apache.pulsar.client.api.Schema
 import java.lang.Integer.min
 
 class NgsiStoreImpl(
-    private val vertx: Vertx,
-    config: OblxConfig,
+    private val config: OblxConfig,
     private val entityContext: EntityContext,
     private val dataStore: DataStore,
     private val rateLimiter: RateLimiter,
-    pulsarClient: PulsarClient
+    private val messageBroker: MessageBroker,
 ) : NgsiStore {
 
     private val logger = KotlinLogging.logger { }
-    protected val eventProducer =
-        pulsarClient.newProducer(Schema.JSON(MetricEvent::class.java)).producerName("${config.hostname()}_ngsi")
-            .blockIfQueueFull(true).topic(config.pulsarMetricEventsTopic).configureForHighThroughput().create()
 
     override fun getEntities(
         readContext: ReadContext,
@@ -483,7 +477,12 @@ class NgsiStoreImpl(
         return errorIfExists(writeContext.datasetId, entity.id!!)
             .flatMap {
                 entity.toEvents().toFlowable()
-                    .flatMapCompletable { eventProducer.rxSend(it).ignoreElement() }
+                    .flatMapCompletable {
+                        rxCompletable {
+                            // Persist to Obelisk...
+                            loadEventProducer().send(it)
+                        }
+                    }
                     .flatMap { entityContext.cache(entity) }
             }
     }
@@ -512,7 +511,12 @@ class NgsiStoreImpl(
                             )
                         } else {
                             entity.toEvents().toFlowable()
-                                .flatMapCompletable { eventProducer.rxSend(it).ignoreElement() }
+                                .flatMapCompletable {
+                                    rxCompletable {
+                                        // Persist to Obelisk...
+                                        loadEventProducer().send(it)
+                                    }
+                                }
                                 .flatMap { entityContext.cache(entity) }
                                 .toSingleDefault(EntityOperationResult(entity.id!!))
                         }
@@ -534,7 +538,12 @@ class NgsiStoreImpl(
             .flatMapCompletable {
                 // Persist input entity converted events into Obelisk
                 entity.toEvents().toFlowable()
-                    .flatMapCompletable { eventProducer.rxSend(it).ignoreElement() }
+                    .flatMapCompletable {
+                        rxCompletable {
+                            // Persist to Obelisk...
+                            loadEventProducer().send(it)
+                        }
+                    }
                     .flatMap { entityContext.cache(entity) }
             }
     }
@@ -562,8 +571,11 @@ class NgsiStoreImpl(
                     .flatMapCompletable {
                         previousState.toEvents().toFlowable()
                             .flatMapCompletable {
-                                eventProducer.rxSend(it).ignoreElement()
-                            } // Persist to Obelisk...
+                                rxCompletable {
+                                    // Persist to Obelisk...
+                                    loadEventProducer().send(it)
+                                }
+                            }
                             .flatMap { entityContext.cache(previousState) } //And then also update entityContext cache
                     }
             }
@@ -571,7 +583,12 @@ class NgsiStoreImpl(
 
     private fun addHistoricalEntityState(writeContext: WriteContext, entity: NgsiEntity): Completable {
         return entity.toEvents().toFlowable()
-            .flatMapCompletable { eventProducer.rxSend(it).ignoreElement() }
+            .flatMapCompletable {
+                rxCompletable {
+                    // Persist to Obelisk...
+                    loadEventProducer().send(it)
+                }
+            }
     }
 
     /**
@@ -600,11 +617,23 @@ class NgsiStoreImpl(
                     .flatMapCompletable {
                         previousState.toEvents().toFlowable()
                             .flatMapCompletable {
-                                eventProducer.rxSend(it).ignoreElement()
-                            } // Persist to Obelisk...
+                                rxCompletable {
+                                    // Persist to Obelisk...
+                                    loadEventProducer().send(it)
+                                }
+                            }
                             .flatMap { entityContext.cache(previousState) } //And then also update entityContext cache
                     }
             }
+    }
+
+    private suspend fun loadEventProducer(): MessageProducer<MetricEvent> {
+        return messageBroker.getProducer(
+            topicName = config.pulsarMetricEventsTopic,
+            contentType = MetricEvent::class,
+            senderName = "${config.hostname()}_ngsi",
+            mode = ProducerMode.HIGH_THROUGHPUT
+        )
     }
 }
 

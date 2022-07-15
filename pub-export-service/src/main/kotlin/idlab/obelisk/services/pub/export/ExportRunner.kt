@@ -13,15 +13,13 @@ import idlab.obelisk.definitions.data.DataStore
 import idlab.obelisk.definitions.data.EventsQuery
 import idlab.obelisk.definitions.data.MetricEvent
 import idlab.obelisk.definitions.framework.OblxConfig
-import idlab.obelisk.pulsar.utils.rxAcknowledge
-import idlab.obelisk.pulsar.utils.rxSend
-import idlab.obelisk.pulsar.utils.rxSubscribeAsFlowable
+import idlab.obelisk.definitions.messaging.MessageBroker
+import idlab.obelisk.definitions.messaging.MessageProducer
+import idlab.obelisk.definitions.messaging.MessagingMode
 import idlab.obelisk.utils.service.reactive.flatMap
-import idlab.obelisk.utils.service.reactive.flatMapMaybe
 import idlab.obelisk.utils.service.reactive.flatMapSingle
 import idlab.obelisk.utils.service.utils.pageAndProcess
 import idlab.obelisk.utils.service.utils.unpage
-import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -35,10 +33,12 @@ import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.core.buffer.Buffer
 import io.vertx.reactivex.core.file.AsyncFile
 import io.vertx.reactivex.core.file.FileProps
+import kotlinx.coroutines.rx2.asFlowable
+import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.rx2.rxCompletable
 import mu.KotlinLogging
 import net.lingala.zip4j.ZipFile
-import org.apache.pulsar.client.api.*
-import org.apache.pulsar.shade.org.apache.commons.lang.StringEscapeUtils
+import org.apache.commons.lang.StringEscapeUtils
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -49,12 +49,10 @@ import kotlin.system.exitProcess
 private const val ENV_EXPORTS_CHUNK_SIZE = "EXPORTS_CHUNK_SIZE"
 private const val ENV_MAX_RECORDS_PER_JOB = "MAX_RECORDS_PER_JOB"
 private const val ENV_MAX_JOB_CONCURRENCY = "MAX_JOB_CONCURRENCY"
-private const val ENV_MAX_ACK_RETRIES = "MAX_ACK_RETRIES"
 private const val ENV_MAX_QUERY_RETRIES = "MAX_QUERY_RETRIES"
 private const val DEFAULT_EXPORTS_CHUNK_SIZE = 5000
 private const val DEFAULT_MAX_RECORDS_PER_JOB = 1000_000
 private const val DEFAULT_MAX_JOB_CONCURRENCY = 4
-private const val DEFAULT_MAX_ACK_RETRIES = 3
 private const val DEFAULT_MAX_QUERY_RETRIES = 3
 private const val EXPORT_EVENTS_CONSUMER = "pub-export-service"
 private const val DB_READ_CHUNK_SIZE = 25000
@@ -65,66 +63,54 @@ private const val CRLF = "" + CR + LF
 
 @Singleton
 class ExportRunner @Inject constructor(
-    pulsarClient: PulsarClient,
     private val metaStore: MetaStore,
     private val dataStore: DataStore,
+    private val messageBroker: MessageBroker,
     private val vertx: Vertx,
     config: OblxConfig
 ) {
 
     private val logger = KotlinLogging.logger { }
 
-    private val jobTriggerConsumerBuilder = pulsarClient.newConsumer(Schema.JSON(ExportEvent::class.java))
-        .subscriptionName(EXPORT_EVENTS_CONSUMER)
-        .subscriptionType(SubscriptionType.Shared)
-        .subscriptionInitialPosition(SubscriptionInitialPosition.Earliest)
-        .topic(ControlChannels.EXPORT_EVENT_TOPIC)
-        .ackTimeout(5, TimeUnit.SECONDS)
-        .acknowledgmentGroupTime(500, TimeUnit.MILLISECONDS)
-    private val jobTriggerProducer =
-        pulsarClient.newProducer(Schema.JSON(ExportEvent::class.java))
-            .producerName(config.hostname() + "_exporter")
-            .topic(ControlChannels.EXPORT_EVENT_TOPIC)
-            .blockIfQueueFull(true)
-            .create()
+    private lateinit var jobTriggerProducer: MessageProducer<ExportEvent>
     private val fileSystem = vertx.fileSystem()
     private val exportDir = config.getString(ENV_EXPORTS_DIR, DEFAULT_EXPORTS_DIR).trimEnd('/')
     private val maxRecordsPerJob = config.getInteger(ENV_MAX_RECORDS_PER_JOB, DEFAULT_MAX_RECORDS_PER_JOB)
     private val chunkSize = config.getInteger(ENV_EXPORTS_CHUNK_SIZE, DEFAULT_EXPORTS_CHUNK_SIZE)
     private val concurrency = config.getInteger(ENV_MAX_JOB_CONCURRENCY, DEFAULT_MAX_JOB_CONCURRENCY)
-    private val maxAckRetries = config.getInteger(ENV_MAX_ACK_RETRIES, DEFAULT_MAX_ACK_RETRIES)
     private val maxQueryRetries = config.getInteger(ENV_MAX_QUERY_RETRIES, DEFAULT_MAX_QUERY_RETRIES)
 
-    fun start() {
-        cleanUp()
-            .flatMap {
-                jobTriggerConsumerBuilder
-                    .rxSubscribeAsFlowable(backpressureStrategy = BackpressureStrategy.BUFFER)
-                    .flatMapCompletable({ (consumer, event) ->
-                        // Always ack the job trigger
-                        consumer.rxAcknowledge(event).retryWhen(
-                            RetryWhen.exponentialBackoff(1000, TimeUnit.MILLISECONDS).maxRetries(maxAckRetries).build()
-                        )
-                            .flatMapMaybe { metaStore.getDataExport(event.value.exportId) }
-                            .flatMapCompletable { export ->
-                                when (export.status.status) {
-                                    ExportStatus.GENERATING, ExportStatus.QUEUING -> runExport(export) // Start or resume the job
-                                    ExportStatus.COMPLETED, ExportStatus.CANCELLED, ExportStatus.FAILED -> {
-                                        logger.warn { "Nothing to execute, the job is already completed... (${export.status.status})" }
-                                        Completable.complete()
-                                    }
-                                }
+    suspend fun start(jobTriggerProducer: MessageProducer<ExportEvent>) {
+        this.jobTriggerProducer = jobTriggerProducer
+        cleanUp().await()
+
+        val jobTriggerConsumer = messageBroker.createConsumer(
+            topicName = ControlChannels.EXPORT_EVENT_TOPIC,
+            subscriptionName = EXPORT_EVENTS_CONSUMER,
+            contentType = ExportEvent::class,
+            mode = MessagingMode.SIGNALING
+        )
+
+        jobTriggerConsumer.receive().asFlowable()
+            .flatMapCompletable({ event ->
+                metaStore.getDataExport(event.content.exportId)
+                    .flatMapCompletable { export ->
+                        when (export.status.status) {
+                            ExportStatus.GENERATING, ExportStatus.QUEUING -> runExport(export) // Start or resume the job
+                            ExportStatus.COMPLETED, ExportStatus.CANCELLED, ExportStatus.FAILED -> {
+                                logger.warn { "Nothing to execute, the job is already completed... (${export.status.status})" }
+                                Completable.complete()
                             }
-                            .doOnError { logger.error(it) { "Something went wrong setting up the job..." } }
-                    }, false, concurrency)
-            }
+                        }
+                    }
+                    .doOnError { logger.error(it) { "Something went wrong setting up the job..." } }
+            }, false, concurrency)
             .subscribeBy(
                 onError = { err ->
                     logger.error(err) { "An unexpected error occurred while executing the export job loop..." }
                     exitProcess(1)
                 }
             )
-
     }
 
     private fun cleanUp(): Completable {
@@ -274,8 +260,8 @@ class ExportRunner @Inject constructor(
         ) else Completable.complete()
     }
 
-    private fun reschedule(export: DataExport): Completable {
-        return jobTriggerProducer.rxSend(ExportEvent(export.id!!)).ignoreElement()
+    private fun reschedule(export: DataExport): Completable = rxCompletable {
+        jobTriggerProducer.send(ExportEvent(export.id!!))
     }
 
     /**

@@ -4,9 +4,9 @@ import graphql.schema.idl.RuntimeWiring
 import idlab.obelisk.definitions.PagedResult
 import idlab.obelisk.plugins.accessmanager.basic.BasicAccessManagerModule
 import idlab.obelisk.plugins.datastore.clickhouse.ClickhouseDataStoreModule
+import idlab.obelisk.plugins.messagebroker.pulsar.PulsarMessageBrokerModule
 import idlab.obelisk.plugins.metastore.mongo.MongoDBMetaStoreModule
 import idlab.obelisk.plugins.ratelimiter.gubernator.GubernatorRateLimiterModule
-import idlab.obelisk.pulsar.utils.PulsarModule
 import idlab.obelisk.services.pub.catalog.CatalogService
 import idlab.obelisk.services.pub.catalog.impl.Response
 import idlab.obelisk.utils.service.OblxBaseModule
@@ -42,7 +42,7 @@ class ValidateGraphQL {
                     ClickhouseDataStoreModule(),
                     MongoDBMetaStoreModule(),
                     BasicAccessManagerModule(),
-                    PulsarModule(),
+                    PulsarMessageBrokerModule(),
                     GubernatorRateLimiterModule()
                 )
 

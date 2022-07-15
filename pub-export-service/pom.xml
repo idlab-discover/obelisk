@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-pulsar-utils</artifactId>
+            <artifactId>plugin-messagebroker-pulsar</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -57,6 +57,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>1.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
     </dependencies>
 

@@ -92,7 +92,7 @@ private fun getCtxSafe(env: DataFetchingEnvironment): RoutingContext {
 private fun checkClientScope(env: DataFetchingEnvironment, token: Token) {
     if (token.client != null) {
         when (env.operationDefinition.operation) {
-            OperationDefinition.Operation.QUERY -> if (!token.client!!.scope.contains(Permission.READ)) throw AuthorizationException(
+            OperationDefinition.Operation.QUERY, OperationDefinition.Operation.SUBSCRIPTION -> if (!token.client!!.scope.contains(Permission.READ)) throw AuthorizationException(
                 "Client cannot perform the query (requires READ scope)"
             )
             OperationDefinition.Operation.MUTATION -> if (!token.client!!.scope.contains(Permission.WRITE)) throw AuthorizationException(

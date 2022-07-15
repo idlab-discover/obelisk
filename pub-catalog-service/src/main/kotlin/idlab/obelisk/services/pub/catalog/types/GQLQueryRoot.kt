@@ -21,7 +21,6 @@ import javax.inject.Singleton
 @Singleton
 @GQLType("Query")
 class GQLQueryRoot @Inject constructor(
-    private val redis: RedissonClient,
     private val metaStore: MetaStore,
     accessManager: AccessManager,
     private val admin: GQLAdmin

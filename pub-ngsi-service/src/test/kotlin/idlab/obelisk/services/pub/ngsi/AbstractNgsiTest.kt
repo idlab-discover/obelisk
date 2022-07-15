@@ -1,6 +1,5 @@
 package idlab.obelisk.services.pub.ngsi
 
-import com.github.davidmoten.rx2.RetryWhen
 import idlab.obelisk.client.OblxClient
 import idlab.obelisk.client.OblxClientOptions
 import idlab.obelisk.definitions.AlreadyExistsException
@@ -18,9 +17,9 @@ import idlab.obelisk.definitions.ratelimiting.RateLimiter
 import idlab.obelisk.plugins.accessmanager.basic.BasicAccessManagerModule
 import idlab.obelisk.plugins.accessmanager.basic.utils.SecureSecret
 import idlab.obelisk.plugins.datastore.clickhouse.ClickhouseDataStoreModule
+import idlab.obelisk.plugins.messagebroker.pulsar.PulsarMessageBrokerModule
 import idlab.obelisk.plugins.metastore.mongo.MongoDBMetaStoreModule
 import idlab.obelisk.plugins.ratelimiter.gubernator.GubernatorRateLimiterModule
-import idlab.obelisk.pulsar.utils.PulsarModule
 import idlab.obelisk.service.internal.sink.SinkService
 import idlab.obelisk.services.pub.auth.AuthService
 import idlab.obelisk.services.pub.auth.AuthServiceModule
@@ -34,13 +33,11 @@ import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.core.buffer.Buffer
 import io.vertx.reactivex.ext.web.client.HttpResponse
 import mu.KotlinLogging
-import org.apache.pulsar.client.api.PulsarClientException
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.org.webcompere.systemstubs.environment.EnvironmentVariables
 import uk.org.webcompere.systemstubs.jupiter.SystemStub
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 
 
 @ExtendWith(SystemStubsExtension::class)
@@ -56,7 +53,7 @@ abstract class AbstractNgsiTest {
         @JvmStatic
         protected val launcher = OblxLauncher.with(
             OblxBaseModule(),
-            PulsarModule(initLocalPulsar = true),
+            PulsarMessageBrokerModule(initLocalPulsar = true),
             BasicAccessManagerModule(),
             MongoDBMetaStoreModule(),
             AuthServiceModule(),
