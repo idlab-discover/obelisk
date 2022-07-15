@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.locationtech.spatial4j</groupId>
             <artifactId>spatial4j</artifactId>
-            <version>0.7</version>
+            <version>0.8</version>
         </dependency>
         <dependency>
             <groupId>org.locationtech.jts</groupId>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>com.github.akarnokd</groupId>
             <artifactId>rxjava3-bridge</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.2</version>
         </dependency>
     </dependencies>
 </project>

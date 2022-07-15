@@ -36,7 +36,7 @@ class TestUsageLimits {
             mongoClient = MongoClient.create(
                 vertx,
                 JsonObject().put("connection_string", config.mongoConnectionUri)
-                    .put("db_name", "${config.mongoDbName}-test")
+                    .put("db_name", config.mongoDbName + "-testUsageLimits")
             )
             identityStore = MongoDBMetaStore(mongoClient)
 

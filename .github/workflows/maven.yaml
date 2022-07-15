@@ -1,6 +1,16 @@
 name: Maven workflow
 
 on:
+  pull_request_target:
+    branches:
+      - main
+      - next
+    paths:
+     - '**/pom.xml'
+     - '**/src/main/kotlin/**'
+     - '**/test/kotlin/**'
+     - '**/src/main/java/**'
+     - '**/test/java/**'
   pull_request:
     branches:
       - main
@@ -20,7 +30,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        token: ${{ secrets.OBLX_PAT }}
+        token: ${{ secrets.OBLX_PAT || github.token }}
     - uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
@@ -32,15 +42,14 @@ jobs:
       # Ignore the failure of a step and avoid terminating the job.
       continue-on-error: true
       with:
-        key: obelisk-docker-cache-{hash}
+        key: docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
         restore-keys: |
-          obelisk-docker-cache-
-    - uses: isbang/compose-action@v1.0.0
-      with:
-        compose-file: './.test/docker-compose.yml'
-        down-flags: '--volumes'
-    - name: Check the test environment
-      run: docker ps -a
+          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
+          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}
+          docker-layer-caching-${{ github.workflow }}
+          docker-layer-caching-
+    - run: docker-compose -f .test/docker-compose.yml up -d
     - name: Run test
       run: mvn test -B -ntp --fail-at-end
     - name: Surefire Report

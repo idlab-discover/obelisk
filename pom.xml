@@ -49,7 +49,7 @@
         <kotlin.version>1.7.0</kotlin.version>
         <kotlinx.version>1.6.3</kotlinx.version>
         <vertx.version>4.2.5</vertx.version>
-        <pulsar.version>2.9.1</pulsar.version>
+        <pulsar.version>2.10.1</pulsar.version>
         <micrometer.version>1.7.1</micrometer.version>
         <logback.level>all</logback.level>
         <logback.level.auth>${logback.level}</logback.level.auth>
@@ -112,12 +112,12 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.11</version>
         </dependency>
         <dependency>
             <groupId>io.github.microutils</groupId>
-            <artifactId>kotlin-logging</artifactId>
-            <version>1.7.7</version>
+            <artifactId>kotlin-logging-jvm</artifactId>
+            <version>2.1.23</version>
         </dependency>
         <dependency>
             <groupId>org.codejargon.feather</groupId>
@@ -142,12 +142,12 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>29.0-jre</version>
+                <version>31.1-jre</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-kotlin</artifactId>
-                <version>2.13.1</version>
+                <version>2.13.3</version>
             </dependency>
             <dependency>
                 <groupId>com.github.davidmoten</groupId>
@@ -170,7 +170,7 @@
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson</artifactId>
-                <version>3.16.0</version>
+                <version>3.17.4</version>
             </dependency>
             <dependency>
                 <groupId>com.github.davidmoten</groupId>
