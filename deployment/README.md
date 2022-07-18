@@ -24,6 +24,7 @@ We recommend you to install each dependency into a separate namespace, we are go
 - MongoDB
 - Redis
 - Gubernator
+- Prometheus
 
 ## Traefik - Ingress Controller
 
@@ -79,9 +80,32 @@ components:
   mop: false
   # superset
   superset: false
+
+  ## Monitoring Components
+##
+## Control what components of the monitoring stack to deploy for the cluster
+monitoring:
+  # monitoring - prometheus
+  prometheus: false
+  # monitoring - grafana
+  grafana: false
+  # monitoring - node_exporter
+  node_exporter: false
+  # alerting - alert-manager
+  alert_manager: false
+  # monitoring - loki
+  loki: false
+  # monitoring - datadog
+  datadog: false
+
+toolset:
+  useProxy: false
 ```
 
 Pulsar charts also have a monitoring stack which can be deployed alongside it, you can do this to get started, but we recommend using [prometheus-community/kube-prometheus-stack](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack) for a more complete Kubernetes monitoring stack (you can always use the Grafana dashboards from the Pulsar chart for your own monitoring stack).
+
+<!-- TODO: write out some help for persistence -->
+❗ Check your persistence
 
 ### Pulsar config
 
@@ -222,7 +246,7 @@ CH Requirements:
 Then just apply the chi file to install
 
 ```yaml
-kubectl apply -f deployment/clickhouse/clickhouseinstallation.yaml
+kubectl apply -f deployment/clickhouse/chi-default.yaml
 ```
 
 ### Create tables
