@@ -12,10 +12,7 @@ Either Dynamic Provisioning or configured volumes are necessary for multiple dep
 
 # Dependencies
 
-<aside>
 ⚠️ In the following we provide brief installation instructions for our dependencies, a getting started point. If you plan on using Obelisk extensively, we **highly recommend** you familiarize yourself with all these dependencies and refer to their Git repositories for more extensive instructions and guidelines.
-
-</aside>
 
 Most of these dependencies have several methods of deployment, here we only highlight how we deploy these ourselves at the time of writing.
 
@@ -55,14 +52,16 @@ components:
   zookeeper: true
   # bookkeeper, necessary for Pulsar to function
   bookkeeper: true
- # broker, necessary for Pulsar to function
- broker: true
+  # broker, necessary for Pulsar to function
+  broker: true
 
- # OPTIONAL used in Obelisk production
+  # OPTIONAL used in Obelisk production
+  # pulsar detector, monitor distribution latency from message sending to message consumption
+  pulsar_detector: true
   # bookkeeper - autorecovery, recommended for production environments!
   autorecovery: true
- # toolset, recommended for management of Pulsar.
- #### Installation instructions rely on this toolset
+  # toolset, recommended for management of Pulsar.
+  #### Installation instructions rely on this toolset
   toolset: true
   # pulsar manager, a dashboard
   pulsar_manager: true
@@ -88,15 +87,12 @@ Pulsar charts also have a monitoring stack which can be deployed alongside it, y
 
 Setup namespaces through either the `pulsar-admin` CLI tool or the pulsar-manager dashboard.
 
-<aside>
 💡 Enable the `pulsar-toolset` in your helm deployment and create an alias to work with it as follows:
-
-</aside>
 
 ```bash
 $ alias pulsar-admin='kubectl exec -n $PULSAR_NAMESPACE pulsar-toolset-0 -- bin/pulsar-admin'
 $ pulsar-admin --version
-Current version of pulsar admin client is: 2.9.2
+Current version of pulsar admin client is: 2.9.3
 ```
 
 ### Namespaces
@@ -145,10 +141,7 @@ This namespace houses auto-created Dataset specific topics which are used to set
 
 It is important to setup [message retention and expiry](https://pulsar.apache.org/docs/en/cookbooks-retention-expiry/) for topics on this namespace. The oblx streaming components will auto create topics and subscriptions needed to facilitate streaming. By default, Pulsar will store unacknowledged messages indefinitely and delete messages when acknowledge by all active subscriptions. To ensure we don’t store all data for inactive streams and that an active stream can *rewind* it’s data flow we need to set the following:
 
-<aside>
 ⚠️ Be sure to check `--help` for these commands and ensure you are using the correct time notation. At the time of writing these commands use different granularities (seconds, minutes and d/h/m/s notation)
-
-</aside>
 
 ```bash
 pulsar-admin namespaces create public/oblx-ds
@@ -221,13 +214,10 @@ CH Requirements:
 - ≥2 shards
 - ≥2 replicas
 
-<aside>
 💡 A sample `ClickhouseInstallation.yaml` file can be found in the deployment folder! Be sure to change the following according to your setup:
 
 - `spec.configuration.zookeeper` : set the correct URL(s)
 - `spec.templates.volumeClaimTemplates` : use your desired storage class and/or configured volumes
-
-</aside>
 
 Then just apply the chi file to install
 
