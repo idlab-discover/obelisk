@@ -18,4 +18,4 @@ appVersion: "22.05.2"
 dependencies:
   - name: oblx-service-template
     repository: file://../oblx-service-template
-    version: ~22.05.2
+    version: ~22.07.0

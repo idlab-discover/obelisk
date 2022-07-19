@@ -26,47 +26,47 @@ appVersion: "22.05.2"
 dependencies:
   - name: commons
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: int-dataset-streamer
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: int-sink-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: int-stats-collector
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-auth-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-catalog-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-export-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-ingest-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-issue-service
     condition: pub-issue-service.enabled
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-monitor-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-ngsi-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-query-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: pub-streaming-service
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: web-apiconsole
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
   - name: web-catalog
     repository: https://idlab-discover.github.io/obelisk
-    version: ~22.05.2
+    version: ~22.07.0
