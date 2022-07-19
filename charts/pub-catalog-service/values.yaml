@@ -10,8 +10,13 @@ config:
   allowUserCreatedDatasets: true
   allowUserCreatedTeams: true
 
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: "oblx-commons"
 basePath: /api/v3/catalog
+host: "obelisk.ilabt.imec.be"
+tls:
+  enabled: false
+  certResolver: le
+  secretName: ""
 
 persistence:
   storageClassName: ''

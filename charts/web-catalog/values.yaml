@@ -13,8 +13,13 @@ config:
   oblxApiPrefix: /api/v3
   oblxAuthEndpoint: /auth
   clientId: 0
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: "oblx-commons"
 basePath: /catalog
+host: "obelisk.ilabt.imec.be"
+tls:
+  enabled: false
+  certResolver: le
+  secretName: ""
 
 disableDefaultProbes: true
 

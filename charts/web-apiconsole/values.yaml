@@ -14,8 +14,13 @@ config:
   oblxAuthEndpoint: /auth
   clientId: 0
 
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: "oblx-commons"
 basePath: /apiconsole
+host: "obelisk.ilabt.imec.be"
+tls:
+  enabled: false
+  certResolver: le
+  secretName: ""
 
 disableDefaultProbes: true
 

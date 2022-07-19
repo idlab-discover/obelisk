@@ -9,8 +9,13 @@ nameOverride: ""
 fullnameOverride: ""
 
 config: {}
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: "oblx-commons"
 basePath: /api/v3/issues
+host: "obelisk.ilabt.imec.be"
+tls:
+  enabled: false
+  certResolver: le
+  secretName: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

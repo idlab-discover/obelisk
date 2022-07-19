@@ -9,8 +9,13 @@ nameOverride: ""
 fullnameOverride: ""
 
 config: {}
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: ""
+host: ""
 basePath: ""
+tls:
+  enabled: false
+  certResolver: le
+  secretName: ""
 
 persistence:
   storageClassName: ""

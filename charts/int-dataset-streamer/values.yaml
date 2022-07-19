@@ -13,7 +13,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: "oblx-commons"
 
 # Additional config specific to the dataset-streamer
 config:

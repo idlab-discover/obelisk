@@ -11,7 +11,7 @@ config:
   rxBackPressureBatchBuffer: 25
   pulsarDlqTopic: public/oblx-core/invalid_metric_events
 
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: "oblx-commons"
 
 imagePullSecrets: []
 nameOverride: ""

@@ -12,8 +12,13 @@ config:
   exportChunkSize: 10000
   maxEventsPerJob: 1000000
 
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: "oblx-commons"
 basePath: /api/v3/data/exports
+host: "obelisk.ilabt.imec.be"
+tls:
+  enabled: false
+  certResolver: le
+  secretName: ""
 
 persistence:
   storageClassName: ""

@@ -15,8 +15,13 @@ config:
   ingestCheckInitialDelayMs: 500
   ingestCheckMaxRetries: 3
 
-oblxCommonsChartName: ""
+oblxCommonsReleaseName: "oblx-commons"
 basePath: /api/v3/monitor
+host: "obelisk.ilabt.imec.be"
+tls:
+  enabled: false
+  certResolver: le
+  secretName: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

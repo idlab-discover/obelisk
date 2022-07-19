@@ -1,6 +1,6 @@
 dependencies:
 - name: oblx-service-template
   repository: file://../oblx-service-template
-  version: 22.05.2
+  version: 22.07.0
 digest: sha256:925d8df1c3e3fe894231f77faac7fee991bb8e09185439458e235e6983e4690f
 generated: "2022-05-31T17:01:22.27381+02:00"

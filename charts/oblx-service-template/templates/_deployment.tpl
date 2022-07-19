@@ -30,7 +30,7 @@ spec:
       volumes:
         - name: logback
           configMap:
-            name: "{{ .Values.oblxCommonsChartName }}-log-config"
+            name: "{{ .Values.oblxCommonsReleaseName }}-log-config"
       {{- if .Values.persistence }}
         - name: {{ include "oblx-service-template.name" . }}-data
           persistentVolumeClaim:
@@ -53,9 +53,9 @@ spec:
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:InitialRAMPercentage=40 -XX:MaxRAMPercentage=80"
           envFrom:
-          {{- if required "Value 'oblxCommonsChartName' is required!" .Values.oblxCommonsChartName }}
+          {{- if required "Value 'oblxCommonsReleaseName' is required!" .Values.oblxCommonsReleaseName }}
             - configMapRef:
-                name: "{{ .Values.oblxCommonsChartName }}-config"
+                name: "{{ .Values.oblxCommonsReleaseName }}-config"
           {{- end }}
           {{- if .Values.config }}
             - configMapRef:
