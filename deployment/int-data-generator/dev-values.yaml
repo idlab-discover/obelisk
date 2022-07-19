@@ -1,0 +1,31 @@
+forceRecreate: true
+
+replicaCount: 1
+
+image:
+  pullPolicy: Always
+
+dataGeneratorConfig:
+  # URL of the API for the Obelisk instance to use
+  oblxApi: 'https://dev.obelisk.ilabt.imec.be/api/v3'
+  # ID of the Dataset to push the events to
+  targetDatasetId: 6042133c17377a7a42debff6
+  # ID of a client that can ingest for the specified Dataset
+  clientId: 6245af3dcd945b0345f2cc6c
+  # The secret for said client
+  clientSecret: 7cda66ce-87d1-4db4-a5a5-bb563ad8e6e7
+  # Period between subsequent ingest requests
+  periodMs: 200
+  # Number of events to ingest per tick (after each period)
+  eventsPerTick: 50
+  # Which scenario to apply. Options: OFFICE_DEMO, AIRQUALITY (numbers) & GATE_EVENTS (JSON)
+  eventsScenario: AIRQUALITY
+  # Set this option to true, to print the generated events to console instead of pushing them to Obelisk.
+  printOnly: false
+  ingestMode: "store_only"
+
+resources:
+  requests:
+    memory: 256Mi
+  limits:
+    memory: 1Gi

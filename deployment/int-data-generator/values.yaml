@@ -1,0 +1,50 @@
+# Default values for oblx-int-sink.
+forceRecreate: false
+
+replicaCount: 1
+
+image:
+  repository: gitlab.ilabt.imec.be:4567/obelisk/packages
+  name: int-data-generator
+  pullPolicy: IfNotPresent
+
+# Set the imagePullSecret used to access the private Obelisk Container Registry (MUST BE AVAILABLE IN THE DEPLOYMENT NAMESPACE)
+imagePullSecrets: []
+nameOverride: int-data-generator
+fullnameOverride: oblx-int-data-generator
+
+dataGeneratorConfig:
+  # URL of the API for the Obelisk instance to use
+  oblxApi: 'https://obelisk.ilabt.imec.be/api/v3'
+  # ID of the Dataset to push the events to
+  targetDatasetId: ''
+  # ID of a client that can ingest for the specified Dataset
+  clientId: ''
+  # The secret for said client
+  clientSecret: ''
+  # Period between subsequent ingest requests
+  periodMs: 5000
+  # Number of events to ingest per tick (after each period)
+  eventsPerTick: 5
+  # Which scenario to apply. Options: OFFICE_DEMO, AIRQUALITY (numbers) & GATE_EVENTS (JSON)
+  eventsScenario: AIRQUALITY
+  # Set this option to true, to print the generated events to console instead of pushing them to Obelisk.
+  printOnly: false
+  # Set the ingest mode for the generated data: stream_only, store_only or default (both)
+  ingestMode: "default"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
