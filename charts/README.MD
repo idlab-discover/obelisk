@@ -3,9 +3,9 @@
 ## Core services
 
 ### int-dataset-streamer
-This service works in the background to process all events posted to the main `metric-event` topic, by reading out the target dataset for each event, so it can be posted to a dataset specific topic. The dataset specific topics are then used for the streaming functionality of Obelisk (see [](#pub-streaming-service)).
+This service works in the background to process all events posted to the main `metric-event` topic, by reading out the target dataset for each event, so it can be posted to a dataset specific topic. The dataset specific topics are then used for the streaming functionality of Obelisk (see [pub-streaming-service](#pub-streaming-service)).
 
-Note: *this background process is an optimization, as it offloads the [](#pub-ingest-service) from having to route the incoming events.*
+Note: *this background process is an optimization, as it offloads the [pub-ingest-service](#pub-ingest-service) from having to route the incoming events.*
 
 ### int-sink-service
 This service works in the background, reading events from the main `metric-event` and store-only topics. The incoming events are grouped in batches, which are persisted with the data store (Clickhouse by default).
@@ -34,7 +34,7 @@ This Web application provides the main user interface for Obelisk. It allows use
 The following services add additional functionality and can be omitted without impacting the core functionality of the platform.
 
 ### int-stats-collector
-This service runs a background process that periodically extracts per dataset statistics from the data store, and exposes these via instrumentation towards the monitoring stack (Prometheus by default). Some dashboard panels will be empty in the [](#web-catalog) when not deploying this service.
+This service runs a background process that periodically extracts per dataset statistics from the data store, and exposes these via instrumentation towards the monitoring stack (Prometheus by default). Some dashboard panels will be empty in the [web-catalog](#web-catalog) when not deploying this service.
 
 ### pub-dcat-service (Proof-of-Concept)
 This service provides a DCAT-AP adapter, bridging the Obelisk Catalog into a DCAT compliant format. Note that only public datasets are exposed via this interface.
@@ -43,7 +43,7 @@ This service provides a DCAT-AP adapter, bridging the Obelisk Catalog into a DCA
 This service implements batch data exports in CSV format. It is used by data scientist that require access to large datasets in cases where using the Obelisk query API is not practical.
 
 ### pub-issue-service
-This service implements a basic issue tracker, which can be used by platform operators to assist users directly from the [](#web-catalog). When not deploying this service, the assistance button in the Catalog UI will not operate properly.
+This service implements a basic issue tracker, which can be used by platform operators to assist users directly from the [web-catalog](#web-catalog). When not deploying this service, the assistance button in the Catalog UI will not operate properly.
 
 ### pub-monitor-service
 This service implements an end-to-end health check. Data events are ingested periodically, and the various steps in the dataflow are then monitored internally (storage, metadata & data querying, streaming). The health check data is exposed via an HTTP API that is used by the Catalog UI to show the platform status.
