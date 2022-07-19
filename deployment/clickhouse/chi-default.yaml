@@ -4,6 +4,14 @@ metadata:
   name: "clickhouse"
 spec:
   configuration:
+    users:
+      default/networks/host_regexp: (chi-clickhouse-[^.]+\d+-\d+|clickhouse\-clickhouse)\.v3-clickhouse\.svc\.cluster\.local$
+      default/networks/ip:
+      - 127.0.0.1
+      # Change to your Pod Subnet mask
+      - 192.168.0.0/16
+      default/profile: default
+      default/quota: default
     clusters:
       - name: "oblx-data"
         templates:
