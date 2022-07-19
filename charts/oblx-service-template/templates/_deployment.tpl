@@ -50,6 +50,10 @@ spec:
               containerPort: 8081
               protocol: TCP
           env:
+          {{- if .Values.basePath }}
+            - name: HTTP_BASE_PATH
+              value: {{ .Values.basePath }}
+          {{- end }}
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:InitialRAMPercentage=40 -XX:MaxRAMPercentage=80"
           envFrom:

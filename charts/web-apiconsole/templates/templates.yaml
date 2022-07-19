@@ -1,5 +1,1 @@
-{{ include "oblx-service-template.deployment" . }}
----
 {{ include "oblx-service-template.service" . }}
----
-{{ include "oblx-service-template.serviceMonitor" . }}

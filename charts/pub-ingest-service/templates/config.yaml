@@ -1,7 +1,0 @@
-# Additional config for the Microservices (is mounted along the Obelisk Base configuration)
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "pub-ingest-service.fullname" . }}-config
-data:
-  HTTP_BASE_PATH: "{{ .Values.basePath }}"
