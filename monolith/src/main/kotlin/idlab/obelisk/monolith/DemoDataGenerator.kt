@@ -88,6 +88,7 @@ class DemoDataGenerator @Inject constructor(
                     metaStore
                         .createDataset(
                             Dataset(
+                                id = name,
                                 name = name,
                                 published = true,
                                 openData = true,

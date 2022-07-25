@@ -7,3 +7,4 @@ data:
     EVENTS_MAX_AGE_MINUTES: "{{ .Values.config.eventsMaxAge }}"
     MAX_CACHED_PRODUCERS: "{{ .Values.config.maxCachedProducers }}"
     EXPIRE_PRODUCER_AFTER_MINUTES: "{{ .Values.config.inactiveProducerExpireTime }}"
+    MAX_PRODUCE_CONCURRENCY: "{{ .Values.config.maxProduceConcurrency }}"

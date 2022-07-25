@@ -39,7 +39,12 @@ class IngestAgent @Inject constructor(private val oblxClient: OblxClient, config
             metric = metricName,
             value = UUID.randomUUID().toString()
         )
-        return oblxClient.ingest(datasetId, event).toSingleDefault(CallResult(state = event))
+        return oblxClient.ingest(
+            datasetId,
+            listOf(event),
+            TimestampPrecision.milliseconds,
+            OblxClient.IngestMode.store_only
+        ).toSingleDefault(CallResult(state = event))
     }
 
     override fun validate(callState: Any?, report: JsonObject): Single<JsonObject> {

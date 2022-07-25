@@ -23,6 +23,8 @@ config:
   maxCachedProducers: 1000
   # Pulsar producers that are not used within this time-frame (in minutes) are automatically closed.
   inactiveProducerExpireTime: 5
+  # Allows tweaking the number of messages that can be written to the Pulsar topic in parallel (a lower number will reduce CPU load).
+  maxProduceConcurrency: 128
 
 
 serviceAccount:

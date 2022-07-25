@@ -2,12 +2,10 @@ package idlab.obelisk.services.pub.monitor.agents
 
 import com.google.common.math.StatsAccumulator
 import idlab.obelisk.client.OblxClient
+import idlab.obelisk.definitions.TimestampPrecision
 import idlab.obelisk.definitions.data.MetricEvent
 import idlab.obelisk.definitions.framework.OblxConfig
-import idlab.obelisk.services.pub.monitor.DEFAULT_MONITORING_PERIOD_MS
-import idlab.obelisk.services.pub.monitor.ENV_MONITORING_PERIOD_MS
-import idlab.obelisk.services.pub.monitor.SERVICE_STARTUP_TIME_MS
-import idlab.obelisk.services.pub.monitor.datasetId
+import idlab.obelisk.services.pub.monitor.*
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Timer
 import io.reactivex.Single
@@ -16,6 +14,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.micrometer.backends.BackendRegistries
 import io.vertx.reactivex.core.Vertx
 import java.time.Instant
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,7 +48,7 @@ class StreamingAgent @Inject constructor(
     }
 
     private fun streamEvents() {
-        oblxClient.openStream(streamId = datasetId)
+        oblxClient.openStream(streamId = datasetId, receiveBacklog = false)
             .filter { it.timestamp >= SERVICE_STARTUP_TIME_MS } // Ignore events not produced by the current instance of the monitor service
             .onBackpressureBuffer()
             .subscribeBy(
@@ -70,17 +69,27 @@ class StreamingAgent @Inject constructor(
     }
 
     override fun performCall(): Single<CallResult> {
-        // Capture of the last received event
-        return Single.just(CallResult(true))
+        val event = MetricEvent(
+            timestamp = System.currentTimeMillis(),
+            metric = metricName,
+            value = UUID.randomUUID().toString()
+        )
+        return oblxClient.ingest(
+            datasetId,
+            listOf(event),
+            TimestampPrecision.milliseconds,
+            OblxClient.IngestMode.stream_only
+        )
+            .toSingleDefault(CallResult(state = event))
     }
 
     override fun validate(callState: Any?, report: JsonObject): Single<JsonObject> {
         report.clear()
         report.put("component", id())
-        lastReceivedEvent.get()?.let { (_, tsReceivedAt) ->
+        lastReceivedEvent.get()?.let { (event, tsReceivedAt) ->
             report.put("lastEventThrough", Instant.ofEpochMilli(tsReceivedAt))
             // If data has still come through within the window of the monitoring period, we consider the streaming service to be operational (even if there is a lot of latency)
-            report.put("lastCallSucceeded", (System.currentTimeMillis() - tsReceivedAt) <= monitoringPeriodMs)
+            report.put("lastCallSucceeded", (tsReceivedAt - event.timestamp) <= monitoringPeriodMs)
         }
         report.put("connectionDropouts", dropouts)
         report.put("successRate", matchRateAccumulator.safeMean(1.0))

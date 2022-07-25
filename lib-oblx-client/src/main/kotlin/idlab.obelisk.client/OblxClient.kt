@@ -328,28 +328,4 @@ class OblxClient(
             return resp
         }
     }
-
-    private fun parseUsingSeparator(): FlowableTransformer<Buffer, String> =
-        Transformers.stateMachine().initialState(Buffer.buffer()).transition<Buffer, String> { state, next, emitter ->
-            val nextString = next.toString(SSE_TEXT_ENCODING)
-            if (!nextString.contains(SSE_SEPARATOR)) {
-                state.copy().appendString(nextString, SSE_TEXT_ENCODING)
-            } else {
-                val edge = nextString.split(SSE_SEPARATOR)
-                state.appendString(edge.first(), SSE_TEXT_ENCODING)
-                // Emit completed string
-                emitter.onNext(state.toString(SSE_TEXT_ENCODING))
-                // When there are multiple separators, in between elements can also be processed
-                if (edge.size > 2) {
-                    edge.drop(1).take(edge.size - 2).forEach { emitter.onNext(it) }
-                }
-
-                // Return "overschot" as new state (buffer)
-                Buffer.buffer(edge.last(), SSE_TEXT_ENCODING)
-            }
-        }.build()
-}
-
-private fun <T> Completable.flatMapPublisher(publisherSupplier: () -> Publisher<out T>): Flowable<T> {
-    return this.andThen(Flowable.defer(publisherSupplier))
 }
