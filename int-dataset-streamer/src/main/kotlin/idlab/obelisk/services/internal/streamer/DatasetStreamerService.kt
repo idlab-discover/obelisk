@@ -10,20 +10,19 @@ import idlab.obelisk.utils.service.OblxBaseModule
 import idlab.obelisk.utils.service.OblxLauncher
 import idlab.obelisk.utils.service.instrumentation.IdToNameMap
 import idlab.obelisk.utils.service.instrumentation.TargetType
+import idlab.obelisk.utils.service.reactive.flatMap
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
-import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.toFlowable
 import io.vertx.micrometer.backends.BackendRegistries
+import io.vertx.reactivex.core.Vertx
 import mu.KotlinLogging
 import org.apache.pulsar.client.api.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.system.exitProcess
 
 const val EVENTS_MAX_AGE_MINUTES = "EVENTS_MAX_AGE_MINUTES"
@@ -32,28 +31,29 @@ const val MAX_CACHED_PRODUCERS = "MAX_CACHED_PRODUCERS"
 const val MAX_CACHED_PRODUCERS_DEFAULT = 10000L
 const val EXPIRE_PRODUCER_AFTER_MINUTES = "EXPIRE_PRODUCER_AFTER_MINUTES"
 const val EXPIRE_PRODUCER_AFTER_MINUTES_DEFAULT = 5L
+const val MAX_PRODUCE_CONCURRENCY = "MAX_PRODUCE_CONCURRENCY"
+const val MAX_PRODUCE_CONCURRENCY_DEFAULT = 128
 
-private const val STALE_EVENTS_METRIC = "oblx.streamer.stale.events"
-private const val SEND_FAILURES_MERIC = "oblx.streamer.send.failures"
-private const val ACK_FAILURES_METRIC = "oblx.streamer.ack.failures"
-private const val INCOMING_EVENTS_METRIC = "oblx.streamer.incoming.events"
-private const val OUTGOING_EVENTS_METRIC = "oblx.streamer.outgoing.events"
-
-private const val BUFFER_PERIOD_MS = 1000L
-private const val BUFFER_MAX_SIZE = 500
-private const val MAX_PRODUCE_CONCURRENCY = 8
+const val STALE_EVENTS_METRIC = "oblx.streamer.stale.events"
+const val SEND_FAILURES_MERIC = "oblx.streamer.send.failures"
+const val ACK_FAILURES_METRIC = "oblx.streamer.ack.failures"
+const val INCOMING_EVENTS_METRIC = "oblx.streamer.incoming.events"
+const val OUTGOING_EVENTS_METRIC = "oblx.streamer.outgoing.events"
 
 fun main(args: Array<String>) {
     OblxLauncher.with(OblxBaseModule(), PulsarModule(), MongoDBMetaStoreModule())
         .bootstrap(DatasetStreamerService::class.java)
 }
 
-@Singleton
 class DatasetStreamerService @Inject constructor(
     private val config: OblxConfig,
     private val pulsarClient: PulsarClient,
-    metaStore: MetaStore
+    metaStore: MetaStore,
+    private val vertx: Vertx
 ) : OblxService {
+
+    private var debugEventCount = 0
+    private val debugDatasets = mutableSetOf<String>()
 
     private val microMeterRegistry = BackendRegistries.getDefaultNow()
     private val streamerSendFailures = Counter
@@ -68,6 +68,7 @@ class DatasetStreamerService @Inject constructor(
     private val logger = KotlinLogging.logger { }
     private val liveTimestampThresholdMinutes =
         config.getInteger(EVENTS_MAX_AGE_MINUTES, EVENTS_MAX_AGE_MINUTES_DEFAULT)
+    private val maxProduceConcurrency = config.getInteger(MAX_PRODUCE_CONCURRENCY, MAX_PRODUCE_CONCURRENCY_DEFAULT)
     private val datasetIdToNameMap = IdToNameMap(metaStore, TargetType.DATASET)
 
     private val producerCache = RxPulsarProducerCache<MetricEvent>(
@@ -80,6 +81,12 @@ class DatasetStreamerService @Inject constructor(
     private val producerSchema = Schema.JSON(MetricEvent::class.java)
 
     override fun start(): Completable {
+        vertx.setPeriodic(5000) {
+            logger.debug { "Streamed $debugEventCount events for datasets: $debugDatasets" }
+            debugEventCount = 0
+            debugDatasets.clear()
+        }
+
         pulsarClient.newConsumer(Schema.JSON(MetricEvent::class.java))
             .subscriptionName("${config.pulsarDatasetStreamerSubscriber}-fo")
             .subscriptionType(SubscriptionType.Failover)
@@ -88,18 +95,27 @@ class DatasetStreamerService @Inject constructor(
             .rxSubscribe()
             .flatMapCompletable { consumer ->
                 consumer.toFlowable(BackpressureStrategy.BUFFER)
-                    .map { it.second }
-                    .buffer(BUFFER_PERIOD_MS, TimeUnit.MILLISECONDS, BUFFER_MAX_SIZE)
-                    .onBackpressureBuffer()
-                    .filter { it.isNotEmpty() }
-                    .concatMapCompletable {
-                        processEvents(it)
-                            .flatMapCompletable { lastMessageId ->
-                                consumer.rxAcknowledgeCumulative(lastMessageId)
+                    .flatMapCompletable({ (_, event) ->
+                        (if (event.value.timestamp > currentLowerTimestampBoundMus()) {
+                            countEvent(INCOMING_EVENTS_METRIC, event)
+                            val targetTopic = config.pulsarDatasetTopic(event.value.dataset!!)
+                            producerCache.rxGet(producerSchema, targetTopic)
+                                .flatMap { producer ->
+                                    producer.rxSend(event.value).doOnError { streamerSendFailures.increment() }
+                                }
+                                .doOnSuccess { countEvent(OUTGOING_EVENTS_METRIC, event) }
+                                .ignoreElement()
+                        } else {
+                            countEvent(STALE_EVENTS_METRIC, event)
+                            Completable.complete()
+                        })
+                            .flatMap {
+                                // Try to ack
+                                consumer.rxAcknowledge(event)
                                     .doOnError { streamerAckFailures.increment() }
                                     .onErrorComplete()
                             }
-                    }
+                    }, false, maxProduceConcurrency)
             }
             .subscribeBy(
                 onComplete = {
@@ -110,7 +126,6 @@ class DatasetStreamerService @Inject constructor(
                     logger.error(it) { "Unrecoverable error in dataset-streamer flow!" }
                     exitProcess(1)
                 })
-
         return datasetIdToNameMap.init()
     }
 
@@ -124,6 +139,8 @@ class DatasetStreamerService @Inject constructor(
     }
 
     private fun countEvent(metricName: String, event: Message<MetricEvent>) {
+        debugEventCount++
+        debugDatasets.add(event.value.dataset ?: "")
         microMeterRegistry.counter(
             metricName,
             Tags.of(
@@ -135,24 +152,4 @@ class DatasetStreamerService @Inject constructor(
         ).increment()
     }
 
-    // Processes a batch of events and returns the latest message id
-    private fun processEvents(events: List<Message<MetricEvent>>): Single<MessageId> {
-        return events.toFlowable()
-            .flatMapCompletable({ event ->
-                (if (event.value.timestamp > currentLowerTimestampBoundMus()) {
-                    countEvent(INCOMING_EVENTS_METRIC, event)
-                    val targetTopic = config.pulsarDatasetTopic(event.value.dataset!!)
-                    producerCache.rxGet(producerSchema, targetTopic)
-                        .flatMap { producer ->
-                            producer.rxSend(event.value).doOnError { streamerSendFailures.increment() }
-                        }
-                        .doOnSuccess { countEvent(OUTGOING_EVENTS_METRIC, event) }
-                        .ignoreElement()
-                } else {
-                    countEvent(STALE_EVENTS_METRIC, event)
-                    Completable.complete()
-                })
-            }, false, MAX_PRODUCE_CONCURRENCY)
-            .toSingle { events.maxOf { it.messageId } }
-    }
 }
