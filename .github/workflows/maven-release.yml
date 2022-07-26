@@ -1,0 +1,26 @@
+name: Release a new version
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.OBLX_PAT || github.token }}
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+      - id: get-current-version
+        run: echo "::set-output name=current_version::mvn help:evaluate -Dexpression=project.version -q -DforceStdout"
+      - uses: ShotaKitazawa/action-bump-calver@v1
+        id: bump-calver
+        with:
+          current_version: ${{ steps.get-current-version.outputs.current_version }}
+      - run: .deployment/bump-version.sh ${{ steps.bump-calver.outputs.new_version}}
