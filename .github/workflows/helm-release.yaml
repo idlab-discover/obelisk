@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - charts/**/*
 
 jobs:
   release:
@@ -32,3 +30,4 @@ jobs:
           charts_dir: charts/
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_SKIP_EXISTING: "true"
