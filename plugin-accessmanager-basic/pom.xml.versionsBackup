@@ -5,11 +5,11 @@
     <parent>
         <artifactId>obelisk-parent</artifactId>
         <groupId>idlab.obelisk</groupId>
-        <version>22.07.1</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>int-sink-service</artifactId>
+    <artifactId>plugin-accessmanager-basic</artifactId>
 
     <dependencies>
         <dependency>
@@ -18,28 +18,29 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-pulsar-utils</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-rx-java2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
         </dependency>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>plugin-datastore-clickhouse</artifactId>
+            <artifactId>plugin-metastore-mongo</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-junit5-rx-java2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.akarnokd</groupId>
+            <artifactId>rxjava3-bridge</artifactId>
+            <version>3.0.2</version>
+        </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

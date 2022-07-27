@@ -5,7 +5,7 @@
     <parent>
         <artifactId>obelisk-parent</artifactId>
         <groupId>idlab.obelisk</groupId>
-        <version>22.07.1</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

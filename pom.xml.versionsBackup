@@ -7,7 +7,7 @@
     <groupId>idlab.obelisk</groupId>
     <artifactId>obelisk-parent</artifactId>
     <packaging>pom</packaging>
-    <version>22.07.1</version>
+    <version>${revision}</version>
 
     <modules>
         <module>int-dataset-streamer</module>
@@ -39,7 +39,7 @@
     </modules>
 
     <properties>
-        <revision>22.07.0</revision>
+        <revision>22.05.2</revision>
         <maven.compiler.release>17</maven.compiler.release>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>

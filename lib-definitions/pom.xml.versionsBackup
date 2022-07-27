@@ -5,32 +5,37 @@
     <parent>
         <artifactId>obelisk-parent</artifactId>
         <groupId>idlab.obelisk</groupId>
-        <version>22.07.1</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>plugin-metastore-mongo</artifactId>
+    <artifactId>lib-definitions</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-definitions</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-mongo-utils</artifactId>
+            <artifactId>lib-annotation-processor</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>vertx-junit5-rx-java2</artifactId>
-            <scope>test</scope>
+            <artifactId>vertx-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.ajbrown</groupId>
-            <artifactId>name-machine</artifactId>
-            <version>1.0.0</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-rx-java2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-junit5-rx-java2</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -62,7 +67,7 @@
                                 </annotationProcessorPath>
                             </annotationProcessorPaths>
                             <annotationProcessors>
-                                <processor>idlab.obelisk.annotations.processors.GenerateMongoStubs</processor>
+                                <processor>idlab.obelisk.annotations.processors.OblxTypeProcessor</processor>
                             </annotationProcessors>
                         </configuration>
                     </execution>

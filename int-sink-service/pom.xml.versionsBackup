@@ -5,11 +5,11 @@
     <parent>
         <artifactId>obelisk-parent</artifactId>
         <groupId>idlab.obelisk</groupId>
-        <version>22.07.1</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pub-ingest-service</artifactId>
+    <artifactId>int-sink-service</artifactId>
 
     <dependencies>
         <dependency>
@@ -18,44 +18,18 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-lang-kotlin</artifactId>
-        </dependency>
-        <dependency>
             <groupId>idlab.obelisk</groupId>
             <artifactId>lib-pulsar-utils</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>plugin-accessmanager-basic</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>plugin-metastore-mongo</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>plugin-ratelimiter-gubernator</artifactId>
+            <artifactId>plugin-datastore-clickhouse</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-junit5-rx-java2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-oblx-client</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>pub-auth-service</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

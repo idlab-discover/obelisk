@@ -5,36 +5,25 @@
     <parent>
         <artifactId>obelisk-parent</artifactId>
         <groupId>idlab.obelisk</groupId>
-        <version>22.07.1</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>int-dataset-streamer</artifactId>
+    <artifactId>lib-oblx-client</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-service-utils</artifactId>
+            <artifactId>lib-definitions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-pulsar-utils</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>plugin-metastore-mongo</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.github.davidmoten</groupId>
+            <artifactId>rxjava2-extras</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

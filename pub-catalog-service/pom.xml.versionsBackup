@@ -5,11 +5,11 @@
     <parent>
         <artifactId>obelisk-parent</artifactId>
         <groupId>idlab.obelisk</groupId>
-        <version>22.07.1</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pub-ingest-service</artifactId>
+    <artifactId>pub-catalog-service</artifactId>
 
     <dependencies>
         <dependency>
@@ -19,16 +19,20 @@
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>vertx-lang-kotlin</artifactId>
+            <artifactId>vertx-web-graphql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java-extended-scalars</artifactId>
+            <version>18.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.akarnokd</groupId>
+            <artifactId>rxjava2-jdk8-interop</artifactId>
         </dependency>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-pulsar-utils</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>plugin-accessmanager-basic</artifactId>
+            <artifactId>plugin-datastore-clickhouse</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -38,24 +42,32 @@
         </dependency>
         <dependency>
             <groupId>idlab.obelisk</groupId>
+            <artifactId>plugin-accessmanager-basic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>idlab.obelisk</groupId>
             <artifactId>plugin-ratelimiter-gubernator</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.23</version>
+        </dependency>
+        <dependency>
+            <groupId>idlab.obelisk</groupId>
+            <artifactId>lib-pulsar-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>idlab.obelisk</groupId>
+            <artifactId>plugin-monitoring-prometheus</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-junit5-rx-java2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>lib-oblx-client</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>pub-auth-service</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
