@@ -16,6 +16,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.micrometer.backends.BackendRegistries
 import io.vertx.reactivex.core.Vertx
 import java.time.Instant
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,8 +34,9 @@ class StreamingAgent @Inject constructor(
     private val microMeterRegistry = BackendRegistries.getDefaultNow()
     private val sseLatency = Timer
         .builder(SSE_LATENCY_METRIC)
-        .publishPercentiles(0.5, 0.95)
+        .publishPercentiles(0.5, 0.9, 0.95)
         .publishPercentileHistogram()
+        .sla(Duration.ofMillis(50), Duration.ofMillis(200), Duration.ofMillis(500), Duration.ofMillis(1000))
         .description("Times the latency of a complete ingest -> stream -> receive via SSE cycle.")
         .register(microMeterRegistry)
 
