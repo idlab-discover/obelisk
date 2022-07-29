@@ -66,11 +66,5 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-      - env:
-          VERSION: ${{ inputs.version }}
-        run: |
-          echo "Bumping maven version to $VERSION"
-          ./mvnw versions:set -q -B -DnewVersion=${{ inputs.version }}
-          MONTHLY=${VERSION%.*}
       - name: Deploy packages and build containers
         run: mvn -B -ntp -DskipTests -DuseGitHubPackages=true compile jib:dockerBuild -Djib.to.tags=${VERSION%.*}
