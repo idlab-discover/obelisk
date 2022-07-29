@@ -10,6 +10,6 @@ on:
 
 jobs:
   lint-test:
-    uses: ./.github/workflows/helm.yaml@main
+    uses: ./.github/workflows/helm.yaml
     with:
       release: false

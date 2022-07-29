@@ -78,14 +78,14 @@ jobs:
   helm-release:
     needs: version-bump
     if: ${{ needs.check-release.outputs.lc > 2 }}
-    uses: ./.github/workflows/helm.yaml@main
+    uses: ./.github/workflows/helm.yaml
     with:
       release: true
 
   maven-release:
     needs: version-bump
     if: ${{ needs.check-release.outputs.lc > 2 }}
-    uses: ./.github/workflows/maven.yaml@main
+    uses: ./.github/workflows/maven.yaml
     with:
       release: true
 

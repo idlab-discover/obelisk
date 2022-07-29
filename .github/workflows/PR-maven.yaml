@@ -14,6 +14,6 @@ on:
 
 jobs:
   compile-test:
-    uses: ./.github/workflows/maven.yaml@main
+    uses: ./.github/workflows/maven.yaml
     with:
       release: false
