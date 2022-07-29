@@ -17,8 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      contents: write
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.OBLX_PAT || secrets.github_token }}
       - uses: actions/setup-java@v3
@@ -54,9 +56,10 @@ jobs:
     needs: maven-build
     if: ${{ inputs.release }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          token: ${{ secrets.OBLX_PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.OBLX_PAT || secrets.github_token }}
       - run: git pull
       - uses: actions/setup-java@v3
         with:
