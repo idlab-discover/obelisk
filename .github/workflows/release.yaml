@@ -1,0 +1,113 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - 'v**'
+
+jobs:
+  check-release:
+    outputs:
+      lc: ${{ steps.changelog-lines.outputs.lc }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.OBLX_PAT || secret.github_token }}
+      - name: Run bumper
+        id: bumper
+        uses: tomerfi/version-bumper-action@1.1.3
+        with:
+          changelog: true
+      - id: changelog-lines
+        run: |
+          mv changelog-${{ steps.bumper.outputs.new_version }}.md changelog-new.md
+          echo "::set-output name=lc::$(wc -l changelog-new.md | cut -d ' ' -f 1)"
+      - if: ${{ steps.changelog-lines.outputs.lc <= 2 }}
+        run: |
+          echo "No release needed."
+
+  version-bump:
+    needs: check-release
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-release.outputs.lc > 2 }}
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version-from-changelog.output.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.OBLX_PAT || secret.github_token }}
+      - name: Configure committer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install Helm
+        uses: azure/setup-helm@v3.3
+        with:
+          version: v3.9.2
+      - name: Bump version and generate changelog
+        uses: ltv/standard-version-action@v1.8.0
+        id: version
+        with:
+          releaseAs: 'patch'
+      ## This is broken in the action, but a PR with fix has been opened.
+      # - env:
+      #     VERSION: ${{ steps.version.output.version }}
+      - id: version-from-changelog
+        run: |
+          VERSION=$(cat CHANGELOG.md | sed -nre '0,/\[[0-9]+\.[0-9]+\.[0-9]+\]/ s/.*\[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p')
+          echo "::set-output name=version::$VERSION"
+          ./mvnw versions:set -q -B -DnewVersion=$VERSION
+          ./charts/bump-version.sh $VERSION
+          ./charts/update-dependencies.sh
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          # Optional. Commit message for the created commit.
+          # Defaults to "Apply automatic changes"
+          commit_message: "chore(release): changelog and version bumps"
+
+  helm-release:
+    needs: version-bump
+    if: ${{ needs.check-release.outputs.lc > 2 }}
+    uses: ./.github/workflows/helm.yaml@main
+    with:
+      release: true
+
+  maven-release:
+    needs: version-bump
+    if: ${{ needs.check-release.outputs.lc > 2 }}
+    uses: ./.github/workflows/maven.yaml@main
+    with:
+      release: true
+
+# When Maven, Helm and Yarn releases are completed, then we can tag the release commit.
+  finalize:
+    runs-on: ubuntu-latest
+    needs:
+      - version-bump
+      - maven-release
+      - helm-release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.OBLX_PAT || secret.github_token }}
+      - name: Configure committer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - env:
+          VERSION: ${{ needs.version-bump.outputs.version }}
+        run: |
+          git pull
+          git tag -a "v$VERSION" -m "Obelisk v$VERSION"
+          git push origin --follow-tags

@@ -1,0 +1,19 @@
+name: Maven compile and test
+
+on:
+  pull_request_target:
+    branches:
+      - main
+      - next
+    paths:
+     - '**/pom.xml'
+     - '**/src/main/kotlin/**'
+     - '**/test/kotlin/**'
+     - '**/src/main/java/**'
+     - '**/test/java/**'
+
+jobs:
+  compile-test:
+    uses: ./.github/workflows/maven.yaml@main
+    with:
+      release: false
