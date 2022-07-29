@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.OBLX_PAT || secretsgithub_token }}
+          token: ${{ secrets.OBLX_PAT || secrets.github_token }}
       - name: Run bumper
         id: bumper
         uses: tomerfi/version-bumper-action@1.1.3
@@ -41,7 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.OBLX_PAT || secretsgithub_token }}
+          token: ${{ secrets.OBLX_PAT || secrets.github_token }}
       - name: Configure committer
         run: |
           git config user.name "github-actions[bot]"
@@ -100,7 +100,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.OBLX_PAT || secretsgithub_token }}
+          token: ${{ secrets.OBLX_PAT || secrets.github_token }}
       - name: Configure committer
         run: |
           git config user.name "github-actions[bot]"
