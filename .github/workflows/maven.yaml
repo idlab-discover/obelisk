@@ -66,5 +66,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-      - name: Deploy packages and build containers
+      - env:
+          VERSION: ${{ inputs.version }}
+        name: Deploy packages and build containers
         run: mvn -B -ntp -DskipTests -DuseGitHubPackages=true compile jib:dockerBuild -Djib.to.tags=${VERSION%.*}
