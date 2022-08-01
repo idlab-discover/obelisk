@@ -19,9 +19,10 @@ jobs:
           fetch-depth: 0
       - name: Run bumper
         id: bumper
-        uses: tomerfi/version-bumper-action@1.1.3
+        uses: MisterTimn/version-bumper-action@feat/bumpoverride
         with:
           changelog: true
+          bumpoverride: patch
       - id: changelog-lines
         run: |
           mv changelog-${{ steps.bumper.outputs.new_version }}.md changelog-new.md
@@ -37,7 +38,7 @@ jobs:
     permissions:
       contents: write
     outputs:
-      version: ${{ steps.version-from-changelog.outputs.version }}
+      version: ${{ steps.version.outputs.new_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -57,19 +58,15 @@ jobs:
         with:
           version: v3.9.2
       - name: Bump version and generate changelog
-        uses: ltv/standard-version-action@v2.8.0
-        id: standard-version
+        uses: MisterTimn/version-bumper-action@feat/bumpoverride
+        id: version
         with:
-          releaseAs: 'patch'
-      ## This is broken in the action, but a PR with fix has been opened.
-      # - env:
-      #     VERSION: ${{ steps.version.outputs.version }}
-      - id: version-from-changelog
+          changelog: true
+          bumpoverride: patch
+      - env:
+          VERSION: ${{ steps.version.outputs.new_version }}
+        id: version-from-changelog
         run: |
-          echo "Version from SV output (faulty): ${{ steps.standard-version.outputs.version }}"
-          VERSION=$(cat CHANGELOG.md | sed -nre '0,/\[[0-9]+\.[0-9]+\.[0-9]+\]/ s/.*\[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p')
-          echo "Version from changelog $VERSION"
-          echo "::set-output name=version::$VERSION"
           ./mvnw versions:set -q -B -DnewVersion=$VERSION
           ./charts/bump-version.sh $VERSION
           ./charts/update-dependencies.sh
