@@ -57,7 +57,7 @@ jobs:
         with:
           version: v3.9.2
       - name: Bump version and generate changelog
-        uses: ltv/standard-version-action@v1.8.0
+        uses: ltv/standard-version-action@v2.8.0
         id: version
         with:
           releaseAs: 'patch'
