@@ -73,4 +73,4 @@ jobs:
       - env:
           VERSION: ${{ inputs.version }}
         name: Deploy packages and build containers
-        run: mvn -B -ntp -DskipTests -DuseGitHubPackages=true compile jib:dockerBuild -Djib.to.tags=${VERSION%.*}
+        run: mvn -B -ntp -DskipTests -DuseGitHubPackages=true deploy -Djib.to.tags=${VERSION%.*}
