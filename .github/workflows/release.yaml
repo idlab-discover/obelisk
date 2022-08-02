@@ -96,7 +96,7 @@ jobs:
     uses: ./.github/workflows/maven.yaml
     with:
       release: true
-      version: ${{ needs.version_bump.outputs.version }}
+      version: ${{ needs.version-bump.outputs.version }}
 
 # When Maven, Helm and Yarn releases are completed, then we can tag the release commit.
   finalize:
