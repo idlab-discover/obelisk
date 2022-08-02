@@ -72,7 +72,7 @@ jobs:
           VERSION: ${{ steps.version.outputs.new_version }}
         id: bump-version
         run: |
-          VERSION=echo $VERSION | sed -E 's/v(.*)/\1/'
+          VERSION=$(echo $VERSION | sed -E 's/v(.*)/\1/')
           echo "::set-output name=version::$VERSION"
           ./mvnw versions:set -q -B -DnewVersion=$VERSION
           ./charts/bump-version.sh $VERSION
