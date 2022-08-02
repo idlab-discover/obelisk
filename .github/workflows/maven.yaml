@@ -11,6 +11,14 @@ on:
       version:
         required: false
         type: string
+    secrets:
+      GITLAB_REG_PASSWORD:
+        description: Gitlab registry password
+        required: false
+      GITLAB_REG_USER:
+        description: Gitlab registry username
+        required: false
+
 
 jobs:
   maven-build:

@@ -97,6 +97,7 @@ jobs:
     with:
       release: true
       version: ${{ needs.version-bump.outputs.version }}
+    secrets: inherit
 
 # When Maven, Helm and Yarn releases are completed, then we can tag the release commit.
   finalize:
