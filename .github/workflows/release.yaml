@@ -38,7 +38,7 @@ jobs:
     permissions:
       contents: write
     outputs:
-      version: ${{ steps.version-bump.outputs.version }}
+      version: ${{ steps.bump.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -70,7 +70,7 @@ jobs:
       # Sets output with the stripped version
       - env:
           VERSION: ${{ steps.version.outputs.new_version }}
-        id: bump-version
+        id: bump
         run: |
           VERSION=$(echo $VERSION | sed -E 's/v(.*)/\1/')
           echo "::set-output name=version::$VERSION"
