@@ -15,7 +15,7 @@ on:
 jobs:
   maven-build:
     runs-on: ubuntu-latest
-    if: ${{ !input.release }}
+    if: ${{ ! inputs.release }}
     permissions:
       pull-requests: write
       contents: write
