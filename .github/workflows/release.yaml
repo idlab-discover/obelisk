@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
       - name: Run bumper
         id: bumper
-        uses: MisterTimn/version-bumper-action@feat/bumpoverride
+        uses: tomerfi/version-bumper-action@1.2.0
         with:
           changelog: true
           bumpoverride: patch
@@ -60,7 +60,7 @@ jobs:
 
       # Outputs a version with a v prefix
       - name: Bump version and generate changelog
-        uses: MisterTimn/version-bumper-action@feat/bumpoverride
+        uses: tomerfi/version-bumper-action@1.2.0
         id: version
         with:
           changelog: true
