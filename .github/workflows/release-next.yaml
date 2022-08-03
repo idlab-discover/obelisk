@@ -1,6 +1,0 @@
-name: Release next
-
-on:
-  push:
-    branches:
-      - next

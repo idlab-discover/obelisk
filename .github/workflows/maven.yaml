@@ -67,6 +67,7 @@ jobs:
   maven-release:
     runs-on: ubuntu-latest
     if: ${{ inputs.release }}
+    needs: maven-build
     permissions:
       contents: read
       packages: write
@@ -92,6 +93,8 @@ jobs:
           username: ${{ secrets.GITLAB_REG_USER }}
           password: ${{ secrets.GITLAB_REG_PASSWORD }}
       - name: Build and push container images
+        env:
+          VERSION: ${{ inputs.version }}
         run: mvn -B -ntp compile jib:build -Djib.to.tags=${VERSION%.*}
 
       # We can only push maven packages once, so making sure we are able to push them all.
