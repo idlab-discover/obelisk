@@ -1,4 +1,4 @@
-### [v22.7.1](https://github.com/idlab-discover/obelisk/compare/v22.7.0...v22.7.1) (2022-08-02)
+### [v22.7.1](https://github.com/idlab-discover/obelisk/compare/v22.7.0...v22.7.1) (2022-08-03)
 
 
 ### Bug Fixes
