@@ -357,19 +357,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/platform-browser@npm:^13.1.1":
-  version: 13.1.1
-  resolution: "@angular/platform-browser@npm:13.1.1"
+"@angular/platform-browser@npm:^14.2.8":
+  version: 14.2.8
+  resolution: "@angular/platform-browser@npm:14.2.8"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
-    "@angular/animations": 13.1.1
-    "@angular/common": 13.1.1
-    "@angular/core": 13.1.1
+    "@angular/animations": 14.2.8
+    "@angular/common": 14.2.8
+    "@angular/core": 14.2.8
   peerDependenciesMeta:
     "@angular/animations":
       optional: true
-  checksum: 5d0c14b047b250f9f41c17055036721024981d013378fab50167500b6a13b169237e63c90858a8ca3ea5fa248074683823d22c5e086707307f4d6890c8a6aa68
+  checksum: acc39930122deb921b9708b4746cf7871e159702f34e1503539b991cf5a4e1b39d551e1c3ed46a05e47155e7f152507d5d71269431b7b619e9bf96f878f431bf
   languageName: node
   linkType: hard
 
@@ -10196,7 +10196,7 @@ __metadata:
     "@angular/forms": ^13.1.1
     "@angular/language-service": ^13.1.1
     "@angular/localize": ^13.1.1
-    "@angular/platform-browser": ^13.1.1
+    "@angular/platform-browser": ^14.2.8
     "@angular/platform-browser-dynamic": ^13.1.1
     "@angular/router": ^13.1.1
     "@ctrl/ngx-codemirror": ^5.1.1
