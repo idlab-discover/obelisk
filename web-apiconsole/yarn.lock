@@ -312,17 +312,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/forms@npm:~13.2.4":
-  version: 13.2.4
-  resolution: "@angular/forms@npm:13.2.4"
+"@angular/forms@npm:~14.2.10":
+  version: 14.2.10
+  resolution: "@angular/forms@npm:14.2.10"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
-    "@angular/common": 13.2.4
-    "@angular/core": 13.2.4
-    "@angular/platform-browser": 13.2.4
+    "@angular/common": 14.2.10
+    "@angular/core": 14.2.10
+    "@angular/platform-browser": 14.2.10
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: e3da6b139ec8695abac92b1d0632421822183bae10934dd19b05934dd6f96b00a1eb5c3283200dbd7e2ee201e5b1ed092b6436c4df09e36d01e7cdf32c020394
+  checksum: 5d22d993da71d85ce7b5fa58507e8c3d5eb11959b7ac63cb95107121547dd916d04e55106316e9a49764546e4bc65bf33d2e974d6ba16f5634d99af905a8ac71
   languageName: node
   linkType: hard
 
@@ -7625,7 +7625,7 @@ __metadata:
     "@angular/compiler": ~13.2.4
     "@angular/compiler-cli": ~13.2.4
     "@angular/core": ~13.2.4
-    "@angular/forms": ~13.2.4
+    "@angular/forms": ~14.2.10
     "@angular/material": 13.2.4
     "@angular/platform-browser": ~13.2.4
     "@angular/platform-browser-dynamic": ~13.2.4
