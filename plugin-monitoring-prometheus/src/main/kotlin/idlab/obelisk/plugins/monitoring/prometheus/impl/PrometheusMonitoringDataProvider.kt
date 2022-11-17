@@ -74,13 +74,9 @@ class PrometheusMonitoringDataProvider(vertx: Vertx, config: OblxConfig) : Monit
         restrictTo: ConsumptionType?
     ): Single<List<MonitoringTimeSeries>> {
         val consumedViaQueryQ = if (datasetId != null) {
-            "rate(oblx_query_response_size_sum${filter(datasetId)}[$duration])/rate(oblx_query_response_size_count${
-                filter(
-                    datasetId
-                )
-            }[$duration])"
+            "rate(oblx_query_response_size_sum${filter(datasetId)}[$duration])"
         } else {
-            "rate(oblx_query_global_response_size_sum[$duration])/rate(oblx_query_global_response_size_count[$duration])"
+            "rate(oblx_query_global_response_size_sum[$duration])"
         }
 
         val consumedViaSSEQ = "rate(oblx_sse_events_streamed_total${filter(datasetId)}[$duration])"
