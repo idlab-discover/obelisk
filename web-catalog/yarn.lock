@@ -373,17 +373,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/router@npm:^13.1.1":
-  version: 13.1.1
-  resolution: "@angular/router@npm:13.1.1"
+"@angular/router@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "@angular/router@npm:15.0.0"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
-    "@angular/common": 13.1.1
-    "@angular/core": 13.1.1
-    "@angular/platform-browser": 13.1.1
+    "@angular/common": 15.0.0
+    "@angular/core": 15.0.0
+    "@angular/platform-browser": 15.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 75fd5579dd9728c148ac146e9d040ddb78345a20ced153a4a63e10333ff2018604083caa2f2cea1f9cedf270392bd098689f59706bd7c30d2407528734d63527
+  checksum: 881f469e5ca5f13fa9743d88c9eaefa31a3fc64adb90ac287d8af529de2f6916abb55c6883b2811c4c0fc942e11b2c75903fd6fef6042fccf0f8480e9fb71210
   languageName: node
   linkType: hard
 
@@ -10198,7 +10198,7 @@ __metadata:
     "@angular/localize": ^13.1.1
     "@angular/platform-browser": ^13.1.1
     "@angular/platform-browser-dynamic": ^13.1.1
-    "@angular/router": ^13.1.1
+    "@angular/router": ^15.0.0
     "@ctrl/ngx-codemirror": ^5.1.1
     "@ctrl/tinycolor": ^3.4.0
     "@fortawesome/angular-fontawesome": ^0.10.1
