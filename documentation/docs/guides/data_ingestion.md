@@ -156,7 +156,7 @@ Aside from the usage limits, there are a number of other constraints that you sh
 3. An event can have a maximum of **32 tags**.
 4. When using Metric type `::number[]`, the size of the number array is limited to **128 entries**.
 5. When using Metric types `::json` or `::string`, the string representation of the value is limited to **65535 characters**.
-6. The `timestamp` must be a positive Integer. No further validation is performed, Obelisk will accept events in the past or future (as this can be useful for certain use cases). However, we recommend developers to validate if the produced timestamps conform to their own expected time-range before posting requests!
+6. The `timestamp` must be a positive Integer. Obelisk will interpret this value as the number of **milliseconds** since `Jan 01 1970 00:00:00` (use the query parameter `timestampPrecison` while ingesting to customize this behaviour). No further validation is performed, Obelisk will accept events in the past or future (as this can be useful for certain use cases). However, we recommend developers to validate if the produced timestamps conform to their own expected time-range before posting requests!
 
 An invalid request body (JSON syntax errors, or not conforming to the data format), or failure to adhere to constraints 2-6 will result in an HTTP error response with code 400.
 

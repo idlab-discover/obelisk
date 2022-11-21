@@ -75,13 +75,13 @@ plugins:
 extra:
   obelisk:
     name: "Obelisk"
-    url: "https://rc.obelisk.ilabt.imec.be"
+    url: "https://obelisk.ilabt.imec.be"
   catalog:
     name: "Obelisk Catalog UI"
-    url: "https://rc.obelisk.ilabt.imec.be/catalog"
+    url: "https://obelisk.ilabt.imec.be/catalog"
   apidocs:
     name: "API Documentation"
     url: "https://obelisk.docs.apiary.io"
   contact:
     name: "Contact"
-    url: "https://rc.obelisk.ilabt.imec.be/catalog/home(x:ticket/new)"
+    url: "https://obelisk.ilabt.imec.be/catalog/home(x:ticket/new)"
