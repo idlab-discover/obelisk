@@ -242,8 +242,9 @@ CH Requirements:
 
 - `spec.configuration.zookeeper` : set the correct URL(s)
 - `spec.templates.volumeClaimTemplates` : use your desired storage class and/or configured volumes
+- `spec.configuration.users.default/networks/ip` : make sure the Pod subnet of your kubernetes cluster is set here so your pods have access to CH
 
-Then just apply the chi file to install
+Then just apply the CHI file to install
 
 ```yaml
 kubectl apply -f deployment/clickhouse/chi-default.yaml
@@ -303,7 +304,7 @@ For Redis any setup will do and persistence isn’t really needed (used for ephe
 
 ```
 helm install redis -n redis bitnami/redis --set architecture=standalone \
- --set auth.enabled=false
+ --set auth.enabled=false --set master.persistence.enabled=false
 ```
 
 ## Gubernator

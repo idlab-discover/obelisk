@@ -7,7 +7,7 @@
     <groupId>idlab.obelisk</groupId>
     <artifactId>obelisk-parent</artifactId>
     <packaging>pom</packaging>
-    <version>${revision}</version>
+    <version>22.7.2</version>
 
     <modules>
         <module>int-dataset-streamer</module>
@@ -39,7 +39,7 @@
     </modules>
 
     <properties>
-        <revision>22.05.2</revision>
+        <revision>22.07.1</revision>
         <maven.compiler.release>17</maven.compiler.release>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
@@ -79,6 +79,25 @@
             <url>https://gitlab.ilabt.imec.be/api/v4/projects/3941/packages/maven</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>github</id>
+            <activation>
+                <property>
+                    <name>useGitHubPackages</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub Packages</name>
+                    <url>https://maven.pkg.github.com/idlab-discover/obelisk</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -193,33 +212,6 @@
                         <id>test-compile</id>
                         <goals>
                             <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.2.2</version>
-                <configuration>
-                    <flattenDependencyMode>all</flattenDependencyMode>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                </configuration>
-                <executions>
-                    <!-- enable flattening -->
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <!-- ensure proper cleanup -->
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
                         </goals>
                     </execution>
                 </executions>

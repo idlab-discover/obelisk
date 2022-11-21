@@ -1,50 +1,110 @@
 name: Maven workflow
 
 on:
-  pull_request_target:
-    branches:
-      - main
-      - next
-    paths:
-     - '**/pom.xml'
-     - '**/src/main/kotlin/**'
-     - '**/test/kotlin/**'
-     - '**/src/main/java/**'
-     - '**/test/java/**'
+  workflow_call:
+    inputs:
+      release:
+        description: Should a release be triggered.
+        required: false
+        type: boolean
+        default: false
+      version:
+        description: Version to be released
+        required: false
+        type: string
+    secrets:
+      GITLAB_REG_PASSWORD:
+        description: Gitlab registry password
+        required: false
+      GITLAB_REG_USER:
+        description: Gitlab registry username
+        required: false
 
 jobs:
   maven-build:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      checks: write
+      contents: read
+      issues: read
     steps:
-    - uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.OBLX_PAT || github.token }}
-    - uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-        cache: 'maven'
-    - name: Compile
-      run: mvn -B -ntp clean compile -DskipTests
-    - uses: satackey/action-docker-layer-caching@v0.0.11
-      # Ignore the failure of a step and avoid terminating the job.
-      continue-on-error: true
-      with:
-        key: docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
-        restore-keys: |
-          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
-          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
-          docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}
-          docker-layer-caching-${{ github.workflow }}
-          docker-layer-caching-
-    - run: docker-compose -f .test/docker-compose.yml up -d
-    - name: Run test
-      run: mvn test -B -ntp --fail-at-end
-    - name: Surefire Report
-      if: ${{ always() }}
-      continue-on-error: true
-      uses: ScaCap/action-surefire-report@v1
-      with:
-        github_token: ${{ secrets.OBLX_PAT }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull when releasing
+        if: ${{ inputs.release }}
+        run: git pull
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+      - name: Compile
+        run: mvn -B -ntp clean compile -DskipTests
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+        with:
+          key: docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
+          restore-keys: |
+            docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
+            docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+            docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}
+            docker-layer-caching-${{ github.workflow }}
+            docker-layer-caching-
+      - run: docker-compose -f .test/docker-compose.yml up -d
+      - name: Run test
+        run: mvn test -B -ntp --fail-at-end
+      - name: Surefire Report
+        if: ${{ always() }}
+        continue-on-error: true
+        uses: ScaCap/action-surefire-report@v1
+        with:
+          github_token: secrets.GITHUB_TOKEN
+
+  maven-release:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.release }}
+    needs: maven-build
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      # Checkout the repo and pull in version changes.
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull in version changes from previous workflow
+        run: git pull
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Log in to IDLab GitLab registry
+        uses: docker/login-action@v2
+        with:
+          registry: gitlab.ilabt.imec.be:4567/obelisk/packages
+          username: ${{ secrets.GITLAB_REG_USER }}
+          password: ${{ secrets.GITLAB_REG_PASSWORD }}
+      - name: Build and push container images
+        env:
+          VERSION: ${{ inputs.version }}
+        run: mvn -B -ntp compile jib:build -Djib.to.tags=${VERSION%.*}
+
+      # We can only push maven packages once, so making sure we are able to push them all.
+      - name: Dry-run deploy
+        run: mvn -B -ntp deploy -DuseGitHubPackages=true -DskipTests -Dmaven.deploy.skip=true
+      # We allow continuation upon error here temporarily
+      # TODO: streamline workflow and then remove the error continuation
+      - name: Deploy maven packages to GitHub
+        env:
+          VERSION: ${{ inputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+        run: mvn -B -ntp deploy -DskipTests -DuseGitHubPackages=true

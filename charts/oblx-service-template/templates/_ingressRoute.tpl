@@ -26,13 +26,3 @@ spec:
     - name: {{ $fullName }}
       port: {{ $svcPort }}
 {{- end -}}
-  entryPoints:
-    - websecure
-  routes:
-  - kind: Rule
-    match: Host(`whoami.20.115.56.189.nip.io`)
-    services:
-    - name: whoami
-      port: 80
-  tls:
-    certResolver: le

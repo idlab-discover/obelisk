@@ -1,0 +1,7 @@
+{
+  "inputs": {
+    "version": "22.8.0",
+    "release": true,
+    "build": false
+  }
+}

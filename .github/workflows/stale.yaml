@@ -7,11 +7,14 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v5
+      - uses: actions/stale@v6
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           stale-issue-message: 'The issue had no activity for 30 days, mark with Stale label.'
           stale-pr-message: 'The pr had no activity for 30 days, mark with Stale label.'
-          days-before-stale: 30
+          days-before-issue-stale: 30
+          days-before-pr-stale: -1
           days-before-close: -1
           operations-per-run: 700
+          exempt-issue-labels: bug,enhancement
+          exempt-all-assignees: true

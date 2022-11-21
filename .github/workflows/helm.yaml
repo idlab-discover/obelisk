@@ -1,0 +1,89 @@
+name: Helm workflow
+
+on:
+  workflow_call:
+    inputs:
+      release:
+        description: Should a release be triggered.
+        required: false
+        type: boolean
+        default: true
+      version:
+        required: false
+        type: string
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.OBLX_PAT || secrets.github_token }}
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3.4
+        with:
+          version: v3.9.0
+
+      # Python is required because `ct lint` runs Yamale (https://github.com/23andMe/Yamale) and
+      # yamllint (https://github.com/adrienverge/yamllint) which require Python
+      - name: Set up Python
+        uses: actions/setup-python@v4.3.0
+        with:
+          python-version: 3.7
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.3.1
+        with:
+          version: v3.6.0
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch main)
+          if [[ -n "$changed" ]]; then
+            echo "::set-output name=changed::true"
+          fi
+      - name: Run chart-testing (lint)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct lint --target-branch main
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.4.0
+        if: steps.list-changed.outputs.changed == 'true'
+
+      - name: Run chart-testing (install)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct install --helm-extra-set-args "--set=oblxCommonsReleaseName=oblx-commons" --upgrade --target-branch main
+
+  helm-release:
+    runs-on: ubuntu-latest
+    needs: lint-test
+    if: ${{ inputs.release }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.OBLX_PAT || secrets.github_token }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git pull
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3.4
+        with:
+          version: v3.9.2
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.4.1
+        with:
+          charts_dir: charts/
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_SKIP_EXISTING: "true"
