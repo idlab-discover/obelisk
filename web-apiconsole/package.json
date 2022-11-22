@@ -46,7 +46,7 @@
     "@types/node": "^12.11.1",
     "@types/react": "^17.0.15",
     "@types/react-dom": "^17.0.9",
-    "@types/react-select": "^2.0.19",
+    "@types/react-select": "^5.0.1",
     "codelyzer": "^6.0.1",
     "jasmine-core": "~3.10.0",
     "jasmine-spec-reporter": "~5.0.0",
