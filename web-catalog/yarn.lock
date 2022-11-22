@@ -6292,10 +6292,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jasmine-core@npm:~3.6.0":
-  version: 3.6.0
-  resolution: "jasmine-core@npm:3.6.0"
-  checksum: d44e19bad4957f43469fc2e779530f03735ad82623b0d9234cff0b630c25af5d615d068a2eec8c865f8766180c580f75e47d38dd8c72a503de0da1b40c888522
+"jasmine-core@npm:~4.5.0":
+  version: 4.5.0
+  resolution: "jasmine-core@npm:4.5.0"
+  checksum: e7adda527d544097ddb8aeec7bbbed19c59ca70ef57e1b740189eecf5cde3e0e20fba74d15c511b169105cface4fa2a775a6088c2220bf97f482b51b3c5d1fa1
   languageName: node
   linkType: hard
 
@@ -10217,7 +10217,7 @@ __metadata:
     bootstrap: ^4.5.3
     codelyzer: ^6.0.1
     codemirror: ^5.62.2
-    jasmine-core: ~3.6.0
+    jasmine-core: ~4.5.0
     jasmine-spec-reporter: ~5.0.0
     jsonpath: ^1.1.1
     karma: ~6.3.4
