@@ -10,10 +10,7 @@ import idlab.obelisk.definitions.ratelimiting.RateLimiter
 import idlab.obelisk.plugins.accessmanager.basic.BasicAccessManagerModule
 import idlab.obelisk.plugins.metastore.mongo.MongoDBMetaStoreModule
 import idlab.obelisk.plugins.ratelimiter.gubernator.GubernatorRateLimiterModule
-import idlab.obelisk.pulsar.utils.PulsarModule
-import idlab.obelisk.pulsar.utils.RxPulsarProducerCache
-import idlab.obelisk.pulsar.utils.configureForHighThroughput
-import idlab.obelisk.pulsar.utils.rxSend
+import idlab.obelisk.pulsar.utils.*
 import idlab.obelisk.utils.service.OblxBaseModule
 import idlab.obelisk.utils.service.OblxLauncher
 import idlab.obelisk.utils.service.http.AuthorizationException
@@ -34,10 +31,12 @@ import io.vertx.reactivex.ext.web.Router
 import io.vertx.reactivex.ext.web.RoutingContext
 import io.vertx.reactivex.ext.web.handler.BodyHandler
 import org.apache.pulsar.client.api.PulsarClient
+import org.apache.pulsar.client.api.PulsarClientException.TimeoutException
 import org.apache.pulsar.client.api.Schema
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.system.exitProcess
 
 const val HTTP_BASE_PATH = "/data/ingest"
 private val mapper = DatabindCodec.mapper()
@@ -139,7 +138,13 @@ class IngestService @Inject constructor(
                 }
                 .subscribeBy(
                     onComplete = { ctx.response().setStatusCode(204).end() },
-                    onError = writeHttpError(ctx)
+                    onError = { err ->
+                        writeHttpError(ctx).invoke(err)
+                        if (err is TimeoutException) {
+                            logger.warn(err) { "Detected PulsarClient TimeoutException, shutting down." }
+                            exitProcess(1)
+                        }
+                    }
                 )
         }
         return datasetIdToNameMap.init()
