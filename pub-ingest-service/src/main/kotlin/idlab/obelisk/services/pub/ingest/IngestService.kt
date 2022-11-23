@@ -141,7 +141,7 @@ class IngestService @Inject constructor(
                     onError = { err ->
                         writeHttpError(ctx).invoke(err)
                         if (err is TimeoutException) {
-                            logger.warn(err) { "Detected PulsarClient TimeoutException, shutting down." }
+                            logger.error(err) { "Detected PulsarClient TimeoutException, shutting down." }
                             exitProcess(1)
                         }
                     }
