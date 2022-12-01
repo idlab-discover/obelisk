@@ -343,17 +343,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/platform-browser-dynamic@npm:^13.1.1":
-  version: 13.1.1
-  resolution: "@angular/platform-browser-dynamic@npm:13.1.1"
+"@angular/platform-browser-dynamic@npm:^15.0.2":
+  version: 15.0.2
+  resolution: "@angular/platform-browser-dynamic@npm:15.0.2"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
-    "@angular/common": 13.1.1
-    "@angular/compiler": 13.1.1
-    "@angular/core": 13.1.1
-    "@angular/platform-browser": 13.1.1
-  checksum: ab24ce3e87a2c3175c86ffd81e035d86a7677b9fca4216cdaaf125dbda7d6c0ad0ef233a4bb0355dd2f1e04beb01953ad169b547bdc491c4b4056b670f2493a9
+    "@angular/common": 15.0.2
+    "@angular/compiler": 15.0.2
+    "@angular/core": 15.0.2
+    "@angular/platform-browser": 15.0.2
+  checksum: a158215a1d213245b91aa9404c266073664a6d768e45ecc8b0164890ce0664ee81fae5aa998f43ab3cdb3afa9fc131be6f8f56c166241fd7c5a557f350708a38
   languageName: node
   linkType: hard
 
@@ -10197,7 +10197,7 @@ __metadata:
     "@angular/language-service": ^13.1.1
     "@angular/localize": ^13.1.1
     "@angular/platform-browser": ^13.1.1
-    "@angular/platform-browser-dynamic": ^13.1.1
+    "@angular/platform-browser-dynamic": ^15.0.2
     "@angular/router": ^13.1.1
     "@ctrl/ngx-codemirror": ^5.1.1
     "@ctrl/tinycolor": ^3.4.0
