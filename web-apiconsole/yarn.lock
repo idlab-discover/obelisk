@@ -2385,10 +2385,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^12.11.1":
-  version: 12.20.46
-  resolution: "@types/node@npm:12.20.46"
-  checksum: 5326c3b5a576e041e522670d642aa17f92d833fa33ff6a6619d7d9fbac54c6a29f329905a7ccd7642a3aac79c80f9cc6887f45e2afa2c24dcf81269c296121a8
+"@types/node@npm:^18.11.12":
+  version: 18.11.12
+  resolution: "@types/node@npm:18.11.12"
+  checksum: 6c67f0998a9ad8ef0f357fcc0d72841c579576c746cfbac67c9d0229e1cd219d3b96297c2caaeaa4084ba7e9ad112b412e64af4066e522faa0be4ef9ad0a613a
   languageName: node
   linkType: hard
 
@@ -7634,7 +7634,7 @@ __metadata:
     "@types/jasmine": ~3.10.0
     "@types/jasminewd2": ^2.0.8
     "@types/jsonpath": ^0.2.0
-    "@types/node": ^12.11.1
+    "@types/node": ^18.11.12
     "@types/react": ^17.0.15
     "@types/react-dom": ^17.0.9
     "@types/react-select": ^2.0.19
