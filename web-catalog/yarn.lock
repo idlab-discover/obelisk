@@ -168,14 +168,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/animations@npm:^13.1.1":
-  version: 13.1.1
-  resolution: "@angular/animations@npm:13.1.1"
+"@angular/animations@npm:^15.0.4":
+  version: 15.0.4
+  resolution: "@angular/animations@npm:15.0.4"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
-    "@angular/core": 13.1.1
-  checksum: 80cd8dfe13c9b27bc270a7be5be129b5c5becfc8e7a2128a525fab2ff9ddee41cf86fd288be2f8e0480cd93e2d69ab95f8d69d7faa53affee3ff77a50a9d677e
+    "@angular/core": 15.0.4
+  checksum: 49f457b0ab34bc8eae8947bb75bb83b837460895ac24adb537239d2d488eef717fbec3cd58bc9695a2a16216121fc146acffa0ab3d4e89385de7114114147654
   languageName: node
   linkType: hard
 
@@ -10186,7 +10186,7 @@ __metadata:
   resolution: "web-catalog@workspace:."
   dependencies:
     "@angular-devkit/build-angular": ~13.1.2
-    "@angular/animations": ^13.1.1
+    "@angular/animations": ^15.0.4
     "@angular/cdk": ^13.1.1
     "@angular/cli": ^13.1.2
     "@angular/common": ^13.1.1
