@@ -1,7 +1,7 @@
 version: '3'
 services:
   pulsar:
-    image: apachepulsar/pulsar:2.9.2
+    image: apachepulsar/pulsar:2.10.3
     ports:
       - 6650:6650
       - 8086:8080
@@ -13,7 +13,7 @@ services:
     volumes:
       - 'mongodb_data:/data/db'
   clickhouse:
-    image: clickhouse/clickhouse-server:22.5
+    image: clickhouse/clickhouse-server:22.12
     ports:
       - 8123:8123
       - 9000:9000

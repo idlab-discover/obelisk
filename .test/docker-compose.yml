@@ -1,7 +1,7 @@
 version: '3'
 services:
   pulsar:
-    image: apachepulsar/pulsar:2.9.2
+    image: apachepulsar/pulsar:2.10.3
     ports:
       - 6650:6650
       - 8086:8080
@@ -11,7 +11,7 @@ services:
     ports:
     - 27017:27017
   clickhouse:
-    image: clickhouse/clickhouse-server:22.5
+    image: clickhouse/clickhouse-server:22.12
     ports:
       - 8123:8123
       - 9000:9000
@@ -23,14 +23,14 @@ services:
         soft: 262144
         hard: 262144
   redis:
-    image: 'bitnami/redis:6.0'
+    image: 'bitnami/redis:7.0'
     ports:
       - 6379:6379
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
   gubernator:
-    image: ghcr.io/mailgun/gubernator:v2.0.0-rc.23
+    image: ghcr.io/mailgun/gubernator:v2.0.0-rc.36
     command: "/gubernator"
     environment:
       # The address GRPC requests will listen on
