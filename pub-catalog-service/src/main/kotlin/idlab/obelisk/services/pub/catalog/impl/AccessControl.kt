@@ -54,7 +54,7 @@ fun checkUpdateFieldAllowed(env: DataFetchingEnvironment, fieldName: String): Bo
     return when (val token: Any? = ctx[Token::class.java.name]) {
         is Token -> {
             val inputTypeName =
-                (env.fieldDefinition.getArgument("input").definition.type as NonNullType).type as TypeName
+                (env.fieldDefinition.getArgument("input").definition?.type as NonNullType).type as TypeName
             val inputType = env.graphQLSchema.getType(inputTypeName.name) as GraphQLInputObjectType?
             if (inputType != null) {
                 val clearance = RestrictedDirective.fromInputFieldDef(inputType.getField(fieldName))

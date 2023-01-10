@@ -9,10 +9,8 @@ import graphql.schema.*
 import graphql.schema.idl.SchemaDirectiveWiring
 import graphql.schema.idl.SchemaDirectiveWiringEnvironment
 import idlab.obelisk.definitions.*
-import io.reactivex.Flowable
 import io.reactivex.Single
 import java.security.InvalidParameterException
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import io.reactivex.rxkotlin.toFlowable
 
@@ -39,9 +37,9 @@ internal class FilterDirective : SchemaDirectiveWiring {
 
         fun extractResultType(field: GraphQLFieldDefinition): GraphQLObjectType {
             try {
-                return PagedDirective.visitedObjectTypes[((field.definition.type as ListType).type as TypeName).name]!!
+                return PagedDirective.visitedObjectTypes[((field.definition?.type as ListType).type as TypeName).name]!!
             } catch (t: Throwable) {
-                throw RuntimeException("Cannot extract result type for field ${field.definition.name}...", t)
+                throw RuntimeException("Cannot extract result type for field ${field.definition?.name}...", t)
             }
         }
 
