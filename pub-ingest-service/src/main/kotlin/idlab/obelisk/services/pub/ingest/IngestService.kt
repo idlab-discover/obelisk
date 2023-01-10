@@ -49,7 +49,6 @@ private const val REQUEST_SIZE_BYTES_METRIC = "oblx.ingest.request.size.bytes"
 private const val REQUEST_SIZE_EVENTS_METRIC = "oblx.ingest.request.size.events"
 private const val SEND_FAILURES_METRIC = "oblx.ingest.send.failures"
 
-// Changes :)
 fun main(args: Array<String>) {
     OblxLauncher.with(
         OblxBaseModule(),
@@ -100,7 +99,7 @@ class IngestService @Inject constructor(
             getValidatedToken(datasetId, ctx)
                 .flatMapCompletable { token ->
                     try {
-                        val events = mapper.readValue<List<IngestMetricEvent>>(ctx.bodyAsString, eventListTypeFactory)
+                        val events = mapper.readValue<List<IngestMetricEvent>>(ctx.body().asString(), eventListTypeFactory)
                         if (events.isEmpty()) {
                             Completable.error(BadRequestException("The event array cannot be empty! "))
                         } else {
@@ -128,7 +127,7 @@ class IngestService @Inject constructor(
                                 microMeterRegistry.counter(RECEIVED_EVENTS_METRIC, tags)
                                     .increment(events.size.toDouble())
                                 microMeterRegistry.summary(REQUEST_SIZE_BYTES_METRIC, tags)
-                                    .record(ctx.body.bytes.size.toDouble())
+                                    .record(ctx.body().length().toDouble())
                                 microMeterRegistry.summary(REQUEST_SIZE_EVENTS_METRIC, tags)
                                     .record(events.size.toDouble())
                             }
@@ -195,12 +194,12 @@ class IngestService @Inject constructor(
 }
 
 private fun getPrecision(ctx: RoutingContext): TimeUnit {
-    return ctx.queryParams().get("timestampPrecision")?.let { TimeUnit.valueOf(it.toUpperCase()) }
+    return ctx.queryParams().get("timestampPrecision")?.let { TimeUnit.valueOf(it.uppercase()) }
         ?: TimeUnit.MILLISECONDS
 }
 
 private fun getIngestMode(ctx: RoutingContext): IngestMode {
-    return ctx.queryParams().get("mode")?.let { IngestMode.valueOf(it.toUpperCase()) } ?: IngestMode.DEFAULT
+    return ctx.queryParams().get("mode")?.let { IngestMode.valueOf(it.uppercase()) } ?: IngestMode.DEFAULT
 }
 
 private enum class IngestMode {
