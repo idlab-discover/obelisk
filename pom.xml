@@ -28,12 +28,10 @@
         <module>plugin-ratelimiter-gubernator</module>
         <module>pub-auth-service</module>
         <module>pub-catalog-service</module>
-        <module>pub-dcat-service</module>
         <module>pub-export-service</module>
         <module>pub-ingest-service</module>
         <module>pub-issue-service</module>
         <module>pub-monitor-service</module>
-        <module>pub-ngsi-service</module>
         <module>pub-query-service</module>
         <module>pub-streaming-service</module>
     </modules>
