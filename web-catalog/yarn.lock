@@ -318,10 +318,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/language-service@npm:^13.1.1":
-  version: 13.1.1
-  resolution: "@angular/language-service@npm:13.1.1"
-  checksum: a1bd207737a0016035230423885eec05f1f60b2df7e2737627e6108ff4cc9e343e7b626d4c3efa33a99fbff369cc23d1c7e28991e6304ffc376d8cc8df2f6d43
+"@angular/language-service@npm:^15.1.0":
+  version: 15.1.0
+  resolution: "@angular/language-service@npm:15.1.0"
+  checksum: 2795c85edddbbe5b83cf2f115ed245bd805ad8cbe88a7e240d65019b8aa5fbc035558971e64b0084b6290f700441672b9769ccd2f9fe82f8ca61beb9d894beea
   languageName: node
   linkType: hard
 
@@ -10194,7 +10194,7 @@ __metadata:
     "@angular/compiler-cli": ^13.1.1
     "@angular/core": ^13.1.1
     "@angular/forms": ^13.1.1
-    "@angular/language-service": ^13.1.1
+    "@angular/language-service": ^15.1.0
     "@angular/localize": ^13.1.1
     "@angular/platform-browser": ^13.1.1
     "@angular/platform-browser-dynamic": ^13.1.1
