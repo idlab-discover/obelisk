@@ -45,7 +45,7 @@
         <kotlin.version>1.6.21</kotlin.version>
         <vertx.version>4.3.7</vertx.version>
         <pulsar.version>2.10.3</pulsar.version>
-        <micrometer.version>1.7.1</micrometer.version>
+        <micrometer.version>1.10.3</micrometer.version>
         <logback.level>all</logback.level>
         <logback.level.auth>${logback.level}</logback.level.auth>
         <docker.baseImage>docker.io/library/eclipse-temurin:17</docker.baseImage>
@@ -146,7 +146,7 @@
             <dependency>
                 <groupId>com.github.davidmoten</groupId>
                 <artifactId>rxjava2-extras</artifactId>
-                <version>0.1.38</version>
+                <version>0.2.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>io.reactivex.rxjava2</groupId>
@@ -223,8 +223,9 @@
                     <version>3.0.0-M6</version>
                     <configuration>
                         <argLine>
-                            --add-opens java.base/java.lang=ALL-UNNAMED
-                            --add-opens java.base/java.util=ALL-UNNAMED
+                            --add-opens=java.base/sun.net=ALL-UNNAMED
+                            --add-opens=java.base/java.lang=ALL-UNNAMED
+                            --add-opens=java.base/java.util=ALL-UNNAMED
                         </argLine>
                     </configuration>
                 </plugin>
