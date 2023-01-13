@@ -6,20 +6,6 @@ updates:
       interval: "daily"
       time: "02:13"
       timezone: "Europe/Brussels"
-  - package-ecosystem: "npm"
-    directory: /web-catalog
-    schedule:
-      interval: "daily"
-      time: "03:35"
-      timezone: "Europe/Brussels"
-    target-branch: next
-  - package-ecosystem: "npm"
-    directory: /web-apiconsole
-    schedule:
-      interval: "daily"
-      time: "03:35"
-      timezone: "Europe/Brussels"
-    target-branch: next
   - package-ecosystem: "maven"
     directory: /
     schedule:
