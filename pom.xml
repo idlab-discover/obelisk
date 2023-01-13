@@ -146,7 +146,7 @@
             <dependency>
                 <groupId>com.github.davidmoten</groupId>
                 <artifactId>rxjava2-extras</artifactId>
-                <version>0.1.38</version>
+                <version>0.2.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>io.reactivex.rxjava2</groupId>
