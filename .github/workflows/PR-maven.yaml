@@ -12,6 +12,10 @@ on:
      - '**/src/main/java/**'
      - '**/test/java/**'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   compile-test:
     uses: ./.github/workflows/maven.yaml
