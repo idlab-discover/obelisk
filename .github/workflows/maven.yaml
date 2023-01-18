@@ -47,6 +47,7 @@ jobs:
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
         with:
+          concurrency: 8
           key: docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
           restore-keys: |
             docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
@@ -57,12 +58,13 @@ jobs:
       - run: docker-compose -f .test/docker-compose.yml up -d
       - name: Run test
         run: mvn test -B -ntp --fail-at-end
-      - name: Surefire Report
+      - name: Upload Surefire Report
         if: ${{ always() }}
+        uses: actions/upload-artifact@v2
         continue-on-error: true
-        uses: ScaCap/action-surefire-report@v1
         with:
-          github_token: secrets.GITHUB_TOKEN
+          name: surefire-reports
+          path: "**/target/surefire-reports"
 
   maven-release:
     runs-on: ubuntu-latest
