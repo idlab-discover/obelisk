@@ -2,9 +2,7 @@ name: Comment on PR with Surefire Report
 
 on:
   workflow_run:
-    workflows:
-     - "Maven compile and test"
-     - "Maven release"
+    workflows: ["Maven workflow"]
     types:
       - completed
 
