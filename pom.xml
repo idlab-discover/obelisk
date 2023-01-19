@@ -44,7 +44,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.version>1.6.21</kotlin.version>
         <vertx.version>4.3.7</vertx.version>
-        <pulsar.version>2.10.3</pulsar.version>
+        <pulsar.version>2.11.0</pulsar.version>
         <micrometer.version>1.10.3</micrometer.version>
         <logback.level>all</logback.level>
         <logback.level.auth>${logback.level}</logback.level.auth>
