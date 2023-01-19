@@ -29,7 +29,7 @@ jobs:
     if: ${{ success() || failure() }} # always run, but obey manual cancellation
     steps:
       - name: Download Surefire Report
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: surefire-reports
           path: surefire-reports
