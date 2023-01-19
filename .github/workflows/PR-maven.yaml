@@ -15,6 +15,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  checks: write
 
 jobs:
 # TODO: split up compile and release maven workflows
@@ -33,7 +34,7 @@ jobs:
           name: surefire-reports
           path: surefire-reports
       - name: Surefire Report
-        uses: ScaCap/action-surefire-report@v1
+        uses: mikepenz/action-junit-report@v3
         with:
           github_token: secrets.GITHUB_TOKEN
           report_paths: surefire-reports/**/target/surefire-reports/TEST-*.xml
