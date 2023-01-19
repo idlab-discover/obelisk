@@ -53,13 +53,6 @@ jobs:
       - run: docker-compose -f .test/docker-compose.yml up -d
       - name: Run test
         run: mvn test -B -ntp --fail-at-end
-      - name: Upload Surefire Report
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        continue-on-error: true
-        with:
-          name: surefire-reports
-          path: "**/target/surefire-reports"
 
   maven-release:
     runs-on: ubuntu-latest
