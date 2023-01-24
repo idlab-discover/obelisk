@@ -6,6 +6,7 @@ import idlab.obelisk.definitions.framework.OblxConfig
 import idlab.obelisk.definitions.ratelimiting.LimitExceededException
 import idlab.obelisk.definitions.ratelimiting.RateLimiter
 import idlab.obelisk.utils.service.instrumentation.TagTemplate
+import io.micrometer.core.instrument.Counter
 import io.reactivex.Single
 import io.reactivex.rxkotlin.toFlowable
 import io.vertx.micrometer.backends.BackendRegistries
@@ -32,6 +33,9 @@ class GubernatorRateLimiter(vertx: Vertx, oblxConfig: OblxConfig) : RateLimiter 
     private val logger = KotlinLogging.logger {  }
     private val connectionUri = URI.create(oblxConfig.gubernatorConnectionUri)
     private val client = GubernatorClient(vertx, connectionUri.host, connectionUri.port)
+    private val limitExceededCounter = Counter
+        .builder(LIMIT_EXCEEDED)
+        .description("Counts number of times client/user hits rate limiting.")
 
     override fun apply(ctx: RoutingContext?, token: Token, increase: Map<UsageLimitId, Int>): Single<Token> {
         return increase.entries.toFlowable()
@@ -43,8 +47,7 @@ class GubernatorRateLimiter(vertx: Vertx, oblxConfig: OblxConfig) : RateLimiter 
 
                         if (resp.isOverLimit()) {
                             val tags = clientUserTags.instantiate(token.client?.id.orEmpty(), token.user.id.orEmpty())
-                            microMeterRegistry.counter(LIMIT_EXCEEDED, tags)
-                                .increment()
+                            limitExceededCounter.tags(tags).register(microMeterRegistry).increment()
                             logger.debug{ "Rate limit triggered for ${token.user}/${token.client}: $resp" }
                             Single.error<Token>(LimitExceededException(resp.limit, resp.resetTime()))
                         } else {
