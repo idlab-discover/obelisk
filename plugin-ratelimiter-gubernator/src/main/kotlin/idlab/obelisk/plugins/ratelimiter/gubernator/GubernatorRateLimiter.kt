@@ -5,8 +5,10 @@ import idlab.obelisk.definitions.catalog.UsageLimitId
 import idlab.obelisk.definitions.framework.OblxConfig
 import idlab.obelisk.definitions.ratelimiting.LimitExceededException
 import idlab.obelisk.definitions.ratelimiting.RateLimiter
+import idlab.obelisk.utils.service.instrumentation.TagTemplate
 import io.reactivex.Single
 import io.reactivex.rxkotlin.toFlowable
+import io.vertx.micrometer.backends.BackendRegistries
 import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.ext.web.RoutingContext
 import mu.KotlinLogging
@@ -21,8 +23,12 @@ private const val RL_HEADER_REMAINING = "RateLimit-Remaining"
 // Response header containing the time remaining in the current window, specified as a duration in ms;
 private const val RL_HEADER_RESET = "RateLimit-Reset"
 
+private const val LIMIT_EXCEEDED = "oblx.limits.exceeded"
+
 class GubernatorRateLimiter(vertx: Vertx, oblxConfig: OblxConfig) : RateLimiter {
 
+    private val microMeterRegistry = BackendRegistries.getDefaultNow()
+    private val clientUserTags = TagTemplate("client", "user")
     private val logger = KotlinLogging.logger {  }
     private val connectionUri = URI.create(oblxConfig.gubernatorConnectionUri)
     private val client = GubernatorClient(vertx, connectionUri.host, connectionUri.port)
@@ -36,7 +42,10 @@ class GubernatorRateLimiter(vertx: Vertx, oblxConfig: OblxConfig) : RateLimiter 
                             ?.putHeader(RL_HEADER_RESET, "${resp.resetTime() - System.currentTimeMillis()}")
 
                         if (resp.isOverLimit()) {
-                            logger.debug{ "Rate limit triggered: $resp" }
+                            val tags = clientUserTags.instantiate(token.client?.id.orEmpty(), token.user.id.orEmpty())
+                            microMeterRegistry.counter(LIMIT_EXCEEDED, tags)
+                                .increment()
+                            logger.debug{ "Rate limit triggered for ${token.user}/${token.client}: $resp" }
                             Single.error<Token>(LimitExceededException(resp.limit, resp.resetTime()))
                         } else {
                             Single.just(token)
