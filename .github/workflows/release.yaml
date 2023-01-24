@@ -26,7 +26,7 @@ jobs:
       - id: changelog-lines
         run: |
           mv changelog-${{ steps.bumper.outputs.new_version }}.md changelog-new.md
-          echo "::set-output name=lc::$(wc -l changelog-new.md | cut -d ' ' -f 1)"
+          echo "lc=$(wc -l changelog-new.md | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
       - if: ${{ steps.changelog-lines.outputs.lc <= 2 }}
         run: |
           echo "No release needed."
@@ -73,7 +73,7 @@ jobs:
         id: bump
         run: |
           VERSION=$(echo $VERSION | sed -E 's/v(.*)/\1/')
-          echo "::set-output name=version::$VERSION"
+          echo "version::$VERSION" >> $GITHUB_OUTPUT
           ./mvnw versions:set -q -B -DnewVersion=$VERSION
           ./charts/bump-version.sh $VERSION
           ./charts/update-dependencies.sh
