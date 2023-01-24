@@ -21,6 +21,7 @@ import idlab.obelisk.utils.service.instrumentation.TagTemplate
 import idlab.obelisk.utils.service.instrumentation.TargetType
 import idlab.obelisk.utils.service.reactive.flatMap
 import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.DistributionSummary
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -75,6 +76,15 @@ class IngestService @Inject constructor(
         .builder(SEND_FAILURES_METRIC)
         .description("Counts number of times sending an event to Pulsar resulted in a failure.")
         .register(microMeterRegistry)
+    private val receivedEventsBuilder = Counter
+        .builder(RECEIVED_EVENTS_METRIC)
+        .description("Counts events received by Oblx Ingest Service.")
+    private val requestSizeBytesBuilder = DistributionSummary
+        .builder(REQUEST_SIZE_BYTES_METRIC)
+        .description("Summary tracking the byte size of requests to the Oblx Ingest Service.")
+    private val requestSizeEventsBuilder = DistributionSummary
+        .builder(REQUEST_SIZE_EVENTS_METRIC)
+        .description("Summary tracking number of events per request to the Oblx Ingest Service")
 
     private val datasetIdToNameMap = IdToNameMap(metaStore, TargetType.DATASET)
 
@@ -124,12 +134,12 @@ class IngestService @Inject constructor(
                             .doOnComplete {
                                 val datasetName = datasetIdToNameMap.getName(datasetId) ?: ""
                                 val tags = datasetIdAndNameTags.instantiate(datasetId, datasetName)
-                                microMeterRegistry.counter(RECEIVED_EVENTS_METRIC, tags)
+                                receivedEventsBuilder.tags(tags).register(microMeterRegistry)
                                     .increment(events.size.toDouble())
-                                microMeterRegistry.summary(REQUEST_SIZE_BYTES_METRIC, tags)
-                                    .record(ctx.body().length().toDouble())
-                                microMeterRegistry.summary(REQUEST_SIZE_EVENTS_METRIC, tags)
+                                requestSizeEventsBuilder.tags(tags).register(microMeterRegistry)
                                     .record(events.size.toDouble())
+                                requestSizeBytesBuilder.tags(tags).register(microMeterRegistry)
+                                    .record(ctx.body.bytes.size.toDouble())
                             }
                     } catch (e: Exception) {
                         Completable.error(BadRequestException("Could not process the request body: ${e.message}"))
