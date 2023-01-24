@@ -37,7 +37,6 @@
     </modules>
 
     <properties>
-        <jvm.args>--add-opens=java.base/sun.net=ALL-UNNAMED</jvm.args>
         <maven.compiler.release>17</maven.compiler.release>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
