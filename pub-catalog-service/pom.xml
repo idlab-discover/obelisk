@@ -24,7 +24,7 @@
         <dependency>
             <groupId>com.graphql-java</groupId>
             <artifactId>graphql-java-extended-scalars</artifactId>
-            <version>18.1</version>
+            <version>20.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.akarnokd</groupId>
