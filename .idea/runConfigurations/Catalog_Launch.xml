@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Ingest Launch" type="JetRunConfigurationType">
+  <configuration default="false" name="Catalog Launch" type="JetRunConfigurationType">
     <envs>
-      <env name="HTTP_PORT" value="8090" />
-      <env name="METRICS_PORT" value="8190" />
+      <env name="HTTP_PORT" value="8080" />
+      <env name="METRICS_PORT" value="8081" />
     </envs>
-    <option name="MAIN_CLASS_NAME" value="idlab.obelisk.services.pub.ingest.IngestServiceKt" />
-    <module name="pub-ingest-service" />
+    <option name="MAIN_CLASS_NAME" value="idlab.obelisk.services.pub.catalog.CatalogServiceKt" />
+    <module name="pub-catalog-service" />
     <shortenClasspath name="NONE" />
     <option name="VM_PARAMETERS" value="--add-opens=java.base/sun.net=ALL-UNNAMED -Djava.net.preferIPv4Addresses=true -Djava.net.preferIPv4Stack=true" />
     <extension name="net.ashald.envfile">
@@ -16,7 +16,7 @@
       <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
       <ENTRIES>
         <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
-        <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env-files/pub-ingest.env" />
+        <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env-files/pub-catalog.env" />
       </ENTRIES>
     </extension>
     <method v="2" />
