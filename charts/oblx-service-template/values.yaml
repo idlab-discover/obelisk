@@ -8,6 +8,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+logLevel: info
 config: {}
 oblxCommonsReleaseName: ""
 host: ""

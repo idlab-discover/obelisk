@@ -24,8 +24,8 @@ version: 22.7.2
 appVersion: "22.7.2"
 
 dependencies:
-  - name: commons
-    repository: file://../commons
+  - name: oblx-service-template
+    repository: file://../oblx-service-template
     version: ~22.7.2
   - name: int-dataset-streamer
     repository: file://../int-dataset-streamer

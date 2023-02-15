@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "commons.fullname" . }}-config
+  name: {{ include "commons.config" . }}
   labels:
   {{- include "commons.labels" . | nindent 4 }}
 data:
@@ -30,29 +30,3 @@ data:
   SMTP_USE_TLS: "{{ .Values.config.smtp.useTls }}"
   {{- end }}
   PROMETHEUS_URI: "{{ .Values.config.metrics.prometheusUri }}"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "commons.fullname" . }}-log-config
-  labels:
-  {{- include "commons.labels" . | nindent 4 }}
-data:
-  logback.xml: |+
-    <?xml version="1.0" encoding="UTF-8"?>
-    <configuration>
-      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-          <pattern>%d{HH:mm:ss.SSS} | %-5level | %logger{1} | %m%n%rEx{3,
-              org.codejargon.feather,
-              io.netty,
-              io.reactivex
-              }
-          </pattern>
-        </encoder>
-      </appender>
-      <root level="warn">
-          <appender-ref ref="STDOUT"/>
-      </root>
-      <logger name="idlab" level="{{ .Values.config.logLevel }}"/>
-    </configuration>

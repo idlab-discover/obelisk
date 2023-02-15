@@ -5,6 +5,7 @@ metadata:
   name: {{ include "oblx-service-template.fullname" . }}
   labels:
     {{- include "oblx-service-template.labels" . | nindent 4 }}
+    global: {{ default "fail" .Values.global.label | quote }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -30,7 +31,7 @@ spec:
       volumes:
         - name: logback
           configMap:
-            name: "{{ .Values.oblxCommonsReleaseName }}-log-config"
+            name: "{{ include "oblx-service-template.fullname" . }}-log-config"
       {{- if .Values.persistence }}
         - name: {{ include "oblx-service-template.name" . }}-data
           persistentVolumeClaim:
@@ -57,8 +58,12 @@ spec:
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:InitialRAMPercentage=40 -XX:MaxRAMPercentage=80"
           envFrom:
-          {{- if required "Value 'oblxCommonsReleaseName' is required!" .Values.oblxCommonsReleaseName }}
             - configMapRef:
+          {{- if .Values.global }}
+            {{- if .Values.global.config }}
+                name: {{ .Release.Name}}-global-config
+            {{- end }}
+          {{- else if .Values.oblxCommonsReleaseName }}
                 name: "{{ .Values.oblxCommonsReleaseName }}-config"
           {{- end }}
           {{- if .Values.config }}
@@ -87,4 +92,30 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-{{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "oblx-service-template.fullname" . }}-log-config
+  labels:
+  {{- include "oblx-service-template.labels" . | nindent 4 }}
+data:
+  logback.xml: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <configuration>
+      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+          <pattern>%d{HH:mm:ss.SSS} | %-5level | %logger{1} | %m%n%rEx{3,
+              org.codejargon.feather,
+              io.netty,
+              io.reactivex
+              }
+          </pattern>
+        </encoder>
+      </appender>
+      <root level="warn">
+          <appender-ref ref="STDOUT"/>
+      </root>
+      <logger name="idlab" level="{{ .Values.logLevel }}"/>
+    </configuration>
+{{- end -}}

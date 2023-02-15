@@ -52,17 +52,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Create the name of the service account to use
-*/}}
-{{- define "oblx-service-template.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "oblx-service-template.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
-
-{{/*
 Default probes (enabled by default)
 */}}
 {{- define "oblx-service-template.defaultProbes" -}}

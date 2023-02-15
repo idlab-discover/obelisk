@@ -1,6 +1,6 @@
 dependencies:
-- name: commons
-  repository: file://../commons
+- name: oblx-service-template
+  repository: file://../oblx-service-template
   version: 22.7.2
 - name: int-dataset-streamer
   repository: file://../int-dataset-streamer
@@ -44,5 +44,5 @@ dependencies:
 - name: web-catalog
   repository: file://../web-catalog
   version: 22.7.2
-digest: sha256:cb9a9dcde8faf65f1c8ce46111bfa9f1180ab483c1a9f8b52b30a78a0c9d37ef
-generated: "2022-11-24T16:10:09.966929159+01:00"
+digest: sha256:dc3b340b528457a90e58bea2a72d750e3055d199f28c8eb703a96e47ec2108a3
+generated: "2023-02-15T15:44:43.8395072+01:00"
