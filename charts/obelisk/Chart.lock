@@ -29,9 +29,6 @@ dependencies:
 - name: pub-monitor-service
   repository: file://../pub-monitor-service
   version: 22.7.2
-- name: pub-ngsi-service
-  repository: file://../pub-ngsi-service
-  version: 22.7.2
 - name: pub-query-service
   repository: file://../pub-query-service
   version: 22.7.2
@@ -44,5 +41,5 @@ dependencies:
 - name: web-catalog
   repository: file://../web-catalog
   version: 22.7.2
-digest: sha256:dc3b340b528457a90e58bea2a72d750e3055d199f28c8eb703a96e47ec2108a3
-generated: "2023-02-15T15:44:43.8395072+01:00"
+digest: sha256:10eda61e0edfbc7c94b460f1816862be1d74cc089d84b8144598ed7ae159b08d
+generated: "2023-02-15T16:04:24.850719117+01:00"

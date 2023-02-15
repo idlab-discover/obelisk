@@ -1,10 +1,4 @@
-imageCredentials:
-  registry: gitlab.ilabt.imec.be:4567/ibcndevs/obelisk/obelisk
-  username: ""
-  password: ""
-
 global:
-  label: global-label-test
   config:
     host: "obelisk.ilabt.imec.be"
     publicUri: "https://obelisk.ilabt.imec.be"
@@ -43,3 +37,42 @@ global:
     # smtp:
     #   connectionUri: "smtp://smtp.server:25"
     #   useTls: "false"
+
+int-dataset-streamer:
+  enabled: true
+
+int-sink-service:
+  enabled: true
+
+int-stats-collector:
+  enabled: true
+
+pub-auth-service:
+  enabled: true
+
+pub-catalog-service:
+  enabled: true
+
+pub-export-service:
+  enabled: true
+
+pub-ingest-service:
+  enabled: true
+
+pub-issue-service:
+  enabled: true
+
+pub-monitor-service:
+  enabled: true
+
+pub-query-service:
+  enabled: true
+
+pub-streaming-service:
+  enabled: true
+
+web-apiconsole:
+  enabled: true
+
+web-catalog:
+  enabled: true
