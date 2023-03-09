@@ -34,3 +34,6 @@ venv
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+.env-files/pub-catalog.env
+.env-files/pub-ingest.env
+.env-files/pub-query.env
