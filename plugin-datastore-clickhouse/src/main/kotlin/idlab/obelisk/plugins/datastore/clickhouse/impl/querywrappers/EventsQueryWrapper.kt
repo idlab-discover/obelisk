@@ -13,7 +13,6 @@ import idlab.obelisk.plugins.datastore.clickhouse.impl.utils.convertCHValue
 import idlab.obelisk.plugins.datastore.clickhouse.impl.utils.indexOfOrNull
 import idlab.obelisk.plugins.datastore.clickhouse.impl.utils.tableName
 import idlab.obelisk.utils.service.utils.fromMus
-import io.vertx.core.json.JsonArray
 import io.vertx.reactivex.sqlclient.Row
 
 internal open class EventsQueryWrapper(q: EventsQuery, config: OblxConfig) :
@@ -40,7 +39,7 @@ internal open class EventsQueryWrapper(q: EventsQuery, config: OblxConfig) :
 
     override fun processResult(record: Row): MetricEvent {
         return MetricEvent(
-            // Timsetamp is always queried
+            // Timestamp is always queried
             timestamp = fields.indexOfOrNull(CHField.timestampMus)!!
                 .let { record.getLong(it).fromMus(q.timestampPrecision.unit) },
             tsReceived = fields.indexOfOrNull(CHField.tsReceived)?.let { record.getLong(it) },
