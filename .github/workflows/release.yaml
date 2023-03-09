@@ -4,12 +4,12 @@ on:
   push:
     branches:
       - main
-      - 'v**'
 
 jobs:
   check-release:
     outputs:
       lc: ${{ steps.changelog-lines.outputs.lc }}
+      version: ${{ steps.bumper.outputs.new_version }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,9 +27,12 @@ jobs:
         run: |
           mv changelog-${{ steps.bumper.outputs.new_version }}.md changelog-new.md
           echo "lc=$(wc -l changelog-new.md | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
-      - if: ${{ steps.changelog-lines.outputs.lc <= 2 }}
-        run: |
-          echo "No release needed."
+      - if: ${{ steps.changelog-lines.outputs.lc > 2 }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: changelog
+          path: changelog-${{ steps.bumper.outputs.new_version }}.md
+          retention-days: 1
 
   version-bump:
     needs: check-release
@@ -49,34 +52,59 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v3.10.0
         with:
           distribution: 'temurin'
           java-version: '17'
       - name: Install Helm
         uses: azure/setup-helm@v3.5
         with:
-          version: v3.9.2
+          version: v3.11.2
 
-      # Outputs a version with a v prefix
-      - name: Bump version and generate changelog
-        uses: tomerfi/version-bumper-action@1.2.2
-        id: version
-        with:
-          changelog: true
-          bumpoverride: patch
-
-      # Strips the v prefix then bumps helm and maven versions
-      # Sets output with the stripped version
-      - env:
-          VERSION: ${{ steps.version.outputs.new_version }}
+      # Strips the version and checks if a CalVer bump is needed
+      - name: check CalVer bump
+        env:
+          VERSION: ${{ needs.check-release.outputs.version }}
         id: bump
         run: |
-          VERSION=$(echo $VERSION | sed -E 's/v(.*)/\1/')
-          echo "version::$VERSION" >> $GITHUB_OUTPUT
+          MAJOR_MINOR=$(echo $VERSION | sed -E 's/v([0-9]+)\.([0-9]+)\.([0-9]+)/\1.\2/')
+          CALVER=$(date +%y.%-m)
+          if [[ $MAJOR_MINOR != $CALVER ]]; then
+            echo "version=$CALVER.0" >> $GITHUB_OUTPUT
+          else
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      # Download changelog artifact
+      - uses: actions/download-artifact@v3
+        with:
+          name: changelog
+          path: changelog-new.md
+
+      - name: Merge changelog and fix formatting
+        run: |
+          sed -E 's/([\[\.]v)([0-9]+)\.([0-9]+)\.([0-9]+)/\1'"$VERSION"'/gm' -i changelog-new.md
+          sed -E 's/### \[/## [/' -i changelog-${{ steps.bump.outputs.version }}.md
+          sed -e "4r changelog-new.md" -i CHANGELOG.md
+          rm changelog-new.md
+
+      # - name: Run bumper
+      #   id: bumper
+      #   uses: tomerfi/version-bumper-action@1.2.2
+      #   with:
+      #     changelog: true
+      #     bumpoverride: patch
+      # - run: |
+      #     mv changelog-${{ steps.bumper.outputs.new_version }}.md changelog-${{ steps.bump.outputs.version }}.md
+
+      # Bumps Helm and Maven versions
+      - env:
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
           ./mvnw versions:set -q -B -DnewVersion=$VERSION
           ./charts/bump-version.sh $VERSION
           ./charts/update-dependencies.sh
+
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           # Optional. Commit message for the created commit.
