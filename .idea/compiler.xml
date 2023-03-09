@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="plugin-metastore-mongo" />
+        <module name="lib-annotation-processor" />
+        <module name="monolith" />
+        <module name="int-dataset-streamer" />
+        <module name="int-sink-service" />
+        <module name="int-stats-collector" />
+        <module name="pub-auth-service" />
+        <module name="lib-test-utils" />
+        <module name="lib-definitions" />
+        <module name="plugin-monitoring-prometheus" />
+        <module name="lib-pulsar-utils" />
+        <module name="plugin-accessmanager-basic" />
+        <module name="pub-ingest-service" />
+        <module name="plugin-ratelimiter-gubernator" />
+        <module name="pub-export-service" />
+        <module name="pub-issue-service" />
+        <module name="lib-mongo-utils" />
+        <module name="lib-oblx-client" />
+        <module name="lib-service-utils" />
+        <module name="pub-catalog-service" />
+        <module name="pub-streaming-service" />
+        <module name="pub-query-service" />
+        <module name="plugin-datastore-clickhouse" />
+        <module name="pub-monitor-service" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
