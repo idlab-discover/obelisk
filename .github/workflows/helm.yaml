@@ -54,8 +54,9 @@ jobs:
         uses: helm/kind-action@v1.5.0
         if: steps.list-changed.outputs.changed == 'true'
 
-      - name: Install promop CRDs
+      - name: Install promop and traefik CRDs
         run: |
+          kubectl apply --server-side -f https://raw.githubusercontent.com/traefik/traefik/v2.9/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
           kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.63.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
           kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.63.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
 
