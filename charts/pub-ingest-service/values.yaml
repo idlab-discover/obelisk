@@ -9,6 +9,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 config: {}
+logLevel: info
 oblxCommonsReleaseName: commons
 basePath: /api/v3/data/ingest
 host: "obelisk.ilabt.imec.be"
