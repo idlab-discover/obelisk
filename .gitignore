@@ -37,3 +37,6 @@ replay_pid*
 .env-files/pub-catalog.env
 .env-files/pub-ingest.env
 .env-files/pub-query.env
+
+# Helm
+charts/*/charts

@@ -5,7 +5,6 @@ metadata:
   name: {{ include "oblx-service-template.fullname" . }}
   labels:
     {{- include "oblx-service-template.labels" . | nindent 4 }}
-    global: {{ default "fail" .Values.global.label | quote }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}

@@ -1,4 +1,3 @@
-{{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
 */}}
@@ -51,9 +50,7 @@ app.kubernetes.io/name: {{ include "commons.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Create the name of the service account to use
-*/}}
+
 {{- define "commons.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
 {{- default (include "commons.fullname" .) .Values.serviceAccount.name }}
@@ -66,6 +63,10 @@ Create the name of the service account to use
 {{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.imageCredentials.registry (printf "%s:%s" .Values.imageCredentials.username .Values.imageCredentials.password | b64enc) | b64enc }}
 {{- end }}
 
-{{- define "commons.config" }}
-{{- printf "%s-config" {{ include "commons.fullname" }} }}
+{{- define "commons.config" -}}
+{{ include "commons.fullname" . }}-config
+{{- end }}
+
+{{- define "commons.secrets" -}}
+{{ include "commons.fullname" . }}-secrets
 {{- end }}
