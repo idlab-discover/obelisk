@@ -3,6 +3,7 @@ replicaCount: 1
 image:
   name: web-catalog
   repository: gitlab.ilabt.imec.be:4567/obelisk/packages
+  tag: latest
 
 imagePullSecrets: []
 nameOverride: ""

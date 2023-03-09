@@ -72,7 +72,7 @@ pub-streaming-service:
   enabled: true
 
 web-apiconsole:
-  enabled: true
+  enabled: false
 
 web-catalog:
-  enabled: true
+  enabled: false
