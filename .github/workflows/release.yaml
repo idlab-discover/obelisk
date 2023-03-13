@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: changelog
-          path: changelog-${{ steps.bumper.outputs.new_version }}.md
+          path: changelog-new.md
           retention-days: 1
 
   version-bump:
