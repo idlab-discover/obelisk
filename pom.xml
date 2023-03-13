@@ -7,7 +7,7 @@
     <groupId>idlab.obelisk</groupId>
     <artifactId>obelisk-parent</artifactId>
     <packaging>pom</packaging>
-    <version>v23.3.1</version>
+    <version>23.3.1</version>
 
     <modules>
         <module>int-dataset-streamer</module>
