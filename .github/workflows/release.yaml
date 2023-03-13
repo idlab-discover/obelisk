@@ -83,10 +83,11 @@ jobs:
 
       - name: Merge changelog and fix formatting
         run: |
-          sed -E 's/([\[\.]v)([0-9]+)\.([0-9]+)\.([0-9]+)/\1'"$VERSION"'/gm' -i changelog-new.md
-          sed -E 's/### \[/## [/' -i changelog-${{ steps.bump.outputs.version }}.md
-          sed -e "4r changelog-new.md" -i CHANGELOG.md
-          rm changelog-new.md
+          cp changelog-new.md changelog-tmp.md
+          sed -E 's/([\[\.]v)([0-9]+)\.([0-9]+)\.([0-9]+)/\1'"$VERSION"'/gm' -i changelog-tmp.md
+          sed -E 's/### \[/## [/' -i changelog-tmp.md
+          sed -e "4r changelog-tmp.md" -i CHANGELOG.md
+          rm changelog-new.md changelog-tmp.md
 
       # - name: Run bumper
       #   id: bumper
