@@ -79,15 +79,13 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: changelog
-          path: changelog-new.md
 
       - name: Merge changelog and fix formatting
         run: |
-          cp changelog-new.md changelog-tmp.md
-          sed -E 's/([\[\.]v)([0-9]+)\.([0-9]+)\.([0-9]+)/\1'"$VERSION"'/gm' -i changelog-tmp.md
-          sed -E 's/### \[/## [/' -i changelog-tmp.md
-          sed -e "4r changelog-tmp.md" -i CHANGELOG.md
-          rm changelog-new.md changelog-tmp.md
+          sed -E 's/([\[\.]v)([0-9]+)\.([0-9]+)\.([0-9]+)/\1'"$VERSION"'/gm' -i changelog-new.md
+          sed -E 's/### \[/## [/' -i changelog-new.md
+          sed -e "4r changelog-new.md" -i CHANGELOG.md
+          rm changelog-new.md
 
       # - name: Run bumper
       #   id: bumper
