@@ -43,6 +43,21 @@ entries:
     version: 22.05.2
   int-dataset-streamer:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:24.447492013Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: A Helm chart for deploying the internal DataSet streamer service
+      of the Obelisk platform.
+    digest: 4c1a84c4f0106e7455d2faeb7c4b65581a5057ff4ac79a016de1e8484c019b5e
+    name: int-dataset-streamer
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/int-dataset-streamer-23.3.0/int-dataset-streamer-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:32.489274413Z"
     dependencies:
@@ -104,6 +119,20 @@ entries:
     version: 22.05.2
   int-sink-service:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:24.624425872Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: Helm chart for the internal Sink Service of the Obelisk platform.
+    digest: b6c199d47d5b0244af63b80fdb962f78d03bdefe526b0aa9011a632e541a93c7
+    name: int-sink-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/int-sink-service-23.3.0/int-sink-service-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:32.618972723Z"
     dependencies:
@@ -161,6 +190,20 @@ entries:
     version: 22.05.2
   int-stats-collector:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:24.81409462Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: Helm chart for the internal Stats Collector of the Obelisk platform.
+    digest: 6a512cc72ecbcf35e36d1c61748a210870d84612ed9fd8959d85583fe6f352b3
+    name: int-stats-collector
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/int-stats-collector-23.3.0/int-stats-collector-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:32.795530591Z"
     dependencies:
@@ -216,7 +259,85 @@ entries:
     urls:
     - https://github.com/idlab-discover/obelisk/releases/download/int-stats-collector-22.05.2/int-stats-collector-22.05.2.tgz
     version: 22.05.2
+  obelisk:
+  - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:25.014938248Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    - condition: int-dataset-streamer.enabled
+      name: int-dataset-streamer
+      repository: file://../int-dataset-streamer
+      version: ~23.3.0
+    - condition: int-sink-service.enabled
+      name: int-sink-service
+      repository: file://../int-sink-service
+      version: ~23.3.0
+    - condition: int-stats-collector.enabled
+      name: int-stats-collector
+      repository: file://../int-stats-collector
+      version: ~23.3.0
+    - condition: pub-auth-service.enabled
+      name: pub-auth-service
+      repository: file://../pub-auth-service
+      version: ~23.3.0
+    - condition: pub-catalog-service.enabled
+      name: pub-catalog-service
+      repository: file://../pub-catalog-service
+      version: ~23.3.0
+    - condition: pub-export-service.enabled
+      name: pub-export-service
+      repository: file://../pub-export-service
+      version: ~23.3.0
+    - condition: pub-ingest-service.enabled
+      name: pub-ingest-service
+      repository: file://../pub-ingest-service
+      version: ~23.3.0
+    - condition: pub-issue-service.enabled
+      name: pub-issue-service
+      repository: file://../pub-issue-service
+      version: ~23.3.0
+    - condition: pub-monitor-service.enabled
+      name: pub-monitor-service
+      repository: file://../pub-monitor-service
+      version: ~23.3.0
+    - condition: pub-query-service.enabled
+      name: pub-query-service
+      repository: file://../pub-query-service
+      version: ~23.3.0
+    - condition: pub-streaming-service.enabled
+      name: pub-streaming-service
+      repository: file://../pub-streaming-service
+      version: ~23.3.0
+    - condition: web-apiconsole.enabled
+      name: web-apiconsole
+      repository: file://../web-apiconsole
+      version: ~23.3.0
+    - condition: web-catalog.enabled
+      name: web-catalog
+      repository: file://../web-catalog
+      version: ~23.3.0
+    description: A Helm chart for Kubernetes
+    digest: ed2d4de35728298136d83498b92b212cb2147015d6130c2f8e128d36ca13ba68
+    name: obelisk
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/obelisk-23.3.0/obelisk-23.3.0.tgz
+    version: 23.3.0
   oblx-mkdocs:
+  - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:25.199920269Z"
+    description: A Helm chart for deploying the Obelisk Documentation powered by mkdocs
+      to Kubernetes.
+    digest: 2bcd276146aa8662c547cad37808f5ed86e6c850b1bc61f82319ab9b1edf77c1
+    name: oblx-mkdocs
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/oblx-mkdocs-23.3.0/oblx-mkdocs-23.3.0.tgz
+    version: 23.3.0
   - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:32.936912165Z"
@@ -263,6 +384,16 @@ entries:
     version: 22.05.2
   oblx-service-template:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:25.64677128Z"
+    description: A Helm chart for Kubernetes
+    digest: e9540a615b8234abeed74ae259a5d7b48ea76f9eb2b5206d40d85b9e928ccb5a
+    name: oblx-service-template
+    type: library
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/oblx-service-template-23.3.0/oblx-service-template-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:33.061350747Z"
     description: A Helm chart for Kubernetes
@@ -303,6 +434,20 @@ entries:
     - https://github.com/idlab-discover/obelisk/releases/download/oblx-service-template-22.05.2/oblx-service-template-22.05.2.tgz
     version: 22.05.2
   pub-auth-service:
+  - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:25.881071345Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: Helm chart for the public Authentication Service of the Obelisk platform.
+    digest: 1f366b986cb8208af364bc9955baed0e7fbabe369e96145e590e3613041d1c47
+    name: pub-auth-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/pub-auth-service-23.3.0/pub-auth-service-23.3.0.tgz
+    version: 23.3.0
   - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:33.187703239Z"
@@ -360,6 +505,20 @@ entries:
     - https://github.com/idlab-discover/obelisk/releases/download/pub-auth-service-22.05.2/pub-auth-service-22.05.2.tgz
     version: 22.05.2
   pub-catalog-service:
+  - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:26.055208108Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: Helm chart for the public Catalog Service of the Obelisk platform.
+    digest: aca4219fdc2f246bf888e11c1519d6232cfab5b3dfa0215d6905a4eaa036f4a2
+    name: pub-catalog-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/pub-catalog-service-23.3.0/pub-catalog-service-23.3.0.tgz
+    version: 23.3.0
   - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:33.332991335Z"
@@ -479,6 +638,20 @@ entries:
     version: 22.05.2
   pub-export-service:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:26.219555987Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: Helm chart for the public Export Service of the Obelisk platform.
+    digest: d48b2bb5e8f628a803e9ab5ef0300d903ec9c78b6b84d933ace8c950eeeed21e
+    name: pub-export-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/pub-export-service-23.3.0/pub-export-service-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:33.620364109Z"
     dependencies:
@@ -535,6 +708,20 @@ entries:
     - https://github.com/idlab-discover/obelisk/releases/download/pub-export-service-22.05.2/pub-export-service-22.05.2.tgz
     version: 22.05.2
   pub-ingest-service:
+  - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:26.412131838Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: Helm chart for the public Ingest Service of the Obelisk platform.
+    digest: a0f5350acc15df3ea9db05d27f918dcd86e45bfb431c5ac2f6da0f920e639757
+    name: pub-ingest-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/pub-ingest-service-23.3.0/pub-ingest-service-23.3.0.tgz
+    version: 23.3.0
   - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:33.763328393Z"
@@ -593,6 +780,20 @@ entries:
     version: 22.05.2
   pub-issue-service:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:26.608543857Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: A Helm chart for the public Issue Service of the Obelisk platform.
+    digest: 9632208caf5ebac822553580b0dcfe107f65c78bb16d7a67e9d5e77b301811fa
+    name: pub-issue-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/pub-issue-service-23.3.0/pub-issue-service-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:33.896530722Z"
     dependencies:
@@ -649,6 +850,20 @@ entries:
     - https://github.com/idlab-discover/obelisk/releases/download/pub-issue-service-22.05.2/pub-issue-service-22.05.2.tgz
     version: 22.05.2
   pub-monitor-service:
+  - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:26.866174252Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: Helm chart for the public Monitoring Service of the Obelisk platform.
+    digest: 11b6f257f9705e0ee74bf5926de3c5edf78229025330df99a0cd563a20fbeae3
+    name: pub-monitor-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/pub-monitor-service-23.3.0/pub-monitor-service-23.3.0.tgz
+    version: 23.3.0
   - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:34.02754054Z"
@@ -764,6 +979,20 @@ entries:
     version: 22.05.2
   pub-query-service:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:27.130758932Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: A Helm chart for the public Query Service of the Obelisk platform.
+    digest: 47d2e8d0a15a55291b8ffb107a6f45d034d1a0217c44c1fb23ef0962b9fc3dc6
+    name: pub-query-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/pub-query-service-23.3.0/pub-query-service-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:34.309922987Z"
     dependencies:
@@ -820,6 +1049,20 @@ entries:
     - https://github.com/idlab-discover/obelisk/releases/download/pub-query-service-22.05.2/pub-query-service-22.05.2.tgz
     version: 22.05.2
   pub-streaming-service:
+  - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:27.346998036Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: A Helm chart for the public Streaming Service of the Obelisk platform.
+    digest: cade0ac99052f77deae706d2f448190d40cf8ff5022bdc0a46cd3cea9ac7e1d2
+    name: pub-streaming-service
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/pub-streaming-service-23.3.0/pub-streaming-service-23.3.0.tgz
+    version: 23.3.0
   - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:34.455405984Z"
@@ -878,6 +1121,20 @@ entries:
     version: 22.05.2
   web-apiconsole:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:27.549890308Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: A Helm chart for the API Console of the Obelisk platform.
+    digest: 040b213884e7ce84ca54c772afb049389d5f669e27da9b249bc66ed904d75a2f
+    name: web-apiconsole
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/web-apiconsole-23.3.0/web-apiconsole-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:34.602326489Z"
     dependencies:
@@ -935,6 +1192,20 @@ entries:
     version: 22.05.2
   web-catalog:
   - apiVersion: v2
+    appVersion: 23.3.0
+    created: "2023-03-13T08:36:28.10165725Z"
+    dependencies:
+    - name: oblx-service-template
+      repository: file://../oblx-service-template
+      version: ~23.3.0
+    description: A Helm chart for the Catalog frontend of the Obelisk platform.
+    digest: 1edf7ee18605ddb3165be6ef69197fb7f82437bed660ce815fd8b3b151fdc6ec
+    name: web-catalog
+    type: application
+    urls:
+    - https://github.com/idlab-discover/obelisk/releases/download/web-catalog-23.3.0/web-catalog-23.3.0.tgz
+    version: 23.3.0
+  - apiVersion: v2
     appVersion: 22.7.2
     created: "2022-11-17T13:58:34.763345671Z"
     dependencies:
@@ -990,4 +1261,4 @@ entries:
     urls:
     - https://github.com/idlab-discover/obelisk/releases/download/web-catalog-22.05.2/web-catalog-22.05.2.tgz
     version: 22.05.2
-generated: "2022-11-17T13:58:34.763549572Z"
+generated: "2023-03-13T08:36:28.102057478Z"
