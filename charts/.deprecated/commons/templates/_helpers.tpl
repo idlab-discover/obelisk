@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "oblx-service-template.name" -}}
+{{- define "commons.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "oblx-service-template.fullname" -}}
+{{- define "commons.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -23,20 +23,19 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 
-
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "oblx-service-template.chart" -}}
+{{- define "commons.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "oblx-service-template.labels" -}}
-helm.sh/chart: {{ include "oblx-service-template.chart" . }}
-{{ include "oblx-service-template.selectorLabels" . }}
+{{- define "commons.labels" -}}
+helm.sh/chart: {{ include "commons.chart" . }}
+{{ include "commons.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -46,23 +45,28 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "oblx-service-template.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "oblx-service-template.name" . }}
+{{- define "commons.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "commons.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Default probes (enabled by default)
-*/}}
-{{- define "oblx-service-template.defaultProbes" -}}
-{{- if not .Values.disableDefaultProbes }}
-livenessProbe:
-  httpGet:
-    path: /_health
-    port: http
-readinessProbe:
-  httpGet:
-    path: /_status
-    port: http
+
+{{- define "commons.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "commons.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
 {{- end }}
+{{- end }}
+
+{{- define "commons.imagePullSecret" }}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.imageCredentials.registry (printf "%s:%s" .Values.imageCredentials.username .Values.imageCredentials.password | b64enc) | b64enc }}
+{{- end }}
+
+{{- define "commons.config" -}}
+{{ include "commons.fullname" . }}-config
+{{- end }}
+
+{{- define "commons.secrets" -}}
+{{ include "commons.fullname" . }}-secrets
 {{- end }}

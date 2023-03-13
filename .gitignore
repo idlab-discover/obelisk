@@ -1,4 +1,7 @@
-.idea
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf
+
 */target/*
 *.iml
 web-*/build/
@@ -9,6 +12,7 @@ pub-export-service/exports
 exports/
 venv
 */sloc.txt
+.env-files
 
 # Compiled class file
 *.class
@@ -37,3 +41,6 @@ replay_pid*
 .env-files/pub-catalog.env
 .env-files/pub-ingest.env
 .env-files/pub-query.env
+
+# Helm
+charts/*/charts

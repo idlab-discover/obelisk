@@ -12,14 +12,11 @@ import idlab.obelisk.services.internal.streamer.DatasetStreamerService
 import idlab.obelisk.services.pub.auth.AuthService
 import idlab.obelisk.services.pub.auth.AuthServiceModule
 import idlab.obelisk.services.pub.catalog.CatalogService
-import idlab.obelisk.services.pub.dcat.DCATService
 import idlab.obelisk.services.pub.export.ExportService
 import idlab.obelisk.services.pub.ingest.IngestService
 import idlab.obelisk.services.pub.issues.IssueService
 import idlab.obelisk.services.pub.monitor.MonitorService
 import idlab.obelisk.services.pub.monitor.MonitoringModule
-import idlab.obelisk.services.pub.ngsi.NgsiLDService
-import idlab.obelisk.services.pub.ngsi.NgsiModule
 import idlab.obelisk.services.pub.query.QueryService
 import idlab.obelisk.services.pub.streaming.StreamingService
 import idlab.obelisk.utils.service.OblxBaseModule
@@ -40,8 +37,6 @@ fun main(args: Array<String>) {
         CatalogService::class.java,
         SinkService::class.java,
         StreamingService::class.java,
-        DCATService::class.java,
-        NgsiLDService::class.java,
         MonitorService::class.java,
         ExportService::class.java,
         IssueService::class.java,
@@ -56,7 +51,6 @@ fun main(args: Array<String>) {
         PulsarModule(initLocalPulsar = true),
         ClickhouseDataStoreModule(),
         MongoDBMetaStoreModule(),
-        NgsiModule(),
         MonitoringModule(),
         GubernatorRateLimiterModule(),
         PrometheusMonitoringModule()

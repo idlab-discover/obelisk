@@ -1,0 +1,78 @@
+global:
+  config:
+    host: "obelisk.ilabt.imec.be"
+    publicUri: "https://obelisk.ilabt.imec.be"
+    # Level of log output (debug, info, warn)
+    logLevel: "warn"
+    metrics:
+      # Supply a Prometheus URI to allow Obelisk to show limited global and per dataset stats in the Catalog UI.
+      prometheusUri: "http://kube-prometheus-stack.monitoring:9090"
+      port: 8081
+    auth:
+      adminUser: "admin"
+      adminPassword: ""
+    pulsar:
+      connectionUri: "pulsar://pulsar-broker.pulsar:6650"
+      adminApiUri: "http://pulsar-broker.pulsar:8080"
+      topicNames:
+        metricEvents: "public/oblx-core/metric_events"
+        datasetTopicsPrefix: "public/oblx-ds/metric_events_ds_"
+      subscriberNames:
+        storageSink: "storage_sink"
+        datasetStreamer: "dataset_streamer"
+      listenerThreads: 2
+    redis:
+      connectionUri: "redis://redis-master.redis:6379"
+    clickhouse:
+      connectionUri: "jdbc:clickhouse://clickhouse-clickhouse.clickhouse:8123/default"
+      clusterName: "oblx-data"
+      minQueryTimeoutSeconds: 10
+      maxQueryTimeoutSeconds: 20
+    mongodb:
+      connectionUri: "mongodb://mongodb.mongodb:27017"
+      database: "obelisk"
+    gubernator:
+      connectionUri: "http://gubernator.gubernator:80"
+    # SMTP settings for Catalog Issues, optional
+    # smtp:
+    #   connectionUri: "smtp://smtp.server:25"
+    #   useTls: "false"
+
+int-dataset-streamer:
+  enabled: true
+
+int-sink-service:
+  enabled: true
+
+int-stats-collector:
+  enabled: true
+
+pub-auth-service:
+  enabled: true
+
+pub-catalog-service:
+  enabled: true
+
+pub-export-service:
+  enabled: true
+
+pub-ingest-service:
+  enabled: true
+
+pub-issue-service:
+  enabled: true
+
+pub-monitor-service:
+  enabled: true
+
+pub-query-service:
+  enabled: true
+
+pub-streaming-service:
+  enabled: true
+
+web-apiconsole:
+  enabled: false
+
+web-catalog:
+  enabled: false

@@ -1,0 +1,32 @@
+# Obelisk Base Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-global-config
+  labels:
+  {{- include "obelisk.labels" . | nindent 4 }}
+data:
+  METRICS_PORT: "{{ .Values.global.config.metrics.port }}"
+  AUTH_PUBLIC_URI: "{{ .Values.global.config.publicUri }}"
+  AUTH_ADMIN_USER: "{{ .Values.global.config.auth.adminUser }}"
+  AUTH_ADMIN_PASSWORD: "{{ .Values.global.config.auth.adminPassword }}"
+  PULSAR_CONNECTION_URI: "{{ .Values.global.config.pulsar.connectionUri }}"
+  PULSAR_ADMIN_API_URI: "{{ .Values.global.config.pulsar.adminApiUri }}"
+  PULSAR_METRIC_EVENTS_TOPIC: "{{ .Values.global.config.pulsar.topicNames.metricEvents }}"
+  PULSAR_DATASET_TOPICS_PREFIX: "{{ .Values.global.config.pulsar.topicNames.datasetTopicsPrefix }}"
+  PULSAR_STORAGE_SINK_SUBSCRIBER: "{{ .Values.global.config.pulsar.subscriberNames.storageSink }}"
+  PULSAR_DATASET_STREAMER_SUBSCRIBER: "{{ .Values.global.config.pulsar.subscriberNames.datasetStreamer }}"
+  PULSAR_LISTENER_THREADS: "{{ .Values.global.config.pulsar.listenerThreads }}"
+  REDIS_CONNECTION_URI: "{{ .Values.global.config.redis.connectionUri }}"
+  CLICKHOUSE_CONNECTION_URI: "{{ .Values.global.config.clickhouse.connectionUri }}"
+  CLICKHOUSE_CLUSTER_NAME: "{{ .Values.global.config.clickhouse.clusterName }}"
+  CLICKHOUSE_MIN_QUERY_TIMEOUT_SECONDS: "{{ .Values.global.config.clickhouse.minQueryTimeoutSeconds }}"
+  CLICKHOUSE_MAX_QUERY_TIMEOUT_SECONDS: "{{ .Values.global.config.clickhouse.maxQueryTimeoutSeconds }}"
+  MONGO_CONNECTION_URI: "{{ .Values.global.config.mongodb.connectionUri }}"
+  MONGO_DB_NAME: "{{ .Values.global.config.mongodb.database }}"
+  GUBERNATOR_CONNECTION_URI: "{{ .Values.global.config.gubernator.connectionUri }}"
+  {{- if .Values.global.config.smtp }}
+  SMTP_CONNECTION_URI: "{{ .Values.global.config.smtp.connectionUri }}"
+  SMTP_USE_TLS: "{{ .Values.global.config.smtp.useTls }}"
+  {{- end }}
+  PROMETHEUS_URI: "{{ .Values.global.config.metrics.prometheusUri }}"

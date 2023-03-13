@@ -54,11 +54,6 @@
         </dependency>
         <dependency>
             <groupId>idlab.obelisk</groupId>
-            <artifactId>pub-ngsi-service</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
             <artifactId>pub-monitor-service</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -91,11 +86,6 @@
             <groupId>org.apache.pulsar</groupId>
             <artifactId>pulsar-client-admin</artifactId>
             <version>${pulsar.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>idlab.obelisk</groupId>
-            <artifactId>pub-dcat-service</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>

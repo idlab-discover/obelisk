@@ -1,0 +1,24 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Query Launch" type="JetRunConfigurationType">
+    <envs>
+      <env name="HTTP_PORT" value="8091" />
+      <env name="METRICS_PORT" value="8191" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="idlab.obelisk.services.pub.query.QueryServiceKt" />
+    <module name="pub-query-service" />
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="--add-opens=java.base/sun.net=ALL-UNNAMED -Djava.net.preferIPv4Addresses=true -Djava.net.preferIPv4Stack=true" />
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="true" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="true" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env-files/pub-query.env" />
+      </ENTRIES>
+    </extension>
+    <method v="2" />
+  </configuration>
+</component>

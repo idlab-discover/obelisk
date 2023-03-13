@@ -25,6 +25,8 @@ import idlab.obelisk.utils.service.instrumentation.IdToNameMap
 import idlab.obelisk.utils.service.instrumentation.TagTemplate
 import idlab.obelisk.utils.service.instrumentation.TargetType
 import idlab.obelisk.utils.service.utils.applyToken
+import io.micrometer.core.instrument.Timer
+import io.micrometer.core.instrument.DistributionSummary;
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
@@ -71,9 +73,7 @@ const val DEFAULT_MAX_EVENT_QUERY_LIMIT = 100000
 const val ENV_MAX_STATS_QUERY_LIMIT = "MAX_STATS_QUERY_LIMIT"
 const val DEFAULT_MAX_STATS_QUERY_LIMIT = 2400
 
-private const val GLOBAL_REQUESTS_METRIC = "oblx.query.global.requests"
 private const val REQUESTS_METRIC = "oblx.query.requests"
-private const val GLOBAL_RESPONSE_SIZE_METRIC = "oblx.query.global.response.size"
 private const val RESPONSE_SIZE_METRIC = "oblx.query.response.size"
 private const val GLOBAL_TARGETED_DATASETS_METRIC = "oblx.query.global.datarange.datasets"
 private val specificQueryTags = TagTemplate("queryType", "datasetId", "datasetName")
@@ -90,6 +90,18 @@ class QueryService @Inject constructor(
 ) : OblxService {
 
     private val microMeterRegistry = BackendRegistries.getDefaultNow()
+    private val queryDurationTimerBuilder = Timer
+        .builder(REQUESTS_METRIC)
+        .publishPercentileHistogram()
+        .description("Duration (ms) of a query request.")
+    private val queryResponseSizeSummaryBuilder = DistributionSummary
+        .builder(RESPONSE_SIZE_METRIC)
+        .baseUnit("bytes")
+        .description("Average event size of query responses.")
+    private val crossDatasetQuerySummaryBuilder = DistributionSummary
+        .builder(GLOBAL_TARGETED_DATASETS_METRIC)
+        .serviceLevelObjectives(1.0,2.0,3.0,5.0,10.0)
+        .description("Number of datasets targeted per query (to track usage of cross dataset querying functionality)")
 
     private val logger = KotlinLogging.logger { }
     private val datasetIdToNameMap = IdToNameMap(metaStore, TargetType.DATASET)
@@ -180,15 +192,15 @@ class QueryService @Inject constructor(
         query.dataRange.datasets.forEach { datasetId ->
             val datasetName = datasetIdToNameMap.getName(datasetId) ?: ""
             val tags = specificQueryTags.instantiate(queryType, datasetId, datasetName)
-            microMeterRegistry.timer(REQUESTS_METRIC, tags).record(durationMs, TimeUnit.MILLISECONDS)
-            microMeterRegistry.summary(RESPONSE_SIZE_METRIC, tags).record(response.items.size.toDouble())
+            queryDurationTimerBuilder.tags(tags).register(microMeterRegistry)
+                .record(durationMs, TimeUnit.MILLISECONDS)
+            queryResponseSizeSummaryBuilder.tags(tags).register(microMeterRegistry)
+                .record(response.items.size.toDouble())
         }
 
         // Global instrumentation
         val globalTags = globalQueryTags.instantiate(queryType)
-        microMeterRegistry.timer(GLOBAL_REQUESTS_METRIC, globalTags).record(durationMs, TimeUnit.MILLISECONDS)
-        microMeterRegistry.summary(GLOBAL_RESPONSE_SIZE_METRIC, globalTags).record(response.items.size.toDouble())
-        microMeterRegistry.summary(GLOBAL_TARGETED_DATASETS_METRIC, globalTags)
+        crossDatasetQuerySummaryBuilder.tags(globalTags).register(microMeterRegistry)
             .record(query.dataRange.datasets.size.toDouble())
     }
 

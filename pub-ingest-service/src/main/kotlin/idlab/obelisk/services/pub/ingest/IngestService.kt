@@ -10,10 +10,7 @@ import idlab.obelisk.definitions.ratelimiting.RateLimiter
 import idlab.obelisk.plugins.accessmanager.basic.BasicAccessManagerModule
 import idlab.obelisk.plugins.metastore.mongo.MongoDBMetaStoreModule
 import idlab.obelisk.plugins.ratelimiter.gubernator.GubernatorRateLimiterModule
-import idlab.obelisk.pulsar.utils.PulsarModule
-import idlab.obelisk.pulsar.utils.RxPulsarProducerCache
-import idlab.obelisk.pulsar.utils.configureForHighThroughput
-import idlab.obelisk.pulsar.utils.rxSend
+import idlab.obelisk.pulsar.utils.*
 import idlab.obelisk.utils.service.OblxBaseModule
 import idlab.obelisk.utils.service.OblxLauncher
 import idlab.obelisk.utils.service.http.AuthorizationException
@@ -24,6 +21,7 @@ import idlab.obelisk.utils.service.instrumentation.TagTemplate
 import idlab.obelisk.utils.service.instrumentation.TargetType
 import idlab.obelisk.utils.service.reactive.flatMap
 import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.DistributionSummary
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -34,10 +32,12 @@ import io.vertx.reactivex.ext.web.Router
 import io.vertx.reactivex.ext.web.RoutingContext
 import io.vertx.reactivex.ext.web.handler.BodyHandler
 import org.apache.pulsar.client.api.PulsarClient
+import org.apache.pulsar.client.api.PulsarClientException.TimeoutException
 import org.apache.pulsar.client.api.Schema
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.system.exitProcess
 
 const val HTTP_BASE_PATH = "/data/ingest"
 private val mapper = DatabindCodec.mapper()
@@ -50,7 +50,6 @@ private const val REQUEST_SIZE_BYTES_METRIC = "oblx.ingest.request.size.bytes"
 private const val REQUEST_SIZE_EVENTS_METRIC = "oblx.ingest.request.size.events"
 private const val SEND_FAILURES_METRIC = "oblx.ingest.send.failures"
 
-// Changes :)
 fun main(args: Array<String>) {
     OblxLauncher.with(
         OblxBaseModule(),
@@ -77,6 +76,15 @@ class IngestService @Inject constructor(
         .builder(SEND_FAILURES_METRIC)
         .description("Counts number of times sending an event to Pulsar resulted in a failure.")
         .register(microMeterRegistry)
+    private val receivedEventsBuilder = Counter
+        .builder(RECEIVED_EVENTS_METRIC)
+        .description("Counts events received by Oblx Ingest Service.")
+    private val requestSizeBytesBuilder = DistributionSummary
+        .builder(REQUEST_SIZE_BYTES_METRIC)
+        .description("Summary tracking the byte size of requests to the Oblx Ingest Service.")
+    private val requestSizeEventsBuilder = DistributionSummary
+        .builder(REQUEST_SIZE_EVENTS_METRIC)
+        .description("Summary tracking number of events per request to the Oblx Ingest Service")
 
     private val datasetIdToNameMap = IdToNameMap(metaStore, TargetType.DATASET)
 
@@ -101,7 +109,7 @@ class IngestService @Inject constructor(
             getValidatedToken(datasetId, ctx)
                 .flatMapCompletable { token ->
                     try {
-                        val events = mapper.readValue<List<IngestMetricEvent>>(ctx.bodyAsString, eventListTypeFactory)
+                        val events = mapper.readValue<List<IngestMetricEvent>>(ctx.body().asString(), eventListTypeFactory)
                         if (events.isEmpty()) {
                             Completable.error(BadRequestException("The event array cannot be empty! "))
                         } else {
@@ -126,12 +134,12 @@ class IngestService @Inject constructor(
                             .doOnComplete {
                                 val datasetName = datasetIdToNameMap.getName(datasetId) ?: ""
                                 val tags = datasetIdAndNameTags.instantiate(datasetId, datasetName)
-                                microMeterRegistry.counter(RECEIVED_EVENTS_METRIC, tags)
+                                receivedEventsBuilder.tags(tags).register(microMeterRegistry)
                                     .increment(events.size.toDouble())
-                                microMeterRegistry.summary(REQUEST_SIZE_BYTES_METRIC, tags)
-                                    .record(ctx.body.bytes.size.toDouble())
-                                microMeterRegistry.summary(REQUEST_SIZE_EVENTS_METRIC, tags)
+                                requestSizeEventsBuilder.tags(tags).register(microMeterRegistry)
                                     .record(events.size.toDouble())
+                                requestSizeBytesBuilder.tags(tags).register(microMeterRegistry)
+                                    .record(ctx.body.bytes.size.toDouble())
                             }
                     } catch (e: Exception) {
                         Completable.error(BadRequestException("Could not process the request body: ${e.message}"))
@@ -139,7 +147,13 @@ class IngestService @Inject constructor(
                 }
                 .subscribeBy(
                     onComplete = { ctx.response().setStatusCode(204).end() },
-                    onError = writeHttpError(ctx)
+                    onError = { err ->
+                        writeHttpError(ctx).invoke(err)
+                        if (err is TimeoutException) {
+                            logger.error(err) { "Detected PulsarClient TimeoutException, shutting down." }
+                            exitProcess(1)
+                        }
+                    }
                 )
         }
         return datasetIdToNameMap.init()
@@ -190,12 +204,12 @@ class IngestService @Inject constructor(
 }
 
 private fun getPrecision(ctx: RoutingContext): TimeUnit {
-    return ctx.queryParams().get("timestampPrecision")?.let { TimeUnit.valueOf(it.toUpperCase()) }
+    return ctx.queryParams().get("timestampPrecision")?.let { TimeUnit.valueOf(it.uppercase()) }
         ?: TimeUnit.MILLISECONDS
 }
 
 private fun getIngestMode(ctx: RoutingContext): IngestMode {
-    return ctx.queryParams().get("mode")?.let { IngestMode.valueOf(it.toUpperCase()) } ?: IngestMode.DEFAULT
+    return ctx.queryParams().get("mode")?.let { IngestMode.valueOf(it.uppercase()) } ?: IngestMode.DEFAULT
 }
 
 private enum class IngestMode {
