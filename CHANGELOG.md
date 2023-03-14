@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [v](https://github.com/idlab-discover/obelisk/compare/v23.3.0...v) (2023-03-14)
+
+
+### Features
+
+* web-console uses npm again ([6ad11bf](https://github.com/idlab-discover/obelisk/commit/6ad11bf85aedcbd365b27b2d001e9e2c75f9e334))
+
 ## [v](https://github.com/idlab-discover/obelisk/compare/v22.7.2...v) (2023-03-13)
 
 
