@@ -53,7 +53,7 @@ build-web-catalog:
     - cd ${PROJECT_SUBDIR}
     - npm --version
   script:
-    - npm run build --configuration production --base-href /${BASE_HREF}/
+    - npm run build -- --configuration production --base-href /${BASE_HREF}/
   artifacts:
     paths:
       - ${PROJECT_SUBDIR}/docker/
