@@ -27,7 +27,7 @@
     "@fortawesome/angular-fontawesome": "^0.10.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@ng-bootstrap/ng-bootstrap": "^11.0.0-rc.0",
+    "@ng-bootstrap/ng-bootstrap": "^11.0.1",
     "@ng-select/ng-select": "^8.1.1",
     "@ngneat/until-destroy": "9.x",
     "@obelisk/auth": "3.7.x",
@@ -35,6 +35,7 @@
     "apexcharts": "^3.27.3",
     "bootstrap": "^4.5.3",
     "codemirror": "^5.62.2",
+    "core-js": "^3.29.1",
     "jsonpath": "^1.1.1",
     "moment": "^2.29.1",
     "ng-apexcharts": "^1.6.0",
@@ -44,7 +45,7 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~13.1.1",
+    "@angular-devkit/build-angular": "~13.3.10",
     "@angular/cli": "^13.1.2",
     "@angular/compiler-cli": "^13.1.1",
     "@angular/language-service": "^13.1.1",

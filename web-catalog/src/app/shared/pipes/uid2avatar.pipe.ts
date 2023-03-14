@@ -1,6 +1,4 @@
-import { AsyncPipe } from '@angular/common';
-import { ThrowStmt } from '@angular/compiler';
-import { ChangeDetectorRef, Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 import { ObeliskService } from '@core/services';
 import { Utils } from '@shared/utils';
 import { Observable } from 'rxjs';
