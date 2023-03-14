@@ -38,7 +38,6 @@ speed-measure-plugin.json
 /coverage
 /libpeerconnection.log
 npm-debug.log
-yarn-error.log
 testem.log
 /typings
 
@@ -48,12 +47,3 @@ Thumbs.db
 /node_modules/*
 
 docker/dist/*
-
-#yarn2
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions

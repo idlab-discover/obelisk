@@ -17,7 +17,7 @@ npm-dependencies-web-catalog:
     - if: '$CI_PIPELINE_SOURCE == "web" && $REBUILD'
       when: never
     - changes:
-      - web-catalog/yarn.lock
+      - web-catalog/package-lock.json
   extends:
    - .web-catalog
   cache:
@@ -26,7 +26,7 @@ npm-dependencies-web-catalog:
       - ${PROJECT_SUBDIR}/node_modules/
   script:
     - cd ${PROJECT_SUBDIR}
-    - yarn
+    - npm ci
   stage: pre
 
 build-web-catalog:
@@ -51,9 +51,9 @@ build-web-catalog:
     policy: pull
   before_script:
     - cd ${PROJECT_SUBDIR}
-    - yarn --version
+    - npm --version
   script:
-    - yarn run build --configuration production --base-href /${BASE_HREF}/
+    - npm run build -- --configuration production --base-href /${BASE_HREF}/
   artifacts:
     paths:
       - ${PROJECT_SUBDIR}/docker/

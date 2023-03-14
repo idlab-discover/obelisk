@@ -17,7 +17,7 @@ npm-dependencies-web-apiconsole:
     - if: '$CI_PIPELINE_SOURCE == "web" && $REBUILD'
       when: never
     - changes:
-      - web-apiconsole/yarn.lock
+      - web-apiconsole/package-lock.json
   extends:
    - .web-apiconsole
   cache:
@@ -26,7 +26,7 @@ npm-dependencies-web-apiconsole:
       - ${PROJECT_SUBDIR}/node_modules/
   script:
     - cd ${PROJECT_SUBDIR}
-    - yarn
+    - npm ci
   stage: pre
 
 build-web-apiconsole:
@@ -51,9 +51,9 @@ build-web-apiconsole:
     policy: pull
   before_script:
     - cd ${PROJECT_SUBDIR}
-    - yarn --version
+    - npm --version
   script:
-    - yarn run build --configuration production --base-href /${BASE_HREF}/
+    - npm run build -- --configuration production --base-href /${BASE_HREF}/
   artifacts:
     paths:
       - ${PROJECT_SUBDIR}/docker/

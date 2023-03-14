@@ -2,9 +2,6 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "cli": {
-    "packageManager": "yarn"
-  },
   "projects": {
     "web-catalog": {
       "projectType": "application",
@@ -61,7 +58,7 @@
             ],
             "scripts": [
               "node_modules/apexcharts/dist/apexcharts.min.js",
-              "node_modules/marked/lib/marked.js",
+              "node_modules/marked/marked.min.js",
               "node_modules/prismjs/prism.js",
               "node_modules/prismjs/components/prism-javascript.min.js",
               "node_modules/prismjs/components/prism-typescript.min.js",
