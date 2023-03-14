@@ -1,22 +1,19 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [conventional-commits.org](https://www.conventionalcommits.org/en/v1.0.0/#summary) for commit guidelines.
 
-## [v](https://github.com/idlab-discover/obelisk/compare/v23.3.0...v) (2023-03-14)
-
+## [v23.3.1](https://github.com/idlab-discover/obelisk/compare/v23.3.0...v23.3.1) (2023-03-14)
 
 ### Features
 
 * web-console uses npm again ([6ad11bf](https://github.com/idlab-discover/obelisk/commit/6ad11bf85aedcbd365b27b2d001e9e2c75f9e334))
 
-## [v](https://github.com/idlab-discover/obelisk/compare/v22.7.2...v) (2023-03-13)
-
+## [v23.3.0](https://github.com/idlab-discover/obelisk/compare/v22.7.2...v23.3.0) (2023-03-13)
 
 ### Features
 
 * **helm:** Obelisk deployment chart (single) ([#217](https://github.com/idlab-discover/obelisk/issues/217)) ([83ccb36](https://github.com/idlab-discover/obelisk/commit/83ccb366c1abf81ff51f501cd62107ea57d3aa82))
 * **instrumentation:** improvements to instrumentation (added descriptions, rate limiting metrics, removed redundant global_*) ([d4bcce8](https://github.com/idlab-discover/obelisk/commit/d4bcce848146ce2d55c8493c06a4afc4d0267219))
-
 
 ### Bug Fixes
 

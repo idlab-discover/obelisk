@@ -1,18 +1,31 @@
+# IntelliJ IDEA
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/shelf
 
+# Java
 */target/*
 *.iml
+*/.flattened-pom.xml
+/.flattened-pom.xml
+
+# NPM
 web-*/build/
 web-*/node_modules/
+
+# Helm
+/charts/*/charts/
+
+# Export Service
 pub-export-service/exports
-*/.flattened-pom.xml
-.flattened-pom.xml
-exports/
+/exports/
+
+# Env files
 venv
-*/sloc.txt
-.env-files
+.env-files/
+
+# nektos/act files (local GitHub Action testing)
+.github/act
 
 # Compiled class file
 *.class
@@ -34,13 +47,11 @@ venv
 *.zip
 *.tar.gz
 *.rar
+*.tgz
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
-.env-files/pub-catalog.env
-.env-files/pub-ingest.env
-.env-files/pub-query.env
 
-# Helm
-charts/*/charts
+# SLOC files
+*/sloc.txt
