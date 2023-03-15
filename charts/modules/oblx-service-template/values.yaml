@@ -24,10 +24,7 @@ persistence:
   requestSize: ""
   accessMode: ReadWriteMany
 
-livenessProbe:
-  enabled: true
-
-disableDefaultProbes: false
+disableDefaultProbes: true
 
 serviceAccount:
   # Specifies whether a service account should be created

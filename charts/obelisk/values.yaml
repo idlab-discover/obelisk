@@ -1,4 +1,5 @@
 global:
+  storageClassName: ""
   config:
     host: "obelisk.ilabt.imec.be"
     publicUri: "https://obelisk.ilabt.imec.be"

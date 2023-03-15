@@ -5,7 +5,7 @@ apiVersion: v1
 metadata:
   name: {{ include "oblx-service-template.fullname" . }}-pv-claim
 spec:
-  storageClassName: {{ .Values.persistence.storageClassName }}
+  storageClassName: {{ default .Values.global.storageClassName .Values.persistence.storageClassName }}
   accessModes:
     - {{ .Values.persistence.accessMode }}
   resources:
