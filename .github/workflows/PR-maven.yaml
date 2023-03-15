@@ -21,8 +21,6 @@ jobs:
 # TODO: split up compile and release maven workflows
   compile-test:
     uses: ./.github/workflows/maven.yaml
-    with:
-      release: false
   surefire-report:
     runs-on: ubuntu-latest
     needs: compile-test

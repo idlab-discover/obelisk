@@ -1,10 +1,31 @@
 name: Maven workflow
 
 on:
+  workflow_dispatch:
+    inputs:
+      release_image:
+        description: Should a container image be released.
+        required: false
+        type: boolean
+        default: false
+      release_package:
+        description: Should a maven release be triggered.
+        required: false
+        type: boolean
+        default: false
+      version:
+        description: Version to be released
+        required: false
+        type: string
   workflow_call:
     inputs:
-      release:
-        description: Should a release be triggered.
+      release_image:
+        description: Should a container image be released.
+        required: false
+        type: boolean
+        default: false
+      release_package:
+        description: Should a maven release be triggered.
         required: false
         type: boolean
         default: false
@@ -20,6 +41,9 @@ on:
         description: Gitlab registry username
         required: false
 
+env:
+  VERSION: ${{ inputs.version }}
+
 jobs:
   maven-build:
     runs-on: ubuntu-latest
@@ -28,31 +52,21 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Pull when releasing
-        if: ${{ inputs.release }}
-        run: git pull
+
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
+
       - name: Compile
         run: mvn -B -ntp clean compile -DskipTests
-      # - uses: satackey/action-docker-layer-caching@v0.0.11
-      #   # Ignore the failure of a step and avoid terminating the job.
-      #   continue-on-error: true
-      #   with:
-      #     concurrency: 8
-      #     key: docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
-      #     restore-keys: |
-      #       docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}-{hash}
-      #       docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
-      #       docker-layer-caching-${{ github.workflow }}-${{ github.event_name }}
-      #       docker-layer-caching-${{ github.workflow }}
-      #       docker-layer-caching-
+
       - run: docker-compose -f .test/docker-compose.yml up -d
+
       - name: Run test
         run: mvn test -B -ntp --fail-at-end
+
       - name: Upload Surefire Report
         if: ${{ success() || failure() }}
         uses: actions/upload-artifact@v2
@@ -62,9 +76,9 @@ jobs:
           path: "**/target/surefire-reports"
           retention-days: 1
 
-  maven-release:
+  maven-release-images:
     runs-on: ubuntu-latest
-    if: ${{ inputs.release }}
+    if: ${{ inputs.release_image }}
     needs: maven-build
     steps:
       # Checkout the repo and pull in version changes.
@@ -85,19 +99,37 @@ jobs:
           registry: gitlab.ilabt.imec.be:4567/obelisk/packages
           username: ${{ secrets.GITLAB_REG_USER }}
           password: ${{ secrets.GITLAB_REG_PASSWORD }}
-      - name: Build and push container images
-        env:
-          VERSION: ${{ inputs.version }}
-        run: mvn -B -ntp package jib:build -Djib.to.tags=${VERSION%.*} -DskipTests
 
+      - name: Build and push container images
+        run: |
+          mvn versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
+          mvn -B -ntp package jib:build -Djib.to.tags=${VERSION%.*} -DskipTests
+
+  maven-release-packages:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.release_package }}
+    needs: maven-build
+    steps:
+      # Checkout the repo and pull in version changes.
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
       # We can only push maven packages once, so making sure we are able to push them all.
       - name: Dry-run deploy
-        run: mvn -B -ntp deploy -DuseGitHubPackages=true -DskipTests -Dmaven.deploy.skip=true
+        run: |
+          mvn versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
+          mvn -B -ntp deploy -DuseGitHubPackages=true -DskipTests -Dmaven.deploy.skip=true
       # We allow continuation upon error here temporarily
       # TODO: streamline workflow and then remove the error continuation
       - name: Deploy maven packages to GitHub
         env:
-          VERSION: ${{ inputs.version }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
         run: mvn -B -ntp deploy -DskipTests -DuseGitHubPackages=true
