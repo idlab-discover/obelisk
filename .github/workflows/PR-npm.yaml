@@ -1,0 +1,57 @@
+name: NPM build
+
+on:
+  pull_request:
+    branches:
+      - main
+      - next
+    paths:
+     - 'web-catalog/**/*'
+     - 'web-apiconsole/**/*'
+
+permissions:
+  contents: read
+
+jobs:
+  check-changed:
+    outputs:
+      catalog: ${{ steps.changed.outputs.catalog }}
+      apiconsole: ${{ steps.changed.outputs.apiconsole }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.OBLX_PAT || secrets.github_token }}
+          fetch-depth: 0
+      - name: Check if changed
+        id: changed
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            catalog:
+              - 'web-catalog/**/*'
+            apiconsole:
+              - 'web-apiconsole/**/*'
+
+  build-catalog:
+    needs:
+      - check-changed
+    if: ${{ needs.check-changed.outputs.catalog == 'true' }}
+    uses: ./.github/workflows/npm.yaml
+    with:
+      release: false
+      module: web-catalog
+      base_href: catalog
+
+  build-apiconsole:
+    needs:
+      - check-changed
+    if: ${{ needs.check-changed.outputs.apiconsole == 'true' }}
+    uses: ./.github/workflows/npm.yaml
+    with:
+      release: false
+      module: web-apiconsole
+      base_href: apiconsole
