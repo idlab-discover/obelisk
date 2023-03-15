@@ -1,0 +1,50 @@
+@import '/src/common';
+
+.custom-day {
+    text-align: center;
+    padding: 0.185rem 0.25rem;
+    display: inline-block;
+    height: 2rem;
+    width: 2rem;
+}
+.custom-day.focused {
+    background-color: #e6e6e6;
+}
+.custom-day.range,
+.custom-day:hover {
+    background-color: rgb(2, 117, 216);
+    color: white;
+}
+.custom-day.faded {
+    background-color: rgba(2, 117, 216, 0.5);
+}
+
+input.dp[disabled]:active {
+    pointer-events: none;
+}
+
+// .ng-invalid:not(form) {
+//     border: 1px solid orangered; /* red */
+// }
+.error-txt {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: #dd0d3d;
+}
+
+.ng-invalid:not(form).ng-touched {
+    border: 1px solid #dd0d3d;
+}
+
+table td {
+    vertical-align: middle;
+}
+
+fa-icon.active {
+    color: #3CD671;
+}
+
+fa-icon.inactive {
+    color: theme-color-level("secondary", -8);
+}
