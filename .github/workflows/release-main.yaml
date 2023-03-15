@@ -47,7 +47,7 @@ jobs:
       - name: check CalVer bump
         if: ${{ steps.changelog-lines.outputs.lc > 2 }}
         env:
-          VERSION: ${{ step.patchbump.outputs.new_version }}
+          VERSION: ${{ steps.patchbump.outputs.new_version }}
         id: final_version
         run: |
           MAJOR_MINOR=$(echo $VERSION | sed -E 's/v([0-9]+)\.([0-9]+)\.([0-9]+)/\1.\2/')
