@@ -26,6 +26,7 @@ jobs:
 
       - id: changelog-lines
         run: |
+          echo VERSION=${{ steps.bumper.outputs.new_version }}
           mv changelog-${{ steps.bumper.outputs.new_version }}.md changelog-new.md
           echo "lc=$(wc -l changelog-new.md | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
 
@@ -37,30 +38,31 @@ jobs:
           changelog: true
           bumpoverride: patch
 
-      - if: ${{ steps.changelog-lines.outputs.lc > 2 }}
+      - if: ${{ steps.changelog-lines.outputs.lc > 2 && !env.ACT }}
         uses: actions/upload-artifact@v3
         with:
           name: changelog
           path: changelog-new.md
           retention-days: 1
 
-      - name: check CalVer bump
+      - name: check CalVer bump and output final version (without v prefix)
         if: ${{ steps.changelog-lines.outputs.lc > 2 }}
         env:
           VERSION: ${{ steps.patchbump.outputs.new_version }}
+          MAJOR_PART: ${{ steps.patchbump.outputs.major_part }}
+          MINOR_PART: ${{ steps.patchbump.outputs.minor_part }}
         id: final_version
         run: |
-          MAJOR_MINOR=$(echo $VERSION | sed -E 's/v([0-9]+)\.([0-9]+)\.([0-9]+)/\1.\2/')
           CALVER=$(date +%y.%-m)
-          if [[ $MAJOR_MINOR != $CALVER ]]; then
+          if [[ $CALVER != ${MAJOR_PART#v}.${MINOR_PART} ]]; then
             echo "version=$CALVER.0" >> $GITHUB_OUTPUT
           else
-            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "version=${VERSION#v}" >> $GITHUB_OUTPUT
           fi
 
   maven-release:
     needs: check-release
-    if: ${{ needs.check-release.outputs.lc > 2 }}
+    if: ${{ needs.check-release.outputs.version }}
     uses: ./.github/workflows/maven.yaml
     with:
       release_image: true
@@ -70,7 +72,7 @@ jobs:
 
   catalog-release:
     needs: check-release
-    if: ${{ needs.check-release.outputs.lc > 2 }}
+    if: ${{ needs.check-release.outputs.version }}
     uses: ./.github/workflows/npm.yaml
     with:
       module: web-catalog
@@ -81,7 +83,7 @@ jobs:
 
   apiconsole-release:
     needs: check-release
-    if: ${{ needs.check-release.outputs.lc > 2 }}
+    if: ${{ needs.check-release.outputs.version }}
     uses: ./.github/workflows/npm.yaml
     with:
       module: web-apiconsole
@@ -95,7 +97,7 @@ jobs:
       - maven-release
       - catalog-release
       - apiconsole-release
-    if: ${{ needs.check-release.outputs.lc > 2 }}
+    if: ${{ needs.check-release.outputs.version }}
     uses: ./.github/workflows/helm.yaml
     with:
       release: true
