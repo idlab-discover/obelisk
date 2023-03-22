@@ -8,11 +8,19 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+containerPort: 8080
 logLevel: info
 config: {}
 oblxCommonsReleaseName: ""
 host: ""
 basePath: ""
+
+metrics:
+  enabled: true
+  port: 8081
+  serviceMonitor:
+    enabled: true
+
 tls:
   enabled: false
   certResolver: le

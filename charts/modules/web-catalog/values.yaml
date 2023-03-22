@@ -1,23 +1,27 @@
 replicaCount: 1
 
 image:
-  name: web-apiconsole
-  repository: gitlab.ilabt.imec.be:4567/obelisk/packages
+  name: web-catalog
   tag: latest
+  repository: gitlab.ilabt.imec.be:4567/obelisk/packages
+  pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+containerPort: 80
+metrics:
+  enabled: false
+
+configPath: /app/assets/config
 config:
-  host: obelisk.ilabt.imec.be
-  oblxApiPrefix: /api/v3
-  oblxAuthEndpoint: /auth
+  apiPrefix: /api/v3
+  authEndpoint: /auth
   clientId: 0
 
-oblxCommonsReleaseName: "oblx-commons"
-basePath: /apiconsole
-host: "obelisk.ilabt.imec.be"
+basePath: /catalog
+host: ""
 tls:
   enabled: false
   certResolver: le

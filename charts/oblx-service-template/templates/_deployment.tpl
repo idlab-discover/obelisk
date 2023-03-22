@@ -14,8 +14,9 @@ spec:
       {{- include "oblx-service-template.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        {{- include "oblx-service-template.podAnnotations" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
@@ -44,11 +45,13 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ .Values.containerPort}}
               protocol: TCP
+          {{- if .Values.metrics.enabled }}
             - name: metrics
-              containerPort: 8081
+              containerPort: {{ .Values.metrics.port }}
               protocol: TCP
+          {{- end }}
           env:
           {{- if .Values.basePath }}
             - name: HTTP_BASE_PATH
@@ -57,13 +60,11 @@ spec:
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:InitialRAMPercentage=40 -XX:MaxRAMPercentage=80"
           envFrom:
-            - configMapRef:
           {{- if .Values.global }}
             {{- if .Values.global.config }}
+            - configMapRef:
                 name: {{ .Release.Name}}-global-config
             {{- end }}
-          {{- else if .Values.oblxCommonsReleaseName }}
-                name: "{{ .Values.oblxCommonsReleaseName }}-config"
           {{- end }}
           {{- if .Values.config }}
             - configMapRef:

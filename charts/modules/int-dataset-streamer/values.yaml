@@ -7,13 +7,16 @@ replicaCount: 1
 image:
   name: int-dataset-streamer
   repository: gitlab.ilabt.imec.be:4567/obelisk/packages
-
+  pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-oblxCommonsReleaseName: "oblx-commons"
+containerPort: 8080
+metrics:
+  enabled: true
+  port: 8081
 
 # Additional config specific to the dataset-streamer
 config:

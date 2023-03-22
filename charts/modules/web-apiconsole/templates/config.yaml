@@ -1,0 +1,20 @@
+{{ $host := default .Values.global.config.host .Values.host }}
+{{ $apiPrefix := default .Values.global.config.apiPrefix .Values.config.apiPrefix}}
+{{ $authEndpoint := default .Values.global.config.authEndpoint .Values.config.authEndpoint}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "web-apiconsole.fullname" . }}-config
+data:
+  config.json: |
+    {
+        "oblxHost": "https://{{ $host }}",
+        "oblxApiPrefix": "{{ $apiPrefix }}",
+        "oblxAuthEndpoint": "{{ $authEndpoint }}",
+        "clientHost": "https://{{ $host }}",
+        "clientBasePath": "{{ .Values.basePath }}",
+        "clientRedirectUri": "https://{{ $host }}{{ .Values.basePath }}",
+        "clientId": {{ .Values.config.clientId | quote }}
+    }
+---
+{{ include "obelisk.config" . }}

@@ -3,10 +3,16 @@ replicaCount: 1
 image:
   name: pub-monitor-service
   repository: gitlab.ilabt.imec.be:4567/obelisk/packages
+  pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+containerPort: 8080
+metrics:
+  enabled: true
+  port: 8081
 
 config:
   apiBaseUrl: https://example.com/api/v3
@@ -15,9 +21,8 @@ config:
   ingestCheckInitialDelayMs: 500
   ingestCheckMaxRetries: 3
 
-oblxCommonsReleaseName: "oblx-commons"
 basePath: /api/v3/monitor
-host: "obelisk.ilabt.imec.be"
+host: ""
 tls:
   enabled: false
   certResolver: le

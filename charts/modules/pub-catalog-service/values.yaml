@@ -3,6 +3,12 @@ replicaCount: 1
 image:
   name: pub-catalog-service
   repository: gitlab.ilabt.imec.be:4567/obelisk/packages
+  pullPolicy: IfNotPresent
+
+containerPort: 8080
+metrics:
+  enabled: true
+  port: 8081
 
 config:
   datasetResourcesPath: /oblx/catalog/resources
@@ -10,9 +16,8 @@ config:
   allowUserCreatedDatasets: true
   allowUserCreatedTeams: true
 
-oblxCommonsReleaseName: "oblx-commons"
 basePath: /api/v3/catalog
-host: "obelisk.ilabt.imec.be"
+host: ""
 tls:
   enabled: false
   certResolver: le

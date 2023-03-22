@@ -3,4 +3,4 @@ dependencies:
   repository: file://../../oblx-service-template
   version: 23.3.1
 digest: sha256:76bab6fafbae7feba95cacb22504773a1a3955612501d41713dc7fee62155ada
-generated: "2023-03-15T15:25:40.83045357+01:00"
+generated: "2023-03-15T16:38:14.308662827+01:00"

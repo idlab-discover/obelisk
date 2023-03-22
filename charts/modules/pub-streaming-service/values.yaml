@@ -3,14 +3,19 @@ replicaCount: 1
 image:
   name: pub-streaming-service
   repository: gitlab.ilabt.imec.be:4567/obelisk/packages
+  pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-oblxCommonsReleaseName: "oblx-commons"
+containerPort: 8080
+metrics:
+  enabled: true
+  port: 8081
+
 basePath: /api/v3/data/streams
-host: "obelisk.ilabt.imec.be"
+host: ""
 tls:
   enabled: false
   certResolver: le
