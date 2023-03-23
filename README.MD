@@ -7,11 +7,11 @@ Monorepo for all things related to Obelisk Definitive Edition.
 
 * `main`: current release branch
 * `next`: all upcoming changes go into this branch. Additional feature branches are used for implementing bigger changes.
-* `YY.0M`: release-specific branches. Used for bugfixing older releases. If no development work is ongoing for such a branch, it can be deleted (we can always recreate it from the latest micro for this release).
+* `versions/YY.MM`: release-specific branches. Used for bugfixing older releases. If no development work is ongoing for such a branch, it can be deleted (we can always recreate it from the latest micro for this release).
 
 # Versioning strategy
 
-![calver-YY](https://img.shields.io/badge/calver-YY.0M.MICRO-085f88)
+![calver-YY](https://img.shields.io/badge/calver-YY.MM.MICRO-085f88)
 
 We are applying the Calendar Versioning or [CalVer](https://calver.org) scheme, with a single version number for all core Obelisk artifacts built during the same release cycle: Maven artifacts, Typescript modules, Docker images, Helm Charts, etc... The public API for Obelisk follows a different versioning scheme (see [Backwards compatibility](#backwards-compatibility)).
 
