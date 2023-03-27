@@ -12,6 +12,9 @@ on:
         required: false
         type: string
 
+env:
+  VERSION: ${{ inputs.version }}
+
 jobs:
   lint-test:
     runs-on: ubuntu-latest
