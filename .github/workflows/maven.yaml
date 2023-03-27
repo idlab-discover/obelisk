@@ -104,7 +104,8 @@ jobs:
       - name: Build and push container images
         run: |
           mvn versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
-          mvn -B -ntp package jib:build -Djib.to.tags=${VERSION%.*} -DskipTests -Ddocker.registry=${{ github.repository }}
+          mvn -B -ntp package jib:build -Djib.to.tags=${VERSION%.*} \
+            -DskipTests -Dcontainer.registry=${{env.registry}}/${{ github.repository }}
 
   maven-release-packages:
     runs-on: ubuntu-latest
