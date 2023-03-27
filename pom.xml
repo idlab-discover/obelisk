@@ -7,7 +7,7 @@
     <groupId>idlab.obelisk</groupId>
     <artifactId>obelisk-parent</artifactId>
     <packaging>pom</packaging>
-    <version>v23.3.1</version>
+    <version>23.3.1</version>
 
     <modules>
         <module>int-dataset-streamer</module>
@@ -48,7 +48,7 @@
         <logback.level>all</logback.level>
         <logback.level.auth>${logback.level}</logback.level.auth>
         <docker.baseImage>docker.io/library/eclipse-temurin:17</docker.baseImage>
-        <docker.registry>gitlab.ilabt.imec.be:4567/obelisk/packages</docker.registry>
+        <docker.registry>ghcr.io</docker.registry>
     </properties>
 
     <repositories>
