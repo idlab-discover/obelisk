@@ -87,6 +87,11 @@ jobs:
         with:
           version: v3.11.2
 
+      - name: Bump chart versions
+        run: |
+          charts/bump-version.sh $VERSION
+          charts/update-dependencies.sh
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
         with:
