@@ -254,6 +254,9 @@
                                 <jvmFlag>-Dlog4j2.formatMsgNoLookups=true</jvmFlag>
                             </jvmFlags>
                             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                            <labels>
+                                <org.opencontainers.image.source>https://github.com/idlab-discover/obelisk</org.opencontainers.image.source>
+                            </labels>
                         </container>
                     </configuration>
                 </plugin>
