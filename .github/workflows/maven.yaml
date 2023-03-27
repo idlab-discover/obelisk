@@ -45,6 +45,10 @@ env:
   VERSION: ${{ inputs.version }}
   registry: ghcr.io
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   maven-build:
     runs-on: ubuntu-latest

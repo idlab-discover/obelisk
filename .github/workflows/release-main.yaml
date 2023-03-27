@@ -72,6 +72,9 @@ jobs:
       release_image: true
       release_package: true
       version: ${{ needs.check-release.outputs.version }}
+    permissions:
+      contents: read
+      packages: write
     secrets: inherit
 
   catalog-release:
