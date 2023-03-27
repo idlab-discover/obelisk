@@ -76,7 +76,7 @@ jobs:
       - name: Kaniko build
         uses: aevea/action-kaniko@v0.10.0
         with:
-          image: aevea/kaniko
+          image: ${{ inputs.module }}
           username: ${{ secrets.GITLAB_REG_USER }}
           password: ${{ secrets.GITLAB_REG_PASSWORD }}
           registry: ${{ secrets.GITLAB_REGISTRY }}
