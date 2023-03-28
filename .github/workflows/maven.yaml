@@ -105,10 +105,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push container images
+      - name: Build container images
         run: |
-          mvn versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
-          mvn -B -ntp package jib:build -Djib.to.tags=${VERSION%.*} \
+          mvn -B -ntp versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
+          mvn -B -ntp package jib:dockerBuild \
+            -DskipTests -Dcontainer.registry=${{env.registry}}/${{ github.repository }}
+
+      - name: Push container images
+        run: |
+          mvn -B -ntp jib:build \
             -DskipTests -Dcontainer.registry=${{env.registry}}/${{ github.repository }}
 
   maven-release-packages:
