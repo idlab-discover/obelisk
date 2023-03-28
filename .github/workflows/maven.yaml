@@ -108,6 +108,8 @@ jobs:
         run: |
           mvn -B -ntp versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
           mvn -B -ntp package jib:build -DskipTests \
+            -Djib.to.auth.username=${{ github.actor }} \
+            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }} \
             -Dcontainer.registry=${{env.registry}}/${{ github.repository }}
 
   maven-release-packages:
