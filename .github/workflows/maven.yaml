@@ -45,10 +45,6 @@ env:
   VERSION: ${{ inputs.version }}
   registry: ghcr.io
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   maven-build:
     runs-on: ubuntu-latest
@@ -82,11 +78,14 @@ jobs:
           retention-days: 1
 
   maven-release-images:
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
     if: ${{ inputs.release_image }}
     needs: maven-build
     steps:
-      # Checkout the repo and pull in version changes.
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -108,13 +107,8 @@ jobs:
       - name: Build container images
         run: |
           mvn -B -ntp versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
-          mvn -B -ntp package jib:dockerBuild \
-            -DskipTests -Dcontainer.registry=${{env.registry}}/${{ github.repository }}
-
-      - name: Push container images
-        run: |
-          mvn -B -ntp jib:build \
-            -DskipTests -Dcontainer.registry=${{env.registry}}/${{ github.repository }}
+          mvn -B -ntp package jib:build -DskipTests \
+            -Dcontainer.registry=${{env.registry}}/${{ github.repository }}
 
   maven-release-packages:
     runs-on: ubuntu-latest
@@ -135,7 +129,7 @@ jobs:
       # We can only push maven packages once, so making sure we are able to push them all.
       - name: Dry-run deploy
         run: |
-          mvn versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
+          mvn -B -ntp versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
           mvn -B -ntp deploy -DuseGitHubPackages=true -DskipTests -Dmaven.deploy.skip=true
       # We allow continuation upon error here temporarily
       # TODO: streamline workflow and then remove the error continuation
