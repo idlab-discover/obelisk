@@ -107,6 +107,8 @@ jobs:
       - check-release
     if: ${{ needs.check-release.outputs.version }}
     uses: ./.github/workflows/helm.yaml
+    permissions:
+      contents: write
     with:
       release: true
       version: ${{ needs.check-release.outputs.version }}
