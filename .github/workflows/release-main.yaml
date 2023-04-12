@@ -163,5 +163,6 @@ jobs:
       - name: Commit and tag
         run: |
           git add -u
+          git commit -m "chore(release): v$VERSION changelog and version bump [skip ci]"
           git tag -a "v$VERSION" -m "Obelisk v$VERSION"
           git push origin --follow-tags
