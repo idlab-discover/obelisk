@@ -31,6 +31,10 @@ on:
         description: Gitlab registry
         required: false
 
+env:
+  VERSION: ${{ inputs.version }}
+  registry: ghcr.io
+
 jobs:
   npm-build:
     runs-on: ubuntu-latest
@@ -76,10 +80,11 @@ jobs:
       - name: Kaniko build
         uses: aevea/action-kaniko@v0.10.0
         with:
-          image: aevea/kaniko
-          username: ${{ secrets.GITLAB_REG_USER }}
-          password: ${{ secrets.GITLAB_REG_PASSWORD }}
-          registry: ${{ secrets.GITLAB_REGISTRY }}
+          image: ${{ inputs.module }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN}}
+          registry: ${{ env.registry }}
           cache: true
           cache_registry: aevea/cache
           tag: ${{ inputs.version }}
+          path: ${{ inputs.module }}/docker/

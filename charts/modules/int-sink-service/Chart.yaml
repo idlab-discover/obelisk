@@ -7,15 +7,28 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
+<<<<<<< HEAD:charts/modules/int-sink-service/Chart.yaml
 version: 23.3.1
+=======
+version: 23.4.0
+>>>>>>> next:charts/int-sink-service/Chart.yaml
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
+<<<<<<< HEAD:charts/modules/int-sink-service/Chart.yaml
 appVersion: "23.3.1"
 
 dependencies:
   - name: oblx-service-template
     repository: file://../../oblx-service-template
     version: ~23.3.1
+=======
+appVersion: "23.4.0"
+
+dependencies:
+  - name: oblx-service-template
+    repository: file://../oblx-service-template
+    version: ~23.4.0
+>>>>>>> next:charts/int-sink-service/Chart.yaml

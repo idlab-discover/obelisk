@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   check-release:
     outputs:
@@ -68,6 +72,9 @@ jobs:
       release_image: true
       release_package: true
       version: ${{ needs.check-release.outputs.version }}
+    permissions:
+      contents: read
+      packages: write
     secrets: inherit
 
   catalog-release:
@@ -97,10 +104,14 @@ jobs:
       - maven-release
       - catalog-release
       - apiconsole-release
+      - check-release
     if: ${{ needs.check-release.outputs.version }}
     uses: ./.github/workflows/helm.yaml
+    permissions:
+      contents: write
     with:
       release: true
+      version: ${{ needs.check-release.outputs.version }}
 
 # When Maven, Helm and Yarn releases are completed, then we can tag the release commit.
   finalize:
@@ -109,11 +120,14 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - helm-release
+      - check-release
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.OBLX_PAT || secrets.github_token }}
+          token: ${{ secrets.OBLX_RELEASE_TOKEN }}
       - name: Configure committer
         run: |
           git config user.name "github-actions[bot]"
@@ -148,5 +162,7 @@ jobs:
 
       - name: Commit and tag
         run: |
+          git add -u
+          git commit -m "chore(release): v$VERSION changelog and version bump [skip ci]"
           git tag -a "v$VERSION" -m "Obelisk v$VERSION"
           git push origin --follow-tags
