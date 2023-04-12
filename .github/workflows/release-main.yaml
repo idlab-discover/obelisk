@@ -162,5 +162,6 @@ jobs:
 
       - name: Commit and tag
         run: |
+          git add -u
           git tag -a "v$VERSION" -m "Obelisk v$VERSION"
           git push origin --follow-tags
