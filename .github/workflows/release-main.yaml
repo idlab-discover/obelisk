@@ -121,6 +121,8 @@ jobs:
     needs:
       - helm-release
       - check-release
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
