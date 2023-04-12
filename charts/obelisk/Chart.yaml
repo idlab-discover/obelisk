@@ -15,67 +15,67 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: v23.3.1
+version: 23.4.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "v23.3.1"
+appVersion: "23.4.0"
 
 dependencies:
   - name: oblx-service-template
     repository: file://../oblx-service-template
-    version: ~v23.3.1
+    version: ~23.4.0
   - name: int-dataset-streamer
     repository: file://../int-dataset-streamer
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: int-dataset-streamer.enabled
   - name: int-sink-service
     repository: file://../int-sink-service
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: int-sink-service.enabled
   - name: int-stats-collector
     repository: file://../int-stats-collector
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: int-stats-collector.enabled
   - name: pub-auth-service
     repository: file://../pub-auth-service
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: pub-auth-service.enabled
   - name: pub-catalog-service
     repository: file://../pub-catalog-service
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: pub-catalog-service.enabled
   - name: pub-export-service
     repository: file://../pub-export-service
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: pub-export-service.enabled
   - name: pub-ingest-service
     repository: file://../pub-ingest-service
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: pub-ingest-service.enabled
   - name: pub-issue-service
     condition: pub-issue-service.enabled
     repository: file://../pub-issue-service
-    version: ~v23.3.1
+    version: ~23.4.0
   - name: pub-monitor-service
     repository: file://../pub-monitor-service
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: pub-monitor-service.enabled
   - name: pub-query-service
     repository: file://../pub-query-service
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: pub-query-service.enabled
   - name: pub-streaming-service
     repository: file://../pub-streaming-service
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: pub-streaming-service.enabled
   - name: web-apiconsole
     repository: file://../web-apiconsole
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: web-apiconsole.enabled
   - name: web-catalog
     repository: file://../web-catalog
-    version: ~v23.3.1
+    version: ~23.4.0
     condition: web-catalog.enabled

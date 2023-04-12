@@ -1,45 +1,45 @@
 dependencies:
 - name: oblx-service-template
   repository: file://../oblx-service-template
-  version: v23.3.1
+  version: 23.4.0
 - name: int-dataset-streamer
   repository: file://../int-dataset-streamer
-  version: v23.3.1
+  version: 23.4.0
 - name: int-sink-service
   repository: file://../int-sink-service
-  version: v23.3.1
+  version: 23.4.0
 - name: int-stats-collector
   repository: file://../int-stats-collector
-  version: v23.3.1
+  version: 23.4.0
 - name: pub-auth-service
   repository: file://../pub-auth-service
-  version: v23.3.1
+  version: 23.4.0
 - name: pub-catalog-service
   repository: file://../pub-catalog-service
-  version: v23.3.1
+  version: 23.4.0
 - name: pub-export-service
   repository: file://../pub-export-service
-  version: v23.3.1
+  version: 23.4.0
 - name: pub-ingest-service
   repository: file://../pub-ingest-service
-  version: v23.3.1
+  version: 23.4.0
 - name: pub-issue-service
   repository: file://../pub-issue-service
-  version: v23.3.1
+  version: 23.4.0
 - name: pub-monitor-service
   repository: file://../pub-monitor-service
-  version: v23.3.1
+  version: 23.4.0
 - name: pub-query-service
   repository: file://../pub-query-service
-  version: v23.3.1
+  version: 23.4.0
 - name: pub-streaming-service
   repository: file://../pub-streaming-service
-  version: v23.3.1
+  version: 23.4.0
 - name: web-apiconsole
   repository: file://../web-apiconsole
-  version: v23.3.1
+  version: 23.4.0
 - name: web-catalog
   repository: file://../web-catalog
-  version: v23.3.1
-digest: sha256:2c75bab1cebe685aa6460fc804267142ff2934d8f0834d8a948b4e36bf8a10bb
-generated: "2023-03-14T12:11:31.319754564Z"
+  version: 23.4.0
+digest: sha256:65769d8e72521822ae4fd7894adf01cb38d5bb4e4436c8e37c1a0165a843a6cd
+generated: "2023-04-12T13:31:13.93126991Z"

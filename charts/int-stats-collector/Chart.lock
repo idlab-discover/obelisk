@@ -1,6 +1,6 @@
 dependencies:
 - name: oblx-service-template
   repository: file://../oblx-service-template
-  version: v23.3.1
-digest: sha256:02265d32eadce32643edba106f5f97ffc6260cb8dc46e1433ba44307c86375de
-generated: "2023-03-14T12:11:31.750974172Z"
+  version: 23.4.0
+digest: sha256:d1523e2c7ce06b492637c9cc4eabff5e34aa14d5da51332d0adae48fe003c94a
+generated: "2023-04-12T13:31:14.162784074Z"
