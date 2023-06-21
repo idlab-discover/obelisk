@@ -1,12 +1,15 @@
 global:
+  storageClassName: ""
   config:
     host: "obelisk.ilabt.imec.be"
+    apiPrefix: /api/v3
+    authEndpoint: /auth
     publicUri: "https://obelisk.ilabt.imec.be"
     # Level of log output (debug, info, warn)
     logLevel: "warn"
     metrics:
       # Supply a Prometheus URI to allow Obelisk to show limited global and per dataset stats in the Catalog UI.
-      prometheusUri: "http://kube-prometheus-stack.monitoring:9090"
+      prometheusUri: "http://kube-prometheus-stack-prometheus.monitoring:9090"
       port: 8081
     auth:
       adminUser: "admin"
@@ -72,7 +75,7 @@ pub-streaming-service:
   enabled: true
 
 web-apiconsole:
-  enabled: false
+  enabled: true
 
 web-catalog:
-  enabled: false
+  enabled: true

@@ -1,0 +1,3 @@
+{{ include "oblx-service-template.deployment-web" . }}
+---
+{{ include "oblx-service-template.service" . }}

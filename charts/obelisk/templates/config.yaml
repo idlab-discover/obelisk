@@ -1,3 +1,4 @@
+{{ define "obelisk.config" }}
 # Obelisk Base Configuration
 apiVersion: v1
 kind: ConfigMap
@@ -30,3 +31,4 @@ data:
   SMTP_USE_TLS: "{{ .Values.global.config.smtp.useTls }}"
   {{- end }}
   PROMETHEUS_URI: "{{ .Values.global.config.metrics.prometheusUri }}"
+{{- end }}

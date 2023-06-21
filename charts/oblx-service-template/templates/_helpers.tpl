@@ -55,7 +55,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Default probes (enabled by default)
 */}}
 {{- define "oblx-service-template.defaultProbes" -}}
-{{- if not .Values.disableDefaultProbes }}
+{{- if not .Values.disableDefaultProbes -}}
 livenessProbe:
   httpGet:
     path: /_health
@@ -64,5 +64,17 @@ readinessProbe:
   httpGet:
     path: /_status
     port: http
+{{- end }}
+{{- end }}
+
+{{- define "oblx-service-template.podAnnotations" -}}
+{{- if or .Values.global.rollOnConfigChange .Values.rollOnConfigChange -}}
+checksum/globalconfig: {{ include "obelisk.config" . | sha256sum }}
+{{- if .Values.config }}
+checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum  }}
+{{- end }}
+{{- end }}
+{{- if or .Values.global.recreate .Values.recreate }}
+recreate: {{ randAlphaNum 10 | quote }}
 {{- end }}
 {{- end }}
