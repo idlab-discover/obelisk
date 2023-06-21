@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [conventional-commits.org](https://www.conventionalcommits.org/en/v1.0.0/#summary) for commit guidelines.
 
+## [v23.6.0](https://github.com/idlab-discover/obelisk/compare/v23.4.0...v23.6.0) (2023-06-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **helm:** Move to single Helm chart for Obelisk stack
+
+### Features
+
+* **helm:** Move to single Helm chart for Obelisk stack ([18603c6](https://github.com/idlab-discover/obelisk/commit/18603c6581b53acc27954682cb221ce9d528c332))
+
 ## [v23.4.0](https://github.com/idlab-discover/obelisk/compare/v23.3.0...v23.4.0) (2023-04-12)
 
 
