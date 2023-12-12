@@ -17,6 +17,10 @@ permissions:
   contents: read
   packages: write
 
+env:
+  VERSION: ${{ inputs.version }}
+  registry: ghcr.io
+
 jobs:
   build:
     name: Build docs
