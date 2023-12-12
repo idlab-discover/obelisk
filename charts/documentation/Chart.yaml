@@ -1,6 +1,0 @@
-apiVersion: v2
-name: oblx-mkdocs
-description: A Helm chart for deploying the Obelisk Documentation powered by mkdocs to Kubernetes.
-type: application
-version: 23.6.0
-appversion: 23.6.0
