@@ -1,45 +1,45 @@
 dependencies:
 - name: oblx-service-template
   repository: file://../oblx-service-template
-  version: 23.6.0
+  version: 23.12.0
 - name: int-dataset-streamer
   repository: file://../modules/int-dataset-streamer
-  version: 23.6.0
+  version: 23.12.0
 - name: int-sink-service
   repository: file://../modules/int-sink-service
-  version: 23.6.0
+  version: 23.12.0
 - name: int-stats-collector
   repository: file://../modules/int-stats-collector
-  version: 23.6.0
+  version: 23.12.0
 - name: pub-auth-service
   repository: file://../modules/pub-auth-service
-  version: 23.6.0
+  version: 23.12.0
 - name: pub-catalog-service
   repository: file://../modules/pub-catalog-service
-  version: 23.6.0
+  version: 23.12.0
 - name: pub-export-service
   repository: file://../modules/pub-export-service
-  version: 23.6.0
+  version: 23.12.0
 - name: pub-ingest-service
   repository: file://../modules/pub-ingest-service
-  version: 23.6.0
+  version: 23.12.0
 - name: pub-issue-service
   repository: file://../modules/pub-issue-service
-  version: 23.6.0
+  version: 23.12.0
 - name: pub-monitor-service
   repository: file://../modules/pub-monitor-service
-  version: 23.6.0
+  version: 23.12.0
 - name: pub-query-service
   repository: file://../modules/pub-query-service
-  version: 23.6.0
+  version: 23.12.0
 - name: pub-streaming-service
   repository: file://../modules/pub-streaming-service
-  version: 23.6.0
+  version: 23.12.0
 - name: web-apiconsole
   repository: file://../modules/web-apiconsole
-  version: 23.6.0
+  version: 23.12.0
 - name: web-catalog
   repository: file://../modules/web-catalog
-  version: 23.6.0
-digest: sha256:1f29dd5d342676a4e607b1154060df3aa69de22335dc1b6b5fbd8b209ad0f344
-generated: "2023-06-21T12:06:39.555742176Z"
+  version: 23.12.0
+digest: sha256:94d63ce2cdaf33effeaf262cbc13549953d0414fcd6e4c4f6e1a49fee0ddc6f0
+generated: "2023-12-12T15:17:06.536289788Z"

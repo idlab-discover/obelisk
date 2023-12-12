@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [conventional-commits.org](https://www.conventionalcommits.org/en/v1.0.0/#summary) for commit guidelines.
 
+## [v23.12.0](https://github.com/idlab-discover/obelisk/compare/v23.6.0...v23.12.0) (2023-12-12)
+
+
+### Features
+
+* non transparent logo added to .assets ([208ff59](https://github.com/idlab-discover/obelisk/commit/208ff597c13cedd0d273257982e0a8f6e98cc458))
+* remove docs v2 link ([#240](https://github.com/idlab-discover/obelisk/issues/240)) ([a730da1](https://github.com/idlab-discover/obelisk/commit/a730da1df1fafdb80796202790ff8be000b65978))
+
 ## [v23.6.0](https://github.com/idlab-discover/obelisk/compare/v23.4.0...v23.6.0) (2023-06-21)
 
 
