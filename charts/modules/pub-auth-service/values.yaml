@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   name: pub-auth-service
-  repository: gitlab.ilabt.imec.be:4567/obelisk/packages
+  repository: ghcr.io/idlab-discover/obelisk
   pullPolicy: IfNotPresent
 
 containerPort: 8080
