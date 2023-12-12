@@ -4,6 +4,10 @@ on:
     branches:
       - next
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   # version:
   #   runs-on: ubuntu-latest
@@ -42,4 +46,11 @@ jobs:
     uses: ./.github/workflows/maven.yaml
     with:
       release_image: true
+      version: next
+
+  docs:
+    # needs: version
+    uses: ./.github/workflows/docs.yaml
+    with:
+      release: true
       version: next

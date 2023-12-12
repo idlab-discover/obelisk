@@ -15,8 +15,8 @@ oblxConfig:
   clientId: 0
 
 image:
-  repository: gitlab.ilabt.imec.be:4567/obelisk/packages
-  name: mkdocs
+  repository: ghcr.io/idlab-discover/obelisk
+  name: docs
   pullPolicy: IfNotPresent
 
 # Set the imagePullSecret used to access the private Obelisk Container Registry (MUST BE AVAILABLE IN THE DEPLOYMENT NAMESPACE)
