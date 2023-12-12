@@ -1,0 +1,21 @@
+name: Build docs
+
+on:
+  pull_request:
+    branches:
+      - main
+      - next
+    paths:
+      - 'documentation/**/*'
+      - '.github/workflows/docs.yaml'
+      - '.github/workflows/PR-docs.yaml'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-documentation:
+    uses: ./.github/workflows/docs.yaml
+    with:
+      release: false

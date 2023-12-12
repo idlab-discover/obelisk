@@ -8,6 +8,9 @@ on:
     paths:
       - 'charts/**'
 
+permissions:
+  contents: write
+
 jobs:
   lint-test:
     uses: ./.github/workflows/helm.yaml

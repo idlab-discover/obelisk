@@ -43,3 +43,10 @@ jobs:
     with:
       release_image: true
       version: next
+
+  docs:
+    # needs: version
+    uses: ./.github/workflows/docs.yaml
+    with:
+      release: true
+      version: next
