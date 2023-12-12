@@ -35,7 +35,7 @@ jobs:
           cp -R documentation/site documentation/docker/site
       - name: Kaniko build
         uses: aevea/action-kaniko@v0.10.0
-        if: ${{ inputs.release == 'true' }}
+        if: ${{ inputs.release }}
         with:
           image: docs
           username: ${{ github.actor }}
