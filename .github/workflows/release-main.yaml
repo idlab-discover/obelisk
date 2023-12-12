@@ -99,6 +99,15 @@ jobs:
       version: ${{ needs.check-release.outputs.version }}
     secrets: inherit
 
+  docs-release:
+    needs: check-release
+    if: ${{ needs.check-release.outputs.version }}
+    uses: ./.github/workflows/docs.yaml
+    with:
+      release: true
+      version: ${{ needs.check-release.outputs.version }}
+    secrets: inherit
+
   helm-release:
     needs:
       - maven-release

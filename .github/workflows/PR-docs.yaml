@@ -1,0 +1,17 @@
+name: Build docs
+
+on:
+  pull_request:
+    branches:
+      - main
+      - next
+
+permissions:
+  contents: read
+
+jobs:
+  build-documentation:
+    uses: ./.github/workflows/docs.yaml
+    with:
+      release: true
+      version: ${{ github.event.pull_request.head.ref }}
