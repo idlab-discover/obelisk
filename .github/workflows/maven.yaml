@@ -68,14 +68,6 @@ jobs:
       - name: Run test
         run: mvn test -B -ntp --fail-at-end
 
-      - name: Upload JAR files
-        uses: actions/upload-artifact@v2
-        with:
-          name: jar-files
-          path: |
-            **/target/*.jar
-          retention-days: 1
-
       - name: Upload Surefire Report
         if: ${{ success() || failure() }}
         uses: actions/upload-artifact@v2
@@ -105,11 +97,6 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Download JAR files
-        uses: actions/download-artifact@v2
-        with:
-          name: jar-files
-
       - name: Build container images
         run: |
           mvn -B -ntp versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
@@ -135,11 +122,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-
-      - name: Download JAR files
-        uses: actions/download-artifact@v2
-        with:
-          name: jar-files
 
       # We can only push maven packages once, so making sure we are able to push them all.
       - name: Dry-run deploy
