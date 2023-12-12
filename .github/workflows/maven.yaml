@@ -97,20 +97,14 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Log in to ghcr.io
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.registry }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build container images
         run: |
           mvn -B -ntp versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
           mvn -B -ntp package jib:build -DskipTests \
+            -Djava.util.logging.config.file=logging.properties -Djib.serialize=true \
             -Djib.to.auth.username=${{ github.actor }} \
             -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }} \
-            -Dcontainer.registry=${{env.registry}}
+            -Dcontainer.registry=${{env.registry}}/${{ github.repository }}
 
   maven-release-packages:
     runs-on: ubuntu-latest
