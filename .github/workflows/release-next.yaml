@@ -4,6 +4,10 @@ on:
     branches:
       - next
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   # version:
   #   runs-on: ubuntu-latest
