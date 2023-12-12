@@ -15,4 +15,4 @@ jobs:
     uses: ./.github/workflows/docs.yaml
     with:
       release: true
-      version: ${{ github.event.pull_request.head.ref }}
+      version: docs-test
