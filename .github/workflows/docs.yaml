@@ -1,0 +1,38 @@
+name: Build docs
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: Build docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        uses: Tiryoh/actions-mkdocs@v0
+        with:
+          mkdocs_version: 'latest'
+          requirements: 'documentation/requirements.txt'
+          configfile: 'documentation/mkdocs.yml'
+      - name: Move site to docker/
+        run: |
+          cp -R documentation/site documentation/docker/site
+      - name: Kaniko build
+        uses: aevea/action-kaniko@v0.10.0
+        with:
+          image: docs
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN}}
+          registry: ${{ env.registry }}
+          cache: true
+          cache_registry: aevea/cache
+          tag: ${{ inputs.version }}
+          path: documentation/docker/
