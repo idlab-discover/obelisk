@@ -74,7 +74,6 @@ jobs:
           name: jar-files
           path: |
             **/target/*.jar
-            **/target/classes/
           retention-days: 1
 
       - name: Upload Surefire Report
