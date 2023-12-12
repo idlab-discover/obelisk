@@ -20,6 +20,8 @@ permissions:
 jobs:
 # TODO: split up compile and release maven workflows
   compile-test:
+    permissions:
+      packages: write
     uses: ./.github/workflows/maven.yaml
   surefire-report:
     runs-on: ubuntu-latest
