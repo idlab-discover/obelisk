@@ -70,7 +70,7 @@ jobs:
 
       - name: Upload Surefire Report
         if: ${{ success() || failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
           name: surefire-reports

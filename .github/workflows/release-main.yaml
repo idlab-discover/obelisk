@@ -43,7 +43,7 @@ jobs:
           bumpoverride: patch
 
       - if: ${{ steps.changelog-lines.outputs.lc > 2 && !env.ACT }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: changelog
           path: changelog-new.md
