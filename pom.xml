@@ -44,7 +44,7 @@
         <kotlin.version>1.6.21</kotlin.version>
         <vertx.version>4.3.7</vertx.version>
         <pulsar.version>2.10.3</pulsar.version>
-        <micrometer.version>1.10.3</micrometer.version>
+        <micrometer.version>1.12.3</micrometer.version>
         <logback.level>all</logback.level>
         <logback.level.auth>${logback.level}</logback.level.auth>
         <container.baseImage>container.io/library/eclipse-temurin:17</container.baseImage>
