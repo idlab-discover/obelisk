@@ -32,7 +32,10 @@ import org.apache.pulsar.client.api.Schema
 import org.codejargon.feather.Provides
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 import java.util.*
@@ -45,8 +48,10 @@ import javax.inject.Singleton
  * TODO: rewrite (this is an autoconverted class generated from Java...)
  */
 @ExtendWith(VertxExtension::class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class IngestTest {
 
+    @Order(1)
     @Test
     fun testNormalOperation(context: VertxTestContext, vertx: Vertx) {
         val rg = Random()
@@ -87,6 +92,7 @@ class IngestTest {
             .subscribe({ context.completeNow() }) { t: Throwable? -> context.failNow(t) }
     }
 
+    @Order(2)
     @Test
     fun testBadSuffixType(context: VertxTestContext) {
         val body = JsonArray().add(
@@ -101,6 +107,53 @@ class IngestTest {
                     context.verify {
                         Assertions.assertEquals(
                             400,
+                            resp.statusCode(),
+                            "Wrong response code!"
+                        )
+                    }.completeNow()
+                }) { t: Throwable? -> context.failNow(t) }
+    }
+
+    @Order(2)
+    @Test
+    fun testTooLargeTimestamp(context: VertxTestContext) {
+        val body = JsonArray().add(
+            JsonObject()
+                .put("timestamp", System.currentTimeMillis())
+                .put("metric", "power::number")
+                .put("value", 33)
+        )
+        httpClient!!.post("/data/ingest/cot.flooding")
+            .addQueryParam("timestampPrecision", "SECONDS")
+            .rxSendJson(body)
+            .subscribe(
+                { resp: HttpResponse<Buffer?> ->
+                    context.verify {
+                        Assertions.assertEquals(
+                            400,
+                            resp.statusCode(),
+                            "Wrong response code!"
+                        )
+                    }.completeNow()
+                }) { t: Throwable? -> context.failNow(t) }
+    }
+
+    @Order(2)
+    @Test
+    fun testDefaultTimestampWithMillisecondPrecision(context: VertxTestContext) {
+        val body = JsonArray().add(
+            JsonObject()
+                .put("metric", "power::number")
+                .put("value", 33)
+        )
+        httpClient!!.post("/data/ingest/test")
+            .addQueryParam("timestampPrecision", "SECONDS")
+            .rxSendJson(body)
+            .subscribe(
+                { resp: HttpResponse<Buffer?> ->
+                    context.verify {
+                        Assertions.assertEquals(
+                            204,
                             resp.statusCode(),
                             "Wrong response code!"
                         )

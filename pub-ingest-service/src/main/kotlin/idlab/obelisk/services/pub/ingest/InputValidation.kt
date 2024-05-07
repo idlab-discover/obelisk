@@ -5,7 +5,9 @@ import idlab.obelisk.definitions.MetricType
 import idlab.obelisk.definitions.data.Location
 import idlab.obelisk.definitions.data.MetricEvent
 import idlab.obelisk.definitions.data.Producer
+import idlab.obelisk.utils.service.utils.toMus
 import io.vertx.core.json.Json
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 
 private object Constraints {
@@ -13,10 +15,11 @@ private object Constraints {
     const val NUMBER_ARRAY_MAX_SIZE = 128
     const val META_STRING_CHAR_LIMIT = 128
     const val MAX_TAGS = 32
+    val MAX_DATE_TIME_MUS = Instant.parse("2262-04-11T23:47:16Z").toEpochMilli().toMus()
 }
 
-fun validatedTimestamp(timestamp: Long): Long {
-    if (timestamp > 0) {
+fun validatedTimestampMus(timestamp: Long): Long {
+    if (timestamp > 0 && timestamp <= Constraints.MAX_DATE_TIME_MUS) {
         return timestamp
     } else {
         throw IllegalArgumentException("A timestamp must be greater than 0!")
@@ -51,6 +54,7 @@ fun validatedValue(metricName: MetricName, value: Any?): Any {
             is Double -> value
             else -> throw IllegalArgumentException("Value type mismatch, expected numerical value.")
         }
+
         MetricType.BOOL -> if (value is Boolean) value else throw IllegalArgumentException("Value type mismatch, expected boolean value.")
         MetricType.STRING -> {
             if (value !is String) {
@@ -58,12 +62,14 @@ fun validatedValue(metricName: MetricName, value: Any?): Any {
             }
             if (value.length <= Constraints.STRING_CHAR_LIMIT) value else throw IllegalArgumentException("String value cannot have more than ${Constraints.STRING_CHAR_LIMIT} characters!")
         }
+
         MetricType.JSON -> {
             if (value !is Map<*, *> && value !is List<*>) {
                 throw IllegalArgumentException("Value type mismatch, expected JSON array or object!")
             }
             if (Json.encode(value).length <= Constraints.STRING_CHAR_LIMIT) value else throw IllegalArgumentException("JSON value cannot have more than ${Constraints.STRING_CHAR_LIMIT} characters!")
         }
+
         MetricType.NUMBER_ARRAY -> {
             if (value !is List<*>) {
                 throw IllegalArgumentException("Value type mismatch, expected array of numbers!")
@@ -84,7 +90,7 @@ fun validatedLocation(location: Location): Location {
 }
 
 data class IngestMetricEvent(
-    val timestamp: Long = System.currentTimeMillis(),
+    val timestamp: Long? = null,
     val metric: MetricName,
     val value: Any,
     val source: String? = null,
@@ -95,7 +101,8 @@ data class IngestMetricEvent(
     fun convert(dataset: String, producer: Producer, precision: TimeUnit, index: Int): MetricEvent {
         try {
             return MetricEvent(
-                timestamp = TimeUnit.MICROSECONDS.convert(validatedTimestamp(timestamp), precision),
+                timestamp = timestamp?.let { validatedTimestampMus(TimeUnit.MICROSECONDS.convert(it, precision)) }
+                    ?: System.currentTimeMillis().toMus(),
                 dataset = validatedMetaField("dataset", dataset),
                 producer = producer,
                 elevation = elevation,
