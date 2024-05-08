@@ -1,52 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/int-dataset-streamer/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/int-dataset-streamer/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/int-dataset-streamer/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/int-sink-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/int-sink-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/int-sink-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/int-stats-collector/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/int-stats-collector/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/int-stats-collector/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lib-annotation-processor/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-annotation-processor/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-annotation-processor/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-definitions/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-definitions/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lib-mongo-utils/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-mongo-utils/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-mongo-utils/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lib-oblx-client/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-oblx-client/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-oblx-client/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lib-pulsar-utils/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-pulsar-utils/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-pulsar-utils/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lib-service-utils/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-service-utils/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-service-utils/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lib-test-utils/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-test-utils/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib-test-utils/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/monolith/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/monolith/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/monolith/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plugin-accessmanager-basic/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-accessmanager-basic/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-accessmanager-basic/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plugin-datastore-clickhouse/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-datastore-clickhouse/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-datastore-clickhouse/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-metastore-mongo/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-metastore-mongo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plugin-monitoring-prometheus/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-monitoring-prometheus/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-monitoring-prometheus/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plugin-ratelimiter-gubernator/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-ratelimiter-gubernator/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugin-ratelimiter-gubernator/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pub-auth-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-auth-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-auth-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pub-catalog-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-catalog-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-catalog-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pub-export-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-export-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-export-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pub-ingest-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-ingest-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-ingest-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pub-issue-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-issue-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-issue-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pub-monitor-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-monitor-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-monitor-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pub-query-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-query-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-query-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pub-streaming-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-streaming-service/src/main/kotlin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pub-streaming-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/kotlin" charset="UTF-8" />

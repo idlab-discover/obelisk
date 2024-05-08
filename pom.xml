@@ -236,10 +236,11 @@
                 <plugin>
                     <groupId>com.google.cloud.tools</groupId>
                     <artifactId>jib-maven-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.4.2</version>
                     <configuration>
                         <from>
-                            <image>eclipse-temurin:17</image>
+                            <image>eclipse-temurin:17.0.11_9-jre</image>
+<!--                            <image>openjdk:17</image>-->
                         </from>
                         <to>
                             <image>${container.registry}/${project.artifactId}:${project.version}</image>
@@ -260,6 +261,14 @@
                             </labels>
                         </container>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
